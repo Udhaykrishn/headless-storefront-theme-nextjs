@@ -10,6 +10,8 @@ import {
   shopifyClient,
 } from "@/lib/shopify";
 
+export const revalidate = 0;
+
 export default async function Home() {
   const data =
     await shopifyClient.request<ProductsResponse>(GET_PRODUCTS_QUERY);

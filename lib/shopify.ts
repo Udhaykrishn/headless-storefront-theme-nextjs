@@ -10,6 +10,7 @@ export const shopifyClient = new GraphQLClient(endpoint, {
     "X-Shopify-Storefront-Access-Token": storefrontAccessToken as string,
     "Content-Type": "application/json",
   },
+  fetch: (url, options) => fetch(url, { ...options, cache: "no-store", next: { revalidate: 0 } }),
 });
 
 export const GET_PRODUCTS_QUERY = `
