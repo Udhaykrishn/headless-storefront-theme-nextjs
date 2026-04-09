@@ -30,18 +30,17 @@ export function Header() {
     <header
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm"
-          : "bg-transparent"
+          ? "bg-white/80 backdrop-blur-lg border-b border-slate-200 py-3"
+          : "bg-transparent py-5"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Mobile Nav */}
-        <div className="flex md:hidden items-center">
+        <div className="flex md:hidden">
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-gray-900">
+              <Button variant="ghost" size="icon">
                 <svg
-                  aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
                   height="24"
@@ -56,125 +55,88 @@ export function Header() {
                   <line x1="4" x2="20" y1="6" y2="6" />
                   <line x1="4" x2="20" y1="18" y2="18" />
                 </svg>
-                <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
             <SheetContent side="left">
               <SheetHeader>
-                <SheetTitle className="text-left font-bold text-xl">
-                  Menu
+                <SheetTitle className="text-left font-bold text-xl tracking-tight">
+                  NEXT<span className="text-indigo-600">STORE</span>
                 </SheetTitle>
               </SheetHeader>
               <div className="flex flex-col gap-4 mt-8">
-                <Link href="/" className="text-lg font-medium text-gray-900">
-                  New Arrivals
-                </Link>
-                <Link href="/" className="text-lg font-medium text-gray-900">
-                  Collections
-                </Link>
-                <Link href="/" className="text-lg font-medium text-gray-900">
-                  Shop
-                </Link>
-                <Link href="/" className="text-lg font-medium text-gray-900">
-                  About
-                </Link>
+                {["New Arrivals", "Collections", "Shop", "About"].map((item) => (
+                  <Link 
+                    key={item} 
+                    href={`/${item.toLowerCase().replace(" ", "-")}`} 
+                    className="text-lg font-medium hover:text-indigo-600 transition-colors"
+                  >
+                    {item}
+                  </Link>
+                ))}
               </div>
             </SheetContent>
           </Sheet>
         </div>
 
         {/* Logo */}
-        <div className="flex-1 md:flex-none flex justify-center md:justify-start">
-          <Link
-            href="/"
-            className="text-2xl font-black tracking-tighter text-gray-900"
-          >
-            LUXE<span className="text-gray-500">.</span>
-          </Link>
-        </div>
+        <Link
+          href="/"
+          className="text-2xl font-bold tracking-tight text-slate-900"
+        >
+          NEXT<span className="text-indigo-600">STORE</span>
+        </Link>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
-          <Link
-            href="/"
-            className="text-sm font-medium text-gray-900 hover:text-gray-600 transition-colors"
-          >
-            New Arrivals
-          </Link>
-          <Link
-            href="#"
-            className="text-sm font-medium text-gray-900 hover:text-gray-600 transition-colors"
-          >
-            Collections
-          </Link>
-          <Link
-            href="#"
-            className="text-sm font-medium text-gray-900 hover:text-gray-600 transition-colors"
-          >
-            Shop
-          </Link>
-          <Link
-            href="#"
-            className="text-sm font-medium text-gray-900 hover:text-gray-600 transition-colors"
-          >
-            About
-          </Link>
+          {[
+            { label: "New Arrivals", href: "/shop?sort=newest" },
+            { label: "Collections", href: "/collections" },
+            { label: "Shop", href: "/shop" },
+            { label: "About", href: "/pages/about" }
+          ].map((item) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+            >
+              {item.label}
+            </Link>
+          ))}
         </nav>
 
         {/* Actions */}
-        <div className="flex items-center gap-2 md:gap-4 justify-end flex-1 md:flex-none">
-          <div className="hidden lg:flex items-center relative w-max max-w-sm">
+        <div className="flex items-center gap-4">
+          <form action="/search" method="GET" className="hidden lg:flex items-center relative">
             <svg
-              aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
+              width="18"
+              height="18"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="absolute left-3 text-gray-400"
+              className="absolute left-3 text-slate-400"
             >
               <circle cx="11" cy="11" r="8" />
               <path d="m21 21-4.3-4.3" />
             </svg>
             <Input
               type="search"
-              placeholder="Search products..."
-              className="pl-9 bg-gray-100/50 border-transparent focus-visible:ring-1 focus-visible:bg-white rounded-full h-9"
+              name="q"
+              placeholder="Search..."
+              className="pl-10 bg-slate-100 border-none focus-visible:ring-indigo-500 w-48 h-10 text-sm"
             />
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-gray-900 lg:hidden"
-          >
-            <svg
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.3-4.3" />
-            </svg>
-          </Button>
+          </form>
+          
           <Link href="/account">
             <Button
               variant="ghost"
               size="icon"
-              className="hidden sm:inline-flex text-gray-900"
+              className="hidden sm:inline-flex text-slate-700 hover:text-slate-900"
             >
               <svg
-                aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
                 height="20"
@@ -194,10 +156,9 @@ export function Header() {
             variant="ghost"
             size="icon"
             onClick={openCart}
-            className="relative text-gray-900"
+            className="text-slate-700 hover:text-slate-900 relative"
           >
             <svg
-              aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               width="20"
               height="20"
@@ -213,9 +174,7 @@ export function Header() {
               <path d="M16 10a4 4 0 0 1-8 0" />
             </svg>
             {cartId && (
-              <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-[10px] bg-black text-white rounded-full">
-                !
-              </Badge>
+              <span className="absolute top-2 right-2 h-2 w-2 bg-indigo-600 rounded-full"></span>
             )}
           </Button>
         </div>

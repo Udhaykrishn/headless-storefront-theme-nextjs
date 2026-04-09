@@ -1,110 +1,70 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
-import { loginCustomer, createCustomer } from "@/app/actions/customer";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { ShoppingBag, ShieldCheck, Zap, Lock } from "lucide-react";
 
 export default function LoginForm() {
-  const [isLogin, setIsLogin] = useState(true);
-  const router = useRouter();
+  const searchParams = useSearchParams();
+  const error = searchParams.get("error");
 
-  const [loginState, loginAction, isLoginPending] = useActionState(
-    loginCustomer,
-    null as any,
-  );
-  const [registerState, registerAction, isRegisterPending] = useActionState(
-    createCustomer,
-    null as any,
-  );
-
-  const error = isLogin ? loginState?.error : registerState?.error;
-  const success = isLogin ? loginState?.success : registerState?.success;
-
-  useEffect(() => {
-    if (success) {
-      router.push("/account");
-      router.refresh();
-    }
-  }, [success, router]);
+  const handleLogin = () => {
+    // Redirect to our internal API route that initiates the OAuth flow
+    window.location.href = "/api/auth/login";
+  };
 
   return (
-    <Card className="w-full max-w-sm shadow-xl">
-      <CardHeader>
-        <CardTitle>{isLogin ? "Welcome Back" : "Create Account"}</CardTitle>
-        <CardDescription>
-          {isLogin
-            ? "Sign in to your account to continue."
-            : "Enter your details below to create an account."}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        {error && (
-          <div className="p-3 mb-4 text-sm text-red-600 bg-red-50 rounded-lg">
-            {error}
-          </div>
-        )}
-
-        <form
-          action={isLogin ? loginAction : registerAction}
-          className="space-y-4"
-        >
-          {!isLogin && (
-            <div className="grid gap-2">
-              <Input name="firstName" placeholder="First Name" required />
-              <Input name="lastName" placeholder="Last Name" required />
-            </div>
-          )}
-          <div className="grid gap-2">
-            <Input
-              name="email"
-              type="email"
-              placeholder="m@example.com"
-              required
-            />
-          </div>
-          <div className="grid gap-2">
-            <Input
-              name="password"
-              type="password"
-              placeholder="Password"
-              required
-            />
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full h-12 text-md font-medium"
-            disabled={isLoginPending || isRegisterPending}
-          >
-            {(isLoginPending || isRegisterPending) && (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            {isLogin ? "Sign In" : "Create Account"}
-          </Button>
-        </form>
-
-        <div className="mt-4 text-center text-sm">
-          {isLogin ? "Don't have an account? " : "Already have an account? "}
-          <button
-            onClick={() => setIsLogin(!isLogin)}
-            className="underline font-semibold"
-            type="button"
-          >
-            {isLogin ? "Sign up" : "Sign in"}
-          </button>
+    <div className="w-full">
+      {error && (
+        <div className="p-6 mb-10 text-[10px] font-black uppercase tracking-[0.2em] text-red-600 bg-red-100/60 backdrop-blur-md rounded-[2rem] border border-red-200 flex items-center justify-center animate-shake">
+          <ShieldCheck className="w-5 h-5 mr-4 flex-shrink-0" />
+          {error}
         </div>
-      </CardContent>
-    </Card>
+      )}
+
+      <div className="space-y-12">
+        <div className="bg-white/50 backdrop-blur-xl p-10 lg:p-14 rounded-[4rem] border border-white/60 shadow-2xl relative group overflow-hidden">
+           <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl group-hover:bg-indigo-500/10 transition-colors"></div>
+           
+           <div className="relative z-10">
+              <div className="w-20 h-20 bg-indigo-950 rounded-[1.5rem] flex items-center justify-center mb-10 shadow-2xl border-2 border-white/20 group-hover:rotate-12 transition-transform duration-700">
+                 <Lock className="w-8 h-8 text-white" />
+              </div>
+              
+              <h3 className="text-3xl font-black uppercase tracking-tighter text-indigo-950 italic mb-4">Identity Protocol</h3>
+              <p className="text-slate-500 font-bold uppercase tracking-widest text-[9px] leading-relaxed max-w-xs">
+                 Initialize secure authentication through the Shopify encrypted channel. 
+              </p>
+              
+              <Button
+                onClick={handleLogin}
+                className="w-full h-24 mt-12 text-sm font-black uppercase tracking-[0.3em] rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(79,70,229,0.4)] hover:shadow-none hover:scale-[0.98] transition-all bg-indigo-600 border-none group/btn relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-black opacity-0 group-hover/btn:opacity-10 transition-opacity"></div>
+                <span className="flex items-center gap-6 relative z-10">
+                   Enter the Vault
+                   <Zap className="w-5 h-5 group-hover/btn:scale-125 transition-transform" />
+                </span>
+              </Button>
+           </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-6">
+           <div className="flex flex-col items-center gap-4 bg-white/40 p-6 rounded-[2.5rem] border border-white/60 shadow-sm group">
+              <ShieldCheck className="w-6 h-6 text-indigo-400 group-hover:scale-110 transition-transform" />
+              <span className="text-[7px] font-black uppercase tracking-[0.4em] text-slate-400">Encrypted</span>
+           </div>
+           <div className="flex flex-col items-center gap-4 bg-white/40 p-6 rounded-[2.5rem] border border-white/60 shadow-sm group">
+              <ShoppingBag className="w-6 h-6 text-indigo-400 group-hover:scale-110 transition-transform" />
+              <span className="text-[7px] font-black uppercase tracking-[0.4em] text-slate-400">Curated</span>
+           </div>
+        </div>
+
+        <p className="text-center text-[8px] text-slate-400 font-black uppercase tracking-[0.4em] leading-relaxed px-10">
+          Authorization grants access to the <span className="text-indigo-400 font-black">Archive Manifest</span>. 
+          By continuing, you accept our <span className="underline decoration-indigo-200">System Parameters</span>.
+        </p>
+      </div>
+    </div>
   );
 }

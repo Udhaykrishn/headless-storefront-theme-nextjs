@@ -32,75 +32,54 @@ const REVIEWS = [
   },
 ];
 
+import { Star } from "lucide-react";
+
 export function Reviews() {
   return (
-    <section className="bg-white py-24 sm:py-32 border-y border-gray-100">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-xl text-center">
-          <h2 className="text-lg font-semibold leading-8 tracking-tight text-amber-600">
-            Testimonials
+    <section className="py-20 bg-slate-50">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center sm:text-left">
+        <div className="max-w-xl mb-16 mx-auto sm:mx-0">
+          <h2 className="text-3xl font-bold text-slate-900 tracking-tight">
+            Customer Reviews
           </h2>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            Loved by thousand of shoppers
+          <p className="mt-4 text-slate-600">
+            See what our customers have to say about their experience with our next-generation technology.
           </p>
         </div>
-        <div className="mx-auto mt-16 flow-root max-w-2xl sm:mt-20 lg:mx-auto lg:max-w-none">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {REVIEWS.map((review) => (
-              <figure
-                key={review.id}
-                className="rounded-3xl bg-gray-50/80 p-8 shadow-sm ring-1 ring-gray-900/5 transition-all hover:-translate-y-2 hover:shadow-xl hover:bg-white flex flex-col justify-between h-full"
-              >
-                <blockquote className="text-gray-900 flex-1">
-                  <div className="flex gap-1 mb-6 text-amber-400">
-                    {[...Array(review.rating)].map((_, i) => (
-                      <svg
-                        aria-hidden="true"
-                        key={`star-filled-${review.id}-${i}`}
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        stroke="none"
-                      >
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                    ))}
-                    {[...Array(5 - review.rating)].map((_, i) => (
-                      <svg
-                        aria-hidden="true"
-                        key={`star-empty-${review.id}-${i}`}
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="text-gray-300"
-                      >
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                    ))}
-                  </div>
-                  <p className="text-lg leading-relaxed">{`"${review.content}"`}</p>
-                </blockquote>
-                <figcaption className="mt-8 flex items-center gap-x-4 border-t border-gray-100 pt-6">
-                  <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
-                    <AvatarImage src={review.avatar} alt={review.name} />
-                    <AvatarFallback>{review.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <div className="font-bold text-gray-900">{review.name}</div>
-                    <div className="text-sm text-gray-500">{review.handle}</div>
-                  </div>
-                </figcaption>
-              </figure>
-            ))}
-          </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {REVIEWS.map((review) => (
+            <div
+              key={review.id}
+              className="flex flex-col bg-white p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow"
+            >
+              <div className="flex gap-1 mb-6 text-yellow-400">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={`star-${review.id}-${i}`}
+                    className={`w-4 h-4 ${i < review.rating ? "fill-current" : "text-slate-200"}`}
+                  />
+                ))}
+              </div>
+              
+              <blockquote className="flex-grow">
+                <p className="text-lg text-slate-700 leading-relaxed italic">
+                  "{review.content}"
+                </p>
+              </blockquote>
+
+              <div className="mt-8 flex items-center gap-4 pt-6 border-t border-slate-100">
+                <Avatar className="h-12 w-12 border border-slate-200">
+                  <AvatarImage src={review.avatar} alt={review.name} />
+                  <AvatarFallback className="bg-slate-100 text-slate-600 font-semibold">{review.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <div className="font-bold text-slate-900">{review.name}</div>
+                  <div className="text-xs text-slate-500 font-medium">{review.handle}</div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

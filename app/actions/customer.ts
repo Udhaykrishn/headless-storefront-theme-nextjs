@@ -71,20 +71,140 @@ export async function logoutCustomer() {
 
 export async function getCustomer() {
   const cookieStore = await cookies();
-  const tokenCookie = cookieStore.get(TOKEN_KEY);
+  const token = (await cookieStore).get(TOKEN_KEY);
 
-  if (!tokenCookie?.value) {
-    return null;
-  }
+  if (!token?.value) return null;
 
   try {
-    const data = await shopifyClient.request<{ customer: any }>(
-      GET_CUSTOMER_QUERY,
-      { customerAccessToken: tokenCookie.value },
+    const { customerAccountClient, GET_CUSTOMER_ACCOUNT_QUERY } = await import("@/lib/shopify");
+    const data = await customerAccountClient(token.value).request<{ customer: any }>(
+      GET_CUSTOMER_ACCOUNT_QUERY
     );
-    return data.customer;
+    
+    // Normalize the data (Customer Account API uses emailAddress/phoneNumber objects)
+    const customer = data.customer;
+    return {
+      ...customer,
+      email: customer.emailAddress?.emailAddress,
+      phone: customer.phoneNumber?.phoneNumber,
+      orders: {
+        ...customer.orders,
+        edges: customer.orders?.edges.map((edge: any) => ({
+          ...edge,
+          node: {
+            ...edge.node,
+            orderNumber: edge.node.name, // Map for UI compatibility
+          },
+        })),
+      },
+    };
   } catch (error) {
     console.error("Failed to fetch customer", error);
+    return null;
+  }
+}
+
+export async function getCustomerToken() {
+  const cookieStore = await cookies();
+  const tokenCookie = cookieStore.get(TOKEN_KEY);
+  return tokenCookie?.value ?? null;
+}
+
+export async function updateCustomerProfile(prevState: any, formData: FormData) {
+  const cookieStore = await cookies();
+  const tokenCookie = cookieStore.get(TOKEN_KEY);
+  if (!tokenCookie?.value) return { error: "Not authenticated" };
+
+  const input = {
+    firstName: formData.get("firstName") as string,
+    lastName: formData.get("lastName") as string,
+  };
+
+  const { customerAccountClient } = await import("@/lib/shopify");
+  
+  const mutation = `
+    mutation customerUpdate($input: CustomerUpdateInput!) {
+      customerUpdate(input: $input) {
+        customer { id }
+        userErrors { field, message }
+      }
+    }
+  `;
+
+  try {
+    const data = await customerAccountClient(tokenCookie.value).request<{
+      customerUpdate: { customer: any; userErrors: any[] };
+    }>(mutation, { input });
+
+    if (data.customerUpdate.userErrors.length > 0) {
+      return { error: data.customerUpdate.userErrors[0].message };
+    }
+    return { success: true };
+  } catch (error) {
+    console.error("Profile update failed", error);
+    return { error: "Failed to update profile" };
+  }
+}
+
+export async function getOrder(orderId: string) {
+  const cookieStore = await cookies();
+  const tokenCookie = cookieStore.get(TOKEN_KEY);
+  if (!tokenCookie?.value) return null;
+
+  const { customerAccountClient } = await import("@/lib/shopify");
+
+  const query = `
+    query getOrder($id: ID!) {
+      customer {
+        orders(first: 1, query: $id) {
+          edges {
+            node {
+              id
+              name
+              processedAt
+              financialStatus
+              fulfillmentStatus
+              totalPrice { amount, currencyCode }
+              subtotalPrice { amount, currencyCode }
+              totalShippingPrice { amount, currencyCode }
+              lineItems(first: 50) {
+                edges {
+                  node {
+                    title
+                    quantity
+                    variant {
+                      title
+                      price { amount, currencyCode }
+                      image { url, altText }
+                    }
+                  }
+                }
+              }
+              shippingAddress {
+                firstName, lastName, address1, address2, city, province, zip, country
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  try {
+    const data = await customerAccountClient(tokenCookie.value).request<{ customer: any }>(
+      query,
+      { id: orderId } 
+    );
+    
+    const order = data.customer.orders.edges[0]?.node;
+    if (!order) return null;
+    
+    return {
+      ...order,
+      orderNumber: order.name, // Map for UI compatibility
+    };
+  } catch (error) {
+    console.error("Failed to fetch order", error);
     return null;
   }
 }

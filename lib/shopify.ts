@@ -1,5 +1,4 @@
 import { GraphQLClient } from "graphql-request";
-import { cookies } from "next/headers";
 
 const domain = process.env.SHOPIFY_STORE_DOMAIN;
 const storefrontAccessToken = process.env.SHOPIFY_STOREFRONT_TOKEN;
@@ -12,6 +11,52 @@ export const shopifyClient = new GraphQLClient(endpoint, {
     "Content-Type": "application/json",
   },
 });
+
+export const customerAccountClient = (accessToken: string) => {
+  // Based on your specific shop discovery:
+  const shopId = "96111690044"; 
+  const url = `https://shopify.com/${shopId}/account/customer/api/2026-04/graphql`;
+  
+  return new GraphQLClient(url, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: accessToken,
+    },
+  });
+};
+
+export const GET_CUSTOMER_ACCOUNT_QUERY = `
+  query getCustomer {
+    customer {
+      id
+      firstName
+      lastName
+      emailAddress { emailAddress }
+      phoneNumber { phoneNumber }
+      orders(first: 10, reverse: true) {
+        edges {
+          node {
+            id
+            name
+            processedAt
+            financialStatus
+            fulfillmentStatus
+            totalPrice { amount, currencyCode }
+          }
+        }
+      }
+      defaultAddress {
+        id
+        address1
+        address2
+        city
+        province
+        zip
+        country
+      }
+    }
+  }
+`;
 
 export const GET_PRODUCTS_QUERY = `
   query getProducts($first: Int, $last: Int, $after: String, $before: String, $query: String, $sortKey: ProductSortKeys, $reverse: Boolean) {
@@ -32,6 +77,141 @@ export const GET_PRODUCTS_QUERY = `
         }
       }
       pageInfo { hasNextPage, hasPreviousPage, startCursor, endCursor }
+    }
+  }
+`;
+
+export const GET_COLLECTIONS_QUERY = `
+  query getCollections($first: Int) {
+    collections(first: $first, sortKey: RELEVANCE) {
+      edges {
+        node {
+          id
+          title
+          handle
+          description
+          image { url, altText }
+          products(first: 1) { edges { node { id } } }
+        }
+      }
+    }
+  }
+`;
+
+export const GET_COLLECTION_BY_HANDLE_QUERY = `
+  query getCollection($handle: String!, $first: Int, $after: String, $sortKey: ProductCollectionSortKeys, $reverse: Boolean) {
+    collection(handle: $handle) {
+      id
+      title
+      handle
+      description
+      image { url, altText }
+      products(first: $first, after: $after, sortKey: $sortKey, reverse: $reverse) {
+        edges {
+          cursor
+          node {
+            id
+            title
+            handle
+            priceRange { maxVariantPrice { amount, currencyCode } }
+            images(first: 1) { edges { node { url, altText } } }
+          }
+        }
+        pageInfo { hasNextPage, hasPreviousPage, startCursor, endCursor }
+      }
+    }
+  }
+`;
+
+export const SEARCH_PRODUCTS_QUERY = `
+  query searchProducts($query: String!, $first: Int, $after: String) {
+    products(first: $first, after: $after, query: $query, sortKey: RELEVANCE) {
+      edges {
+        cursor
+        node {
+          id
+          title
+          handle
+          priceRange { maxVariantPrice { amount, currencyCode } }
+          images(first: 1) { edges { node { url, altText } } }
+        }
+      }
+      pageInfo { hasNextPage, hasPreviousPage, startCursor, endCursor }
+    }
+  }
+`;
+
+export const GET_PAGE_QUERY = `
+  query getPage($handle: String!) {
+    page(handle: $handle) {
+      id, title, handle, body, seo { title, description }
+    }
+  }
+`;
+
+export const GET_ORDER_QUERY = `
+  query getOrder($customerAccessToken: String!, $orderId: String!) {
+    customer(customerAccessToken: $customerAccessToken) {
+      orders(first: 1, query: $orderId) {
+        edges {
+          node {
+            id
+            orderNumber
+            processedAt
+            financialStatus
+            fulfillmentStatus
+            totalPrice { amount, currencyCode }
+            subtotalPrice { amount, currencyCode }
+            totalShippingPrice { amount, currencyCode }
+            shippingAddress {
+              firstName, lastName, address1, address2, city, province, zip, country
+            }
+            lineItems(first: 50) {
+              edges {
+                node {
+                  title
+                  quantity
+                  variant {
+                    id, title
+                    price { amount, currencyCode }
+                    image { url, altText }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const GET_CUSTOMER_ADDRESSES_QUERY = `
+  query getCustomerAddresses($customerAccessToken: String!) {
+    customer(customerAccessToken: $customerAccessToken) {
+      defaultAddress { id, address1, address2, city, province, zip, country, firstName, lastName, phone }
+      addresses(first: 10) {
+        edges {
+          node { id, address1, address2, city, province, zip, country, firstName, lastName, phone }
+        }
+      }
+    }
+  }
+`;
+
+export const GET_CUSTOMER_PROFILE_QUERY = `
+  query getCustomerProfile($customerAccessToken: String!) {
+    customer(customerAccessToken: $customerAccessToken) {
+      id, firstName, lastName, email, phone
+    }
+  }
+`;
+
+export const CUSTOMER_UPDATE_MUTATION = `
+  mutation customerUpdate($customerAccessToken: String!, $customer: CustomerUpdateInput!) {
+    customerUpdate(customerAccessToken: $customerAccessToken, customer: $customer) {
+      customer { id, firstName, lastName, email, phone }
+      customerUserErrors { code, field, message }
     }
   }
 `;
@@ -342,4 +522,90 @@ export async function getCart(cartId: string) {
     cartId,
   });
   return data.cart;
+}
+
+export interface ShopifyCollection {
+  id: string;
+  title: string;
+  handle: string;
+  description: string;
+  image: { url: string; altText: string } | null;
+}
+
+export interface CollectionsResponse {
+  collections: {
+    edges: { node: ShopifyCollection }[];
+  };
+}
+
+export interface CollectionResponse {
+  collection: ShopifyCollection & {
+    products: {
+      edges: { cursor: string; node: ShopifyProduct }[];
+      pageInfo: {
+        hasNextPage: boolean;
+        hasPreviousPage: boolean;
+        startCursor: string;
+        endCursor: string;
+      };
+    };
+  };
+}
+
+export async function getCollections(first = 20) {
+  const data = await shopifyClient.request<CollectionsResponse>(
+    GET_COLLECTIONS_QUERY,
+    { first },
+  );
+  return data.collections.edges.map((e) => e.node);
+}
+
+export async function getCollection({
+  handle,
+  first = 20,
+  after,
+  sortKey = "BEST_SELLING",
+  reverse = false,
+}: {
+  handle: string;
+  first?: number;
+  after?: string;
+  sortKey?: string;
+  reverse?: boolean;
+}) {
+  const data = await shopifyClient.request<CollectionResponse>(
+    GET_COLLECTION_BY_HANDLE_QUERY,
+    { handle, first, after, sortKey, reverse },
+  );
+  return data.collection;
+}
+
+export async function searchProducts({
+  query,
+  first = 20,
+  after,
+}: {
+  query: string;
+  first?: number;
+  after?: string;
+}) {
+  const data = await shopifyClient.request<ProductsResponse>(
+    SEARCH_PRODUCTS_QUERY,
+    { query, first, after },
+  );
+  return data.products;
+}
+
+export async function getPage(handle: string) {
+  const data = await shopifyClient.request<{ page: any }>(GET_PAGE_QUERY, {
+    handle,
+  });
+  return data.page;
+}
+
+export async function getShopId() {
+  const query = `{ shop { id } }`;
+  const data = await shopifyClient.request<{ shop: { id: string } }>(query);
+  const gid = data.shop.id; // gid://shopify/Shop/123456
+  return gid.split("/").pop();
 }

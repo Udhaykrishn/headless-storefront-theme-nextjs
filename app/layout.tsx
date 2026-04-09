@@ -30,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn("font-sans", figtree.variable)}>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-white text-slate-900 selection:bg-indigo-500 selection:text-white`}
       >
         {children}
         <CartSheet />

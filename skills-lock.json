@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "skills": {
+    "building-storefronts": {
+      "source": "medusajs/medusa-agent-skills",
+      "sourceType": "github",
+      "computedHash": "288f645ffd2b29f925f5c70077b9e57af6b787843fc98b276e84150d253511a7"
+    },
+    "next-best-practices": {
+      "source": "vercel-labs/next-skills",
+      "sourceType": "github",
+      "computedHash": "db85045827ebeb83ac8dbc992b69188755eeb74dcf01cbf5e694d58aa494a106"
+    },
+    "shopify-storefront-api": {
+      "source": "finsilabs/awesome-ecommerce-skills",
+      "sourceType": "github",
+      "computedHash": "0a212496fa665bbcab9b95836125f96c184a25f2883c15214447d71a426a7a1c"
+    },
+    "storefront-best-practices": {
+      "source": "medusajs/medusa-agent-skills",
+      "sourceType": "github",
+      "computedHash": "633f757031071344075cce6450ff8c5bf209691a8d072bb6cc73be153faa4ba4"
+    },
+    "ui-ux-pro-max": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "computedHash": "0a413bf988d06481f69bb81df2070741c3ba12dd9f1be2706d57f259c905992d"
+    },
+    "web-design-guidelines": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "computedHash": "f3bc47f890f42a44db1007ab390709ec368e4b8c089baee6b0007182236ac474"
+    }
+  }
+}

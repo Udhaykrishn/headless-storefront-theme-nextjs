@@ -13,13 +13,15 @@ export default async function Home() {
   const products = productsData.edges.map((e) => e.node);
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 selection:bg-amber-100 selection:text-amber-900 flex flex-col">
+    <div className="min-h-screen flex flex-col text-slate-900 selection:bg-indigo-500 selection:text-white transition-colors">
       <Header />
-      <main className="flex-1">
+      <main className="flex-1 relative">
         <Hero />
-        <FeaturedProducts products={products} />
-        <Reviews />
-        <Faq />
+        <div className="relative z-10 space-y-24 pb-24 lg:pb-48">
+          <FeaturedProducts products={products} />
+          <Reviews />
+          <Faq />
+        </div>
       </main>
       <Footer />
     </div>

@@ -30,42 +30,26 @@ const FAQS = [
   },
 ];
 
+import { Mail, ArrowUpRight } from "lucide-react";
+
 export function Faq() {
   return (
-    <section className="bg-gray-50 py-24 sm:py-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8 flex flex-col lg:flex-row gap-16">
+    <section className="py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row gap-16 lg:gap-24">
         <div className="lg:w-1/3">
-          <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+          <h2 className="text-3xl font-bold text-slate-900 tracking-tight">
             Frequently Asked Questions
           </h2>
-          <p className="mt-4 text-lg text-gray-500">
-            Can't find the answer you're looking for? Reach out to our customer
-            support team directly.
+          <p className="mt-4 text-slate-600 leading-relaxed">
+            Everything you need to know about our products, shipping, and returns. Can't find the answer you're looking for? Reach out to our team.
           </p>
+          
           <div className="mt-8">
             <a
-              href="mailto:support@example.com"
-              className="inline-flex items-center gap-2 font-medium text-black hover:text-amber-700 transition-colors"
+              href="mailto:support@nextstore.com"
+              className="inline-flex items-center gap-2 text-indigo-600 font-semibold hover:text-indigo-700 transition-colors"
             >
-              <span className="h-10 w-10 rounded-full bg-black flex items-center justify-center">
-                <svg
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-white"
-                >
-                  <rect width="20" height="16" x="2" y="4" rx="2" />
-                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                </svg>
-              </span>
-              Contact Support
+              Contact Support <ArrowUpRight className="w-4 h-4" />
             </a>
           </div>
         </div>
@@ -74,18 +58,18 @@ export function Faq() {
           <Accordion
             type="single"
             collapsible
-            className="w-full bg-white rounded-3xl p-8 shadow-sm border border-gray-100"
+            className="w-full space-y-4"
           >
-            {FAQS.map((faq) => (
+            {FAQS.map((faq, index) => (
               <AccordionItem
                 key={faq.question}
                 value={faq.question}
-                className="border-b border-gray-100 last:border-0"
+                className="border rounded-xl px-6 bg-white shadow-sm overflow-hidden"
               >
-                <AccordionTrigger className="text-left text-lg font-bold text-gray-900 hover:text-amber-700 py-6 hover:no-underline">
+                <AccordionTrigger className="text-left font-bold text-slate-900 py-6 hover:no-underline hover:text-indigo-600 transition-colors">
                   {faq.question}
                 </AccordionTrigger>
-                <AccordionContent className="text-gray-600 text-base leading-relaxed pb-6">
+                <AccordionContent className="text-slate-600 leading-relaxed pb-6">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>
