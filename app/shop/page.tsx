@@ -60,41 +60,66 @@ export default async function ShopPage({
           <h1 className="text-4xl font-extrabold tracking-tight">
             Shop {query && `results for "${query}"`}
           </h1>
-          <div className="flex items-center gap-4 mt-4 md:mt-0 relative">
-            <Link
-              href={`/shop?sort=best-selling${query ? `&q=${query}` : ""}`}
-              className={`text-sm ${!sort || sort === "best-selling" ? "font-bold" : "text-gray-500 hover:text-gray-900"}`}
-            >
-              Best Selling
-            </Link>
-            <Link
-              href={`/shop?sort=newest${query ? `&q=${query}` : ""}`}
-              className={`text-sm ${sort === "newest" ? "font-bold" : "text-gray-500 hover:text-gray-900"}`}
-            >
-              Newest
-            </Link>
-            <Link
-              href={`/shop?sort=price-asc${query ? `&q=${query}` : ""}`}
-              className={`text-sm ${sort === "price-asc" ? "font-bold" : "text-gray-500 hover:text-gray-900"}`}
-            >
-              Price: Low to High
-            </Link>
-            <Link
-              href={`/shop?sort=price-desc${query ? `&q=${query}` : ""}`}
-              className={`text-sm ${sort === "price-desc" ? "font-bold" : "text-gray-500 hover:text-gray-900"}`}
-            >
-              Price: High to Low
-            </Link>
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-4 mt-6 md:mt-0 w-full lg:w-auto">
+            <div className="w-full lg:w-80">
+              <ShopSearch defaultValue={query} />
+            </div>
+            
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 lg:pb-0 scrollbar-hide px-1">
+              <Link
+                href={`/shop?sort=best-selling${query ? `&q=${query}` : ""}`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap border ${
+                  !sort || sort === "best-selling" 
+                    ? "bg-indigo-600 text-white border-indigo-600 shadow-sm" 
+                    : "bg-white text-gray-600 border-gray-200 hover:border-indigo-200 hover:bg-indigo-50"
+                }`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m11 17 2 2 4-4"/><path d="m11 9 2 2 4-4"/><path d="M5 19 9 5l4 14"/><path d="M19 19h-4L11 5l-4 14H3"/></svg>
+                Best Selling
+              </Link>
+              
+              <Link
+                href={`/shop?sort=newest${query ? `&q=${query}` : ""}`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap border ${
+                  sort === "newest" 
+                    ? "bg-indigo-600 text-white border-indigo-600 shadow-sm" 
+                    : "bg-white text-gray-600 border-gray-200 hover:border-indigo-200 hover:bg-indigo-50"
+                }`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Newest
+              </Link>
+              
+              <Link
+                href={`/shop?sort=price-asc${query ? `&q=${query}` : ""}`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap border ${
+                  sort === "price-asc" 
+                    ? "bg-indigo-600 text-white border-indigo-600 shadow-sm" 
+                    : "bg-white text-gray-600 border-gray-200 hover:border-indigo-200 hover:bg-indigo-50"
+                }`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="M11 4h4"/><path d="M11 8h7"/><path d="M11 12h10"/></svg>
+                Price: Low to High
+              </Link>
+              
+              <Link
+                href={`/shop?sort=price-desc${query ? `&q=${query}` : ""}`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap border ${
+                  sort === "price-desc" 
+                    ? "bg-indigo-600 text-white border-indigo-600 shadow-sm" 
+                    : "bg-white text-gray-600 border-gray-200 hover:border-indigo-200 hover:bg-indigo-50"
+                }`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/><path d="M11 12h4"/><path d="M11 16h7"/><path d="M11 20h10"/></svg>
+                Price: High to Low
+              </Link>
+            </div>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Filters */}
           <div className="hidden md:block col-span-1 border-r border-gray-200 pr-8">
-            <div className="mb-6">
-              <ShopSearch defaultValue={query} />
-            </div>
-
             <h3 className="font-semibold text-lg mb-4">Categories</h3>
             <ul className="space-y-3">
               <li>

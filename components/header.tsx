@@ -1,11 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useCartStore } from "@/lib/store";
 import {
   Sheet,
@@ -17,33 +14,7 @@ import {
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
   const { openCart, cartId } = useCartStore();
-
-  // Sync state with URL param
-  useEffect(() => {
-    setSearchTerm(searchParams.get("q") || "");
-  }, [searchParams]);
-
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      // Only push if the search term has actually changed compared to the URL
-      const currentQuery = searchParams.get("q") || "";
-      if (searchTerm !== currentQuery) {
-        const params = new URLSearchParams(searchParams.toString());
-        if (searchTerm) {
-          params.set("q", searchTerm);
-        } else {
-          params.delete("q");
-        }
-        router.push(`/shop?${params.toString()}`);
-      }
-    }, 500);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, router, searchParams]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -131,31 +102,6 @@ export function Header() {
 
         {/* Actions */}
         <div className="flex items-center gap-4">
-          <div className="flex items-center relative flex-1 max-w-[160px] sm:max-w-xs ml-4">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="absolute left-3 text-slate-400 pointer-events-none"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.3-4.3" />
-            </svg>
-            <Input
-              type="search"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search..."
-              className="pl-10 bg-slate-100 border-none focus-visible:ring-indigo-500 w-full h-10 text-sm"
-            />
-          </div>
-
           <Link href="/account">
             <Button
               variant="ghost"
