@@ -31,7 +31,7 @@ export function Header() {
           : "bg-transparent py-5"
         }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Mobile Nav */}
         <div className="flex md:hidden">
           <Sheet>
@@ -55,19 +55,23 @@ export function Header() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left">
-              <SheetHeader>
+              <SheetHeader className="px-6 pt-6">
                 <SheetTitle className="text-left font-bold text-xl tracking-tight">
                   Reboot<span className="text-indigo-600">X</span>
                 </SheetTitle>
               </SheetHeader>
-              <div className="flex flex-col gap-4 mt-8">
-                {["Recent Restocks", "Laptop Series", "Our Process"].map((item) => (
+              <div className="flex flex-col gap-4 mt-8 px-6">
+                {[
+                  { label: "Shop", href: "/shop" },
+                  { label: "Laptop Series", href: "/collections" },
+                  { label: "Our Process", href: "/pages/about" }
+                ].map((item) => (
                   <Link
-                    key={item}
-                    href={`/${item.toLowerCase().replace(" ", "-")}`}
+                    key={item.label}
+                    href={item.href}
                     className="text-lg font-medium hover:text-indigo-600 transition-colors"
                   >
-                    {item}
+                    {item.label}
                   </Link>
                 ))}
               </div>
@@ -86,7 +90,7 @@ export function Header() {
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
           {[
-            { label: "Recent Restocks", href: "/shop?sort=newest" },
+            { label: "Shop", href: "/shop" },
             { label: "Laptop Series", href: "/collections" },
             { label: "Our Process", href: "/pages/about" }
           ].map((item) => (
