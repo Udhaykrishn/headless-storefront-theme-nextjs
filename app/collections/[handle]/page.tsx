@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { QuickAdd } from "@/components/quick-add";
 
 export const revalidate = 60;
 
@@ -174,6 +175,12 @@ export default async function CollectionPage({ params, searchParams }: Props) {
                             </svg>
                           </div>
                         )}
+                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <QuickAdd 
+                            variantId={product.variants?.edges[0]?.node?.id} 
+                            availableForSale={product.variants?.edges[0]?.node?.availableForSale}
+                          />
+                        </div>
                       </div>
                       <h3 className="font-medium text-sm leading-tight group-hover:underline underline-offset-4 decoration-2 line-clamp-2">
                         {product.title}

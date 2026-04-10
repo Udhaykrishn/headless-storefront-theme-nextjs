@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ShopSearch } from "@/components/shop-search";
 import { ShopSort } from "@/components/shop-sort";
 import { TrendingUp, Clock, ArrowUpNarrowWide, ArrowDownWideNarrow } from "lucide-react";
+import { QuickAdd } from "@/components/quick-add";
 
 export default async function ShopPage({
   searchParams,
@@ -216,6 +217,12 @@ export default async function ShopPage({
                             fill
                             className="object-cover transition-transform duration-500 group-hover:scale-105"
                           />
+                          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <QuickAdd 
+                              variantId={product.variants?.edges[0]?.node?.id} 
+                              availableForSale={product.variants?.edges[0]?.node?.availableForSale}
+                            />
+                          </div>
                         </div>
                         <h3 className="font-medium text-sm sm:text-lg leading-tight group-hover:underline underline-offset-4 decoration-2 h-10 line-clamp-2">
                           {product.title}

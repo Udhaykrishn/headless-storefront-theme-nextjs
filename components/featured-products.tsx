@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Plus, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { QuickAdd } from "./quick-add";
 
 // biome-ignore lint/suspicious/noExplicitAny: Passing any since shopify node type is extensive
 export function FeaturedProducts({ products }: { products: any[] }) {
@@ -70,9 +71,11 @@ export function FeaturedProducts({ products }: { products: any[] }) {
                         currency: currencyCode,
                       }).format(price)}
                     </p>
-                    <div className="p-2 rounded-lg bg-slate-100 text-slate-900 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                       <Plus className="w-5 h-5" />
-                    </div>
+                    <QuickAdd 
+                      variantId={product.variants?.edges[0]?.node?.id} 
+                      availableForSale={product.variants?.edges[0]?.node?.availableForSale}
+                      className="group-hover:bg-indigo-600 group-hover:text-white"
+                    />
                   </div>
                 </div>
               </div>

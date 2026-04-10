@@ -10,7 +10,7 @@ import { ShopifyProduct } from "@/lib/shopify";
 
 export function AddToCart({ product }: { product: ShopifyProduct }) {
   const [isPending, setIsPending] = useState(false);
-  const { cartId, setCartId, openCart } = useCartStore();
+  const { cartId, setCartData, openCart } = useCartStore();
 
   const [selectedOptions, setSelectedOptions] = useState<{
     [key: string]: string;
@@ -36,7 +36,7 @@ export function AddToCart({ product }: { product: ShopifyProduct }) {
       const cart = await addToCart(cartId, [
         { merchandiseId: selectedVariant.id, quantity: 1 },
       ]);
-      setCartId(cart.id);
+      setCartData(cart.id, cart.totalQuantity);
       openCart();
       toast.success("Added to cart!");
     } catch (error) {

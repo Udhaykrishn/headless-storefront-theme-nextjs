@@ -14,7 +14,7 @@ import {
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const { openCart, cartId } = useCartStore();
+  const { openCart, cartId, totalQuantity } = useCartStore();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -149,8 +149,10 @@ export function Header() {
               <path d="M3 6h18" />
               <path d="M16 10a4 4 0 0 1-8 0" />
             </svg>
-            {cartId && (
-              <span className="absolute top-2 right-2 h-2 w-2 bg-indigo-600 rounded-full"></span>
+            {totalQuantity > 0 && (
+              <span className="absolute -top-1 -right-1 h-5 w-5 bg-indigo-600 text-white text-[10px] font-bold flex items-center justify-center rounded-full ring-2 ring-white">
+                {totalQuantity}
+              </span>
             )}
           </Button>
         </div>

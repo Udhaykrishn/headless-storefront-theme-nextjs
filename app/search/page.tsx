@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { QuickAdd } from "@/components/quick-add";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -104,6 +105,12 @@ export default async function SearchPage({
                           </svg>
                         </div>
                       )}
+                      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <QuickAdd 
+                          variantId={product.variants?.edges[0]?.node?.id} 
+                          availableForSale={product.variants?.edges[0]?.node?.availableForSale}
+                        />
+                      </div>
                     </div>
                     <h3 className="font-semibold text-lg leading-tight group-hover:underline underline-offset-4 decoration-2">
                       {product.title}

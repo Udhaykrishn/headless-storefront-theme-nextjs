@@ -71,6 +71,14 @@ export const GET_PRODUCTS_QUERY = `
           priceRange {
             maxVariantPrice { amount, currencyCode }
           }
+          variants(first: 1) {
+            edges {
+              node {
+                id
+                availableForSale
+              }
+            }
+          }
           images(first: 1) {
             edges { node { url, altText } }
           }
@@ -133,6 +141,14 @@ export const SEARCH_PRODUCTS_QUERY = `
           title
           handle
           priceRange { maxVariantPrice { amount, currencyCode } }
+          variants(first: 1) {
+            edges {
+              node {
+                id
+                availableForSale
+              }
+            }
+          }
           images(first: 1) { edges { node { url, altText } } }
         }
       }
@@ -245,6 +261,7 @@ export const CART_CREATE_MUTATION = `
       cart {
         id
         checkoutUrl
+        totalQuantity
         lines(first: 10) {
           edges {
             node {
@@ -277,6 +294,7 @@ export const CART_LINES_ADD_MUTATION = `
     cartLinesAdd(cartId: $cartId, lines: $lines) {
       cart {
         id
+        totalQuantity
         lines(first: 10) {
           edges {
             node {
@@ -306,6 +324,7 @@ export const CART_LINES_REMOVE_MUTATION = `
     cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
       cart {
         id
+        totalQuantity
         lines(first: 10) {
           edges {
             node {
@@ -335,6 +354,7 @@ export const GET_CART_QUERY = `
     cart(id: $cartId) {
       id
       checkoutUrl
+      totalQuantity
       lines(first: 100) {
         edges {
           node {
@@ -457,6 +477,7 @@ export const GET_CUSTOMER_QUERY = `
 export interface CartInfo {
   id: string;
   checkoutUrl: string;
+  totalQuantity: number;
   lines: {
     edges: {
       node: {
