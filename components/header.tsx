@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,33 @@ import {
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
   const { openCart, cartId } = useCartStore();
+
+  // Sync state with URL param
+  useEffect(() => {
+    setSearchTerm(searchParams.get("q") || "");
+  }, [searchParams]);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      // Only push if the search term has actually changed compared to the URL
+      const currentQuery = searchParams.get("q") || "";
+      if (searchTerm !== currentQuery) {
+        const params = new URLSearchParams(searchParams.toString());
+        if (searchTerm) {
+          params.set("q", searchTerm);
+        } else {
+          params.delete("q");
+        }
+        router.push(`/shop?${params.toString()}`);
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm, router, searchParams]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -63,7 +90,7 @@ export function Header() {
                 </SheetTitle>
               </SheetHeader>
               <div className="flex flex-col gap-4 mt-8">
-                {["Recent Restocks", "Laptop Series", "All Laptops", "Our Process"].map((item) => (
+                {["Recent Restocks", "Laptop Series", "Our Process"].map((item) => (
                   <Link
                     key={item}
                     href={`/${item.toLowerCase().replace(" ", "-")}`}
@@ -90,7 +117,6 @@ export function Header() {
           {[
             { label: "Recent Restocks", href: "/shop?sort=newest" },
             { label: "Laptop Series", href: "/collections" },
-            { label: "All Laptops", href: "/shop" },
             { label: "Our Process", href: "/pages/about" }
           ].map((item) => (
             <Link
@@ -105,7 +131,7 @@ export function Header() {
 
         {/* Actions */}
         <div className="flex items-center gap-4">
-          <form action="/search" method="GET" className="hidden lg:flex items-center relative">
+          <div className="flex items-center relative flex-1 max-w-[160px] sm:max-w-xs ml-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="18"
@@ -116,18 +142,19 @@ export function Header() {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="absolute left-3 text-slate-400"
+              className="absolute left-3 text-slate-400 pointer-events-none"
             >
               <circle cx="11" cy="11" r="8" />
               <path d="m21 21-4.3-4.3" />
             </svg>
             <Input
               type="search"
-              name="q"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search..."
-              className="pl-10 bg-slate-100 border-none focus-visible:ring-indigo-500 w-48 h-10 text-sm"
+              className="pl-10 bg-slate-100 border-none focus-visible:ring-indigo-500 w-full h-10 text-sm"
             />
-          </form>
+          </div>
 
           <Link href="/account">
             <Button

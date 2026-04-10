@@ -4,6 +4,7 @@ import { Footer } from "@/components/footer";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ShopSearch } from "@/components/shop-search";
 
 export default async function ShopPage({
   searchParams,
@@ -90,15 +91,9 @@ export default async function ShopPage({
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Filters */}
           <div className="hidden md:block col-span-1 border-r border-gray-200 pr-8">
-            <form action="/shop" method="GET" className="mb-6">
-              <input
-                type="search"
-                name="q"
-                defaultValue={query}
-                placeholder="Search products..."
-                className="w-full h-10 px-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-black"
-              />
-            </form>
+            <div className="mb-6">
+              <ShopSearch defaultValue={query} />
+            </div>
 
             <h3 className="font-semibold text-lg mb-4">Categories</h3>
             <ul className="space-y-3">
@@ -112,26 +107,26 @@ export default async function ShopPage({
               </li>
               <li>
                 <Link
-                  href="/shop?q=shoes"
+                  href="/shop?q=workstation"
                   className="text-sm font-medium hover:underline text-gray-600"
                 >
-                  Shoes
+                  Workstations
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/shop?q=accessories"
+                  href="/shop?q=gaming"
                   className="text-sm font-medium hover:underline text-gray-600"
                 >
-                  Accessories
+                  Gaming
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/shop?q=clothing"
+                  href="/shop?q=ultrabook"
                   className="text-sm font-medium hover:underline text-gray-600"
                 >
-                  Clothing
+                  Ultrabooks
                 </Link>
               </li>
             </ul>
