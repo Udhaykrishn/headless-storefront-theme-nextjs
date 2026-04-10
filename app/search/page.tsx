@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { QuickAdd } from "@/components/quick-add";
+import { ProductCard } from "@/components/product-card";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -74,51 +74,9 @@ export default async function SearchPage({
         ) : query && (
           <>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-              {products.map((product) => {
-                const price = product.priceRange.maxVariantPrice;
-                const formattedPrice = new Intl.NumberFormat("en-US", {
-                  style: "currency",
-                  currency: price.currencyCode,
-                }).format(parseFloat(price.amount));
-                const img = product.images.edges[0]?.node;
-
-                return (
-                  <Link
-                    key={product.id}
-                    href={`/products/${product.handle}`}
-                    className="group"
-                  >
-                    <div className="aspect-square relative rounded-2xl overflow-hidden bg-white mb-4 shadow-sm border border-black/5">
-                      {img ? (
-                        <Image
-                          src={img.url}
-                          alt={img.altText || product.title}
-                          fill
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="text-gray-300">
-                            <rect width="18" height="18" x="3" y="3" rx="2" />
-                            <circle cx="9" cy="9" r="2" />
-                            <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
-                          </svg>
-                        </div>
-                      )}
-                      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <QuickAdd 
-                          variantId={product.variants?.edges[0]?.node?.id} 
-                          availableForSale={product.variants?.edges[0]?.node?.availableForSale}
-                        />
-                      </div>
-                    </div>
-                    <h3 className="font-semibold text-lg leading-tight group-hover:underline underline-offset-4 decoration-2">
-                      {product.title}
-                    </h3>
-                    <p className="text-gray-600 mt-1 font-bold">{formattedPrice}</p>
-                  </Link>
-                );
-              })}
+              {products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
             </div>
 
             {pageInfo.hasNextPage && (

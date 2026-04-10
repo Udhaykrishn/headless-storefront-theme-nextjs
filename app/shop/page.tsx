@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ShopSearch } from "@/components/shop-search";
 import { ShopSort } from "@/components/shop-sort";
 import { TrendingUp, Clock, ArrowUpNarrowWide, ArrowDownWideNarrow } from "lucide-react";
-import { QuickAdd } from "@/components/quick-add";
+import { ProductCard } from "@/components/product-card";
 
 export default async function ShopPage({
   searchParams,
@@ -196,43 +196,10 @@ export default async function ShopPage({
               </div>
             ) : (
               <>
-                <div className={`grid ${view === "grid" ? "grid-cols-2 gap-3 sm:gap-8" : "grid-cols-1 gap-8"} sm:grid-cols-2 lg:grid-cols-3`}>
-                  {products.map((product) => {
-                    const price = product.priceRange.maxVariantPrice;
-                    const formattedPrice = new Intl.NumberFormat("en-US", {
-                      style: "currency",
-                      currency: price.currencyCode,
-                    }).format(parseFloat(price.amount));
-
-                    return (
-                      <Link
-                        key={product.id}
-                        href={`/products/${product.handle}`}
-                        className="group flex flex-col cursor-pointer"
-                      >
-                        <div className="aspect-square relative rounded-xl overflow-hidden bg-white mb-3 shadow-sm border border-black/5">
-                          <Image
-                            src={product.images.edges[0]?.node?.url || ""}
-                            alt={product.title}
-                            fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
-                          />
-                          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <QuickAdd 
-                              variantId={product.variants?.edges[0]?.node?.id} 
-                              availableForSale={product.variants?.edges[0]?.node?.availableForSale}
-                            />
-                          </div>
-                        </div>
-                        <h3 className="font-medium text-sm sm:text-lg leading-tight group-hover:underline underline-offset-4 decoration-2 h-10 line-clamp-2">
-                          {product.title}
-                        </h3>
-                        <p className="text-gray-600 mt-1 font-semibold text-xs sm:text-base">
-                          {formattedPrice}
-                        </p>
-                      </Link>
-                    );
-                  })}
+                <div className={view === "grid" ? "grid grid-cols-2 gap-3 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3" : "flex flex-col gap-6"}>
+                  {products.map((product) => (
+                    <ProductCard key={product.id} product={product} view={view as any} />
+                  ))}
                 </div>
 
                 <div className="mt-12 flex justify-center gap-4">
