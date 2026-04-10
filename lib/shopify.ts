@@ -238,7 +238,10 @@ export const GET_PRODUCT_BY_HANDLE_QUERY = `
       id
       handle
       title
+      description
       descriptionHtml
+      vendor
+      productType
       variants(first: 100) { 
         edges { 
           node { 
@@ -250,7 +253,7 @@ export const GET_PRODUCT_BY_HANDLE_QUERY = `
       }
       options { name, values }
       priceRange { maxVariantPrice { amount, currencyCode } }
-      images(first: 5) { edges { node { url, altText } } }
+      images(first: 10) { edges { node { url, altText } } }
     }
   }
 `;
@@ -384,7 +387,10 @@ export interface ShopifyProduct {
   id: string;
   title: string;
   handle: string;
+  description?: string;
   descriptionHtml: string;
+  vendor?: string;
+  productType?: string;
   priceRange: {
     maxVariantPrice: {
       amount: string;
