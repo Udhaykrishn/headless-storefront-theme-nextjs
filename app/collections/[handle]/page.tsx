@@ -25,13 +25,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { handle } = await params;
   try {
     const collection = await getCollection({ handle });
-    if (!collection) return { title: "Collection | LUXE" };
+    if (!collection) return { title: "Collection | RebootX" };
     return {
-      title: `${collection.title} | LUXE`,
+      title: `${collection.title} | RebootX`,
       description: collection.description || `Shop our ${collection.title} collection.`,
     };
   } catch {
-    return { title: "Collection | LUXE" };
+    return { title: "Collection | RebootX" };
   }
 }
 
@@ -121,11 +121,10 @@ export default async function CollectionPage({ params, searchParams }: Props) {
                   <Link
                     key={opt.value}
                     href={`/collections/${handle}?sort=${opt.value}`}
-                    className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
-                      sort === opt.value
+                    className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${sort === opt.value
                         ? "bg-black text-white border-black"
                         : "border-gray-300 text-gray-600 hover:border-gray-900 hover:text-gray-900"
-                    }`}
+                      }`}
                   >
                     {opt.label}
                   </Link>

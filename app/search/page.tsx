@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Search | LUXE",
+  title: "Search | RebootX",
   description: "Search for premium products in our store.",
 };
 

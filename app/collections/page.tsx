@@ -8,7 +8,7 @@ import type { Metadata } from "next";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "Collections | LUXE",
+  title: "Collections | RebootX",
   description: "Browse all our curated collections of premium products.",
 };
 
@@ -73,27 +73,27 @@ export default async function CollectionsPage() {
                     />
                   ) : (
                     <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 flex items-center justify-center">
-                       <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300 italic">No Visual Asset</span>
+                      <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300 italic">No Visual Asset</span>
                     </div>
                   )}
-                  
+
                   {/* Floating Glass UI Overlay */}
                   <div className="absolute inset-x-6 bottom-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-700 ease-out z-10">
-                     <div className="bg-white/40 backdrop-blur-xl p-8 rounded-[2rem] border border-white/60 shadow-2xl">
-                        <span className="text-[8px] font-black uppercase tracking-[0.4em] text-indigo-600 mb-2 block">Premium Range</span>
-                        <div className="flex items-center justify-between">
-                           <h3 className="text-xl font-black uppercase tracking-tighter text-indigo-950 italic">Open Gallery</h3>
-                           <div className="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-lg">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="7" x2="17" y1="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-                           </div>
+                    <div className="bg-white/40 backdrop-blur-xl p-8 rounded-[2rem] border border-white/60 shadow-2xl">
+                      <span className="text-[8px] font-black uppercase tracking-[0.4em] text-indigo-600 mb-2 block">Premium Range</span>
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-xl font-black uppercase tracking-tighter text-indigo-950 italic">Open Gallery</h3>
+                        <div className="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-lg">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="7" x2="17" y1="17" y2="7" /><polyline points="7 7 17 7 17 17" /></svg>
                         </div>
-                     </div>
+                      </div>
+                    </div>
                   </div>
-                  
+
                   {/* Subtle vignette */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
                 </div>
-                
+
                 <div className="text-center md:text-left px-4">
                   <h2 className="text-3xl font-black text-indigo-950 uppercase tracking-tighter italic group-hover:text-indigo-600 transition-colors">
                     {collection.title}
