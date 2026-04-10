@@ -8,7 +8,7 @@ const REVIEWS = [
     name: "Sarah Jenkins",
     handle: "@sarahj",
     content:
-      "Absolutely love the quality of the new spring collection. The fabric feels premium and the fit is perfect.",
+      "Picked up a refurbished ThinkPad for my design work. It looks brand new and handles heavy software like a champ. Incredible value!",
     rating: 5,
     avatar: "https://i.pravatar.cc/150?u=sarahj",
   },
@@ -17,7 +17,7 @@ const REVIEWS = [
     name: "Michael Chen",
     handle: "@mchen_opts",
     content:
-      "Fast shipping and incredible customer service. The minimalist design is exactly what I was looking for.",
+      "The battery life on this refurbished MacBook is stellar. Fast shipping and the 1-year warranty gave me peace of mind.",
     rating: 5,
     avatar: "https://i.pravatar.cc/150?u=mchen",
   },
@@ -26,8 +26,8 @@ const REVIEWS = [
     name: "Elena Rodriguez",
     handle: "@elenar",
     content:
-      "I've bought three items so far and they never disappoint. The attention to detail is unmatched.",
-    rating: 4,
+      "I was skeptical about buying refurbished, but RebootX proved me wrong. My Dell XPS is flawless and saved me $400.",
+    rating: 5,
     avatar: "https://i.pravatar.cc/150?u=elena",
   },
 ];
@@ -43,7 +43,7 @@ export function Reviews() {
             Customer Reviews
           </h2>
           <p className="mt-4 text-slate-600">
-            See what our customers have to say about their experience with our next-generation technology.
+            See why thousands of professionals trust RebootX for their high-performance computing needs.
           </p>
         </div>
 

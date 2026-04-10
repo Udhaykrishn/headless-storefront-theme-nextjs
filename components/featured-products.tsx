@@ -14,10 +14,10 @@ export function FeaturedProducts({ products }: { products: any[] }) {
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
           <div className="max-w-xl">
             <h2 className="text-3xl font-bold text-slate-900 tracking-tight">
-              Featured Products
+              Top Refurbished Deals
             </h2>
             <p className="mt-4 text-slate-600">
-              Discover our most popular tech essentials, selected for quality and performance.
+              Our highest-rated laptops, restored to factory standards and ready for work.
             </p>
           </div>
           <Link href="/shop" className="group flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">

@@ -11,10 +11,10 @@ export function Footer() {
               href="/"
               className="text-2xl font-bold tracking-tight text-slate-900"
             >
-              NEXT<span className="text-indigo-600">STORE</span>
+              Reboot<span className="text-indigo-600">X</span>
             </Link>
             <p className="text-sm text-slate-500 max-w-xs leading-relaxed">
-              Premium tech essentials for the modern lifestyle. Quality gear, expert support, and global shipping.
+              Premium refurbished laptops for professionals and students. High-performance gear, expert testing, and a 1-year warranty.
             </p>
             <div className="flex space-x-6">
               {['Facebook', 'Instagram', 'X'].map((social) => (
@@ -29,7 +29,7 @@ export function Footer() {
             <div>
               <h3 className="text-sm font-bold text-slate-900 mb-6">Shop</h3>
               <ul className="space-y-4">
-                {['Laptops', 'Tablets', 'Accessories', 'New Arrival'].map((item) => (
+                {['Business Laptops', 'Creative Workstations', 'Gaming Rigs', 'Recent Restocks'].map((item) => (
                   <li key={item}>
                     <Link href="/shop" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">
                        {item}
@@ -67,7 +67,7 @@ export function Footer() {
 
         <div className="mt-16 pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-xs text-slate-500">
-            &copy; 2026 NEXTSTORE. All rights reserved. Premium tech commerce.
+            &copy; 2026 RebootX. All rights reserved. Premium Refurbished Computing.
           </p>
           
           <div className="flex items-center gap-4 text-xs font-semibold text-slate-600">

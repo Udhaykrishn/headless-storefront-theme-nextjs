@@ -9,24 +9,24 @@ import {
 
 const FAQS = [
   {
-    question: "Do you offer international shipping?",
+    question: "How do you grade your refurbished laptops?",
     answer:
-      "Yes, we ship globally! International shipping times and rates vary by region. All costs are calculated at checkout so there are no surprises.",
+      "All our laptops undergo a 90-point inspection and are graded as 'A+', 'A', or 'B'. Grade 'A+' units are virtually indistinguishable from new, while 'B' units offer deeper discounts for slight cosmetic wear.",
   },
   {
-    question: "What is your return policy?",
+    question: "What kind of warranty do you provide?",
     answer:
-      "We offer a 30-day return policy for unused, unworn items in their original packaging. Simply contact our support team to initiate a return process.",
+      "We provide a comprehensive 1-year limited warranty on all refurbished hardware, covering defects and component failures. We also offer extended protection plans at checkout.",
   },
   {
-    question: "How can I track my order?",
+    question: "Is the battery life guaranteed?",
     answer:
-      "Once your order ships, you will receive an email with a tracking number and a link to monitor your shipment's journey in real-time.",
+      "Yes! Every laptop is tested to ensure the battery holds at least 80% of its original design capacity. If a battery falls below this threshold during testing, we replace it with a new one.",
   },
   {
-    question: "Are your products sustainably made?",
+    question: "Can I upgrade the RAM or storage?",
     answer:
-      "Sustainability is at the core of our brand. We use eco-friendly materials whenever possible and partner with manufacturers who share our ethical standards.",
+      "For many of our workstation and business series models, upgrades are available. You can select RAM and SSD upgrades directly on the product page before adding to your cart.",
   },
 ];
 

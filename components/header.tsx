@@ -28,11 +28,10 @@ export function Header() {
 
   return (
     <header
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        isScrolled
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled
           ? "bg-white/80 backdrop-blur-lg border-b border-slate-200 py-3"
           : "bg-transparent py-5"
-      }`}
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Mobile Nav */}
@@ -60,14 +59,14 @@ export function Header() {
             <SheetContent side="left">
               <SheetHeader>
                 <SheetTitle className="text-left font-bold text-xl tracking-tight">
-                  NEXT<span className="text-indigo-600">STORE</span>
+                  Reboot<span className="text-indigo-600">X</span>
                 </SheetTitle>
               </SheetHeader>
               <div className="flex flex-col gap-4 mt-8">
-                {["New Arrivals", "Collections", "Shop", "About"].map((item) => (
-                  <Link 
-                    key={item} 
-                    href={`/${item.toLowerCase().replace(" ", "-")}`} 
+                {["Recent Restocks", "Laptop Series", "All Laptops", "Our Process"].map((item) => (
+                  <Link
+                    key={item}
+                    href={`/${item.toLowerCase().replace(" ", "-")}`}
                     className="text-lg font-medium hover:text-indigo-600 transition-colors"
                   >
                     {item}
@@ -83,16 +82,16 @@ export function Header() {
           href="/"
           className="text-2xl font-bold tracking-tight text-slate-900"
         >
-          NEXT<span className="text-indigo-600">STORE</span>
+          Reboot<span className="text-indigo-600">X</span>
         </Link>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
           {[
-            { label: "New Arrivals", href: "/shop?sort=newest" },
-            { label: "Collections", href: "/collections" },
-            { label: "Shop", href: "/shop" },
-            { label: "About", href: "/pages/about" }
+            { label: "Recent Restocks", href: "/shop?sort=newest" },
+            { label: "Laptop Series", href: "/collections" },
+            { label: "All Laptops", href: "/shop" },
+            { label: "Our Process", href: "/pages/about" }
           ].map((item) => (
             <Link
               key={item.label}
@@ -129,7 +128,7 @@ export function Header() {
               className="pl-10 bg-slate-100 border-none focus-visible:ring-indigo-500 w-48 h-10 text-sm"
             />
           </form>
-          
+
           <Link href="/account">
             <Button
               variant="ghost"
