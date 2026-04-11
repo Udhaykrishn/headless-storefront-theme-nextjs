@@ -1,42 +1,59 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getAccessToken } from "@/lib/auth";
+import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { getAccessToken } from "@/lib/auth";
 
-export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams;
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
   const state = searchParams.get("state");
-
   const cookieStore = await cookies();
-  const storedVerifier = cookieStore.get("code_verifier")?.value;
-  const storedState = cookieStore.get("auth_state")?.value;
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const savedState = cookieStore.get("auth_state")?.value;
+  const codeVerifier = cookieStore.get("auth_code_verifier")?.value;
 
-  if (!code || !state || !storedVerifier || state !== storedState) {
-    console.error("Auth callback validation failed", { code, state, storedState });
-    return NextResponse.redirect(`${baseUrl}/account/login?error=Invalid session`);
+  if (!code || state !== savedState || !codeVerifier) {
+    return NextResponse.redirect(new URL("/account/login?error=Invalid session state", request.url));
   }
 
-  const tokenData = await getAccessToken(code, storedVerifier);
+  const tokenData = await getAccessToken(code, codeVerifier);
 
-  if (!tokenData || !tokenData.access_token) {
-    return NextResponse.redirect(`${baseUrl}/account/login?error=Token exchange failed`);
+  if (!tokenData) {
+    return NextResponse.redirect(new URL("/account/login?error=Authentication failed", request.url));
   }
 
-  const response = NextResponse.redirect(`${baseUrl}/account`);
-  
-  response.cookies.set("shopify_customer_access_token", tokenData.access_token, {
+  // Set the access token in an HTTP-only cookie
+  cookieStore.set("shopify_customer_access_token", tokenData.access_token, {
     httpOnly: true,
-    secure: true, 
+    secure: true,
     sameSite: "lax",
-    maxAge: tokenData.expires_in || 3600,
     path: "/",
+    maxAge: tokenData.expires_in,
   });
 
-  // Clean up auth cookies
-  response.cookies.delete("code_verifier");
-  response.cookies.delete("auth_state");
+  if (tokenData.id_token) {
+    cookieStore.set("shopify_customer_id_token", tokenData.id_token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+      maxAge: tokenData.expires_in,
+    });
+  }
 
-  return response;
+  // Use refresh token if provided
+  if (tokenData.refresh_token) {
+     cookieStore.set("shopify_customer_refresh_token", tokenData.refresh_token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+    });
+  }
+
+  // Clean up transient cookies
+  cookieStore.delete("auth_state");
+  cookieStore.delete("auth_code_verifier");
+
+  return NextResponse.redirect(new URL("/account", request.url));
 }
