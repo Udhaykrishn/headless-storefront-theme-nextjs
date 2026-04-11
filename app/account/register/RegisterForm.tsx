@@ -2,55 +2,60 @@
 
 import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
-import { ShoppingBag, ChevronRight } from "lucide-react";
+import { UserPlus, ShieldCheck, AlertCircle, Sparkles } from "lucide-react";
 
 export default function RegisterForm() {
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
 
   const handleRegister = () => {
-    // For passwordless auth, register and login are often the same flow
+    // Passwordless auth — same OAuth flow as login
     window.location.href = "/api/auth/login";
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full space-y-5">
+      {/* Error banner */}
       {error && (
-        <div className="p-6 mb-10 text-[10px] font-black uppercase tracking-[0.2em] text-red-600 bg-red-100/60 backdrop-blur-md rounded-[2rem] border border-red-200 flex items-center justify-center animate-shake">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="mr-4 flex-shrink-0">
-            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-          </svg>
-          {error}
+        <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-2xl text-sm text-red-700">
+          <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+          <p>{error}</p>
         </div>
       )}
 
-      <div className="space-y-12">
-        <div className="bg-white/50 backdrop-blur-xl p-10 lg:p-12 rounded-[3.5rem] border border-white/60 shadow-2xl relative group">
-           <div className="absolute -top-10 -left-10 w-20 h-20 bg-indigo-600 rounded-3xl flex items-center justify-center shadow-2xl border-4 border-white group-hover:rotate-12 transition-transform duration-500">
-              <ShoppingBag className="w-8 h-8 text-white" />
-           </div>
-           
-           <div className="pt-8">
-              <h3 className="text-2xl font-black uppercase tracking-tighter text-indigo-950 italic mb-4">Secured Access</h3>
-              <p className="text-slate-500 font-bold uppercase tracking-widest text-[9px] leading-relaxed">
-                 We use Shopify's modern encrypted authentication. No passwords to remember, just pure secure access.
-              </p>
-           </div>
-           
-           <Button
-             onClick={handleRegister}
-             className="w-full h-24 mt-12 text-sm font-black uppercase tracking-[0.3em] rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(79,70,229,0.3)] hover:shadow-none hover:scale-[0.98] transition-all bg-indigo-600 border-none group/btn"
-           >
-             <span className="flex items-center gap-6">
-                Register with Shopify 
-                <ChevronRight className="w-5 h-5 group-hover/btn:translate-x-2 transition-transform" />
-             </span>
-           </Button>
+      {/* What you get */}
+      <div className="bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 rounded-2xl p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <Sparkles className="w-4 h-4 text-indigo-500" />
+          <p className="text-sm font-semibold text-indigo-900">What you get for free</p>
         </div>
+        <ul className="space-y-2">
+          {[
+            "Order history & tracking dashboard",
+            "Faster checkout with saved details",
+            "Early access to restocks",
+          ].map((item) => (
+            <li key={item} className="flex items-center gap-2 text-xs text-indigo-700/80">
+              <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 flex-shrink-0" />
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
 
-        <p className="text-center text-[10px] text-slate-500 font-bold uppercase tracking-[0.3em] leading-relaxed px-10">
-          Enrolling signifies agreement with the <span className="text-indigo-600 hover:text-black cursor-pointer underline underline-offset-4 decoration-indigo-200 hover:decoration-black transition-colors">Terms of Artistry</span> & <span className="text-indigo-600 hover:text-black cursor-pointer underline underline-offset-4 decoration-indigo-200 hover:decoration-black transition-colors">Privacy Doctrine</span>.
-        </p>
+      {/* CTA button */}
+      <Button
+        onClick={handleRegister}
+        className="w-full h-12 text-sm font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-500/30 transition-all gap-2"
+      >
+        <UserPlus className="w-4 h-4" />
+        Create Account with Shopify
+      </Button>
+
+      {/* Trust row */}
+      <div className="flex items-center justify-center gap-1.5 pt-1">
+        <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
+        <span className="text-xs text-slate-400">Secured by Shopify — no password needed</span>
       </div>
     </div>
   );

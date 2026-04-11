@@ -1,10 +1,8 @@
 import { getCustomer } from "@/app/actions/customer";
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
 import { redirect } from "next/navigation";
 import LoginForm from "./login-form";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ShieldCheck, Package, RotateCcw } from "lucide-react";
 
 export default async function LoginPage() {
   const customer = await getCustomer();
@@ -14,38 +12,111 @@ export default async function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col text-slate-900 overflow-hidden relative selection:bg-indigo-600 selection:text-white">
-      {/* Cinematic Background Orbs */}
-      <div className="fixed top-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-indigo-500/10 blur-[150px] -z-10 animate-pulse"></div>
-      <div className="fixed bottom-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-500/10 blur-[150px] -z-10"></div>
+    <div className="min-h-screen flex bg-slate-50 selection:bg-indigo-600 selection:text-white">
 
-      <Header />
-      <main className="flex-1 flex items-center justify-center p-6 lg:p-12 relative z-10">
-        <div className="w-full max-w-2xl bg-white/40 backdrop-blur-[60px] rounded-[5rem] p-16 lg:p-24 shadow-[0_80px_150px_-30px_rgba(79,70,229,0.2)] border-2 border-white/80 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-[100px] group-hover:bg-indigo-500/10 transition-colors duration-1000"></div>
-          
-          <div className="relative z-10">
-            <div className="text-center mb-20">
-              <span className="text-indigo-400 text-[10px] font-black uppercase tracking-[0.6em] mb-6 block">Access Protocol</span>
-              <h1 className="text-8xl lg:text-9xl font-black tracking-tighter uppercase text-indigo-950 italic leading-none underline decoration-indigo-200 decoration-[16px] underline-offset-[12px] mb-12">
-                Enter
-              </h1>
-              <p className="text-slate-500 font-bold uppercase tracking-[0.3em] text-[10px] opacity-60">Initialize your premium lifestyle experience</p>
-            </div>
-            
-            <LoginForm />
-            
-            <div className="mt-20 pt-16 border-t-2 border-white/40 text-center">
-               <p className="text-slate-400 font-bold uppercase tracking-[0.3em] text-[9px] mb-8">New to the archive?</p>
-               <Link href="/account/register" className="group inline-block text-white font-black uppercase tracking-[0.3em] text-[10px] bg-indigo-950 px-12 py-6 rounded-full hover:bg-black transition-all shadow-2xl skew-x-[-12deg]">
-                  <span className="flex items-center gap-4 skew-x-[12deg]">
-                    Create Account <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
-                  </span>
-               </Link>
-            </div>
+      {/* ── Left Panel — Brand ───────────────────────────── */}
+      <div className="hidden lg:flex lg:w-[44%] relative bg-indigo-950 flex-col justify-between p-12 overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute top-[-20%] right-[-20%] w-[500px] h-[500px] rounded-full bg-indigo-500/20 blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] rounded-full bg-purple-500/15 blur-[100px] pointer-events-none" />
+
+        {/* Logo */}
+        <Link href="/" className="relative z-10">
+          <span className="text-white font-bold text-xl tracking-tight">
+            Reboot<span className="text-indigo-400">X</span>
+          </span>
+        </Link>
+
+        {/* Center content */}
+        <div className="relative z-10">
+          <h2 className="text-4xl font-bold text-white leading-tight mb-4">
+            Your account,<br />
+            <span className="text-indigo-300">your orders.</span>
+          </h2>
+          <p className="text-indigo-200/70 text-sm leading-relaxed max-w-xs">
+            Sign in to track your orders, manage your profile, and get a faster checkout experience.
+          </p>
+
+          {/* Trust points */}
+          <div className="mt-10 space-y-4">
+            {[
+              { icon: Package, text: "Track all your orders in one place" },
+              { icon: RotateCcw, text: "Easy returns and order management" },
+              { icon: ShieldCheck, text: "Secured with Shopify encryption" },
+            ].map(({ icon: Icon, text }) => (
+              <div key={text} className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-indigo-800/60 flex items-center justify-center flex-shrink-0">
+                  <Icon className="w-4 h-4 text-indigo-300" />
+                </div>
+                <span className="text-sm text-indigo-200/80">{text}</span>
+              </div>
+            ))}
           </div>
         </div>
-      </main>
+
+        {/* Bottom tagline */}
+        <p className="relative z-10 text-xs text-indigo-400/60">
+          © {new Date().getFullYear()} RebootX — Premium Refurbished Laptops
+        </p>
+      </div>
+
+      {/* ── Right Panel — Form ───────────────────────────── */}
+      <div className="flex-1 flex flex-col min-h-screen">
+
+        {/* Mobile logo */}
+        <div className="lg:hidden flex items-center justify-between px-6 pt-6 pb-4">
+          <Link href="/">
+            <span className="font-bold text-lg text-indigo-950 tracking-tight">
+              Reboot<span className="text-indigo-600">X</span>
+            </span>
+          </Link>
+        </div>
+
+        {/* Form area */}
+        <div className="flex-1 flex items-center justify-center px-6 py-12">
+          <div className="w-full max-w-md">
+
+            {/* Heading */}
+            <div className="mb-8">
+              <h1 className="text-2xl font-bold text-slate-900">Sign in to your account</h1>
+              <p className="text-sm text-slate-500 mt-1.5">
+                Welcome back! Continue where you left off.
+              </p>
+            </div>
+
+            {/* Form card */}
+            <div className="bg-white rounded-3xl border border-slate-200 shadow-lg shadow-slate-100/80 p-8">
+              <LoginForm />
+            </div>
+
+            {/* Create account */}
+            <div className="mt-6 text-center">
+              <p className="text-sm text-slate-500">
+                Don&apos;t have an account?{" "}
+                <Link
+                  href="/account/register"
+                  className="text-indigo-600 font-semibold hover:text-indigo-800 transition-colors"
+                >
+                  Create one
+                </Link>
+              </p>
+            </div>
+
+            {/* Terms */}
+            <p className="mt-6 text-center text-xs text-slate-400 leading-relaxed">
+              By signing in, you agree to our{" "}
+              <Link href="/terms" className="underline hover:text-slate-600 transition-colors">
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link href="/privacy" className="underline hover:text-slate-600 transition-colors">
+                Privacy Policy
+              </Link>
+              .
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

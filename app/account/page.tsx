@@ -2,182 +2,239 @@ import { getCustomer } from "@/app/actions/customer";
 import { redirect } from "next/navigation";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { 
-  Package, 
-  History as HistoryIcon, 
-  MapPin, 
-  CreditCard,
+import {
+  Package,
+  User,
+  MapPin,
   LogOut,
-  ArrowRight
+  ArrowRight,
+  ShoppingBag,
+  Clock,
+  ChevronRight,
 } from "lucide-react";
+
+const NAV_ITEMS = [
+  { icon: Package, label: "My Orders", href: "#orders", active: true },
+  { icon: User, label: "Profile", href: "/account/profile" },
+  { icon: MapPin, label: "Addresses", href: "#addresses" },
+];
+
+function StatusBadge({ status }: { status: string }) {
+  const map: Record<string, { label: string; class: string }> = {
+    PAID: { label: "Paid", class: "bg-emerald-100 text-emerald-700 border-emerald-200" },
+    PENDING: { label: "Pending", class: "bg-amber-100 text-amber-700 border-amber-200" },
+    REFUNDED: { label: "Refunded", class: "bg-red-100 text-red-700 border-red-200" },
+    PARTIALLY_REFUNDED: { label: "Partial Refund", class: "bg-orange-100 text-orange-700 border-orange-200" },
+  };
+  const s = map[status] ?? { label: status, class: "bg-slate-100 text-slate-600 border-slate-200" };
+  return (
+    <span className={cn("text-xs font-semibold px-3 py-1 rounded-full border", s.class)}>
+      {s.label}
+    </span>
+  );
+}
 
 export default async function AccountPage() {
   const customer = await getCustomer();
+  if (!customer) redirect("/account/login");
 
-  if (!customer) {
-    redirect("/account/login");
-  }
-
-  const orders = customer.orders;
+  const orders = customer.orders?.nodes ?? [];
+  const initials = `${customer.firstName?.[0] ?? ""}${customer.lastName?.[0] ?? ""}`.toUpperCase();
 
   return (
-    <div className="min-h-screen flex flex-col text-slate-900 overflow-hidden relative selection:bg-indigo-600 selection:text-white">
-      {/* Cinematic Background Orbs */}
-      <div className="fixed top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-purple-500/10 blur-[150px] -z-10 animate-pulse"></div>
-      <div className="fixed bottom-[-20%] right-[-10%] w-[70%] h-[70%] rounded-full bg-indigo-500/10 blur-[200px] -z-10 delay-700"></div>
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-indigo-600 selection:text-white">
+      {/* Subtle gradient backdrop */}
+      <div className="fixed inset-0 -z-10 pointer-events-none">
+        <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-br from-indigo-50 via-purple-50/50 to-transparent" />
+        <div className="absolute bottom-0 right-0 w-[600px] h-[400px] rounded-full bg-indigo-100/40 blur-[120px]" />
+      </div>
 
       <Header />
-      
-      <main className="flex-1 py-12 lg:py-24 relative z-10">
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
-          {/* Dashboard Header Protocol */}
-          <div className="mb-24 p-12 lg:p-16 bg-white/40 backdrop-blur-3xl rounded-[4rem] border border-white/60 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.08)] relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/5 rounded-full blur-[100px]"></div>
-            <div className="relative z-10">
-              <span className="text-indigo-400 text-[10px] font-black uppercase tracking-[0.6em] mb-6 block">Member Status: Elite</span>
-              <h1 className="text-7xl lg:text-9xl font-black tracking-tighter uppercase text-indigo-950 italic leading-[0.8] underline decoration-indigo-200 decoration-[16px] underline-offset-[12px]">
-                 Greetings, {customer.firstName}
+
+      <main className="flex-1 py-10 lg:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
+
+          {/* ── Welcome Banner ────────────────────────────────── */}
+          <div className="mb-10 bg-white/80 backdrop-blur-xl rounded-3xl border border-white shadow-lg shadow-indigo-100/40 px-8 py-8 flex flex-col sm:flex-row items-start sm:items-center gap-6 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-[80px] pointer-events-none" />
+            {/* Avatar */}
+            <div className="w-16 h-16 rounded-2xl bg-indigo-950 text-white flex items-center justify-center text-xl font-bold flex-shrink-0 shadow-lg shadow-indigo-900/30">
+              {initials}
+            </div>
+            <div className="flex-1">
+              <p className="text-xs font-semibold text-indigo-400 uppercase tracking-widest mb-1">Welcome back</p>
+              <h1 className="text-2xl lg:text-3xl font-bold text-slate-900 leading-tight">
+                {customer.firstName} {customer.lastName}
               </h1>
-              <p className="text-slate-500 mt-16 font-bold uppercase tracking-[0.3em] text-[10px] opacity-60">
-                Authorized entry to the premium resource network
-              </p>
+              <p className="text-sm text-slate-500 mt-0.5">{customer.email}</p>
+            </div>
+            {/* Stats row */}
+            <div className="flex gap-6 mt-2 sm:mt-0">
+              <div className="text-center">
+                <p className="text-2xl font-bold text-indigo-700">{orders.length}</p>
+                <p className="text-[11px] text-slate-400 font-medium uppercase tracking-wide">Orders</p>
+              </div>
+              <div className="w-px bg-slate-200" />
+              <div className="text-center">
+                <p className="text-2xl font-bold text-indigo-700">
+                  {orders.filter((o: any) => o.financialStatus === "PAID").length}
+                </p>
+                <p className="text-[11px] text-slate-400 font-medium uppercase tracking-wide">Completed</p>
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-20">
-            
-            {/* Sidebar - Terminal Navigation */}
-            <aside className="lg:col-span-4 space-y-12">
-              <div className="bg-white/40 backdrop-blur-[60px] rounded-[4rem] p-12 border-2 border-white/80 shadow-2xl relative overflow-hidden group">
-                <div className="absolute top-0 left-0 w-32 h-32 bg-purple-500/10 rounded-full blur-[50px]"></div>
-                
-                <div className="relative flex flex-col items-center lg:items-start mb-16">
-                  <div className="w-40 h-40 rounded-[3rem] bg-indigo-950 flex items-center justify-center text-white text-5xl font-black shadow-[0_30px_60px_-15px_rgba(49,46,129,0.5)] mb-10 border-4 border-white group-hover:rotate-6 transition-all duration-1000">
-                    {customer.firstName?.[0]}{customer.lastName?.[0]}
-                  </div>
-                  <h2 className="text-4xl font-black uppercase tracking-tighter text-indigo-950 italic">{customer.firstName} {customer.lastName}</h2>
-                  <div className="flex items-center gap-3 mt-4">
-                     <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                     <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.3em]">{customer.email}</p>
-                  </div>
-                  
-                  <div className="w-full grid grid-cols-2 gap-4 mt-12">
-                    <div className="bg-indigo-950 text-white p-6 rounded-[2rem] shadow-2xl skew-x-[-12deg] group/stat">
-                       <p className="text-[8px] font-black uppercase tracking-widest mb-2 opacity-40 skew-x-[12deg]">Tier</p>
-                       <p className="text-sm font-black uppercase skew-x-[12deg]">Platinum</p>
-                    </div>
-                    <div className="bg-white/60 backdrop-blur-md p-6 rounded-[2rem] border border-white shadow-sm skew-x-[-12deg] group/stat">
-                       <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-2 skew-x-[12deg]">Assets</p>
-                       <p className="text-sm font-black text-indigo-950 uppercase skew-x-[12deg]">{orders.nodes.length} Items</p>
-                    </div>
-                  </div>
-                </div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-                <div className="space-y-4">
-                  {[
-                    { icon: HistoryIcon, label: "Asset History", active: true },
-                    { icon: MapPin, label: "Node Addresses", active: false },
-                    { icon: CreditCard, label: "Vault Parameters", active: false },
-                    { icon: LogOut, label: "Terminate Session", active: false, action: "/api/auth/logout" }
-                  ].map((item) => (
-                    <button 
+            {/* ── Sidebar ────────────────────────────────────── */}
+            <aside className="lg:col-span-3">
+              <div className="bg-white/80 backdrop-blur-xl rounded-3xl border border-white shadow-lg shadow-indigo-100/30 p-6 sticky top-24">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 px-2">Account</p>
+                <nav className="space-y-1">
+                  {NAV_ITEMS.map((item) => (
+                    <Link
                       key={item.label}
+                      href={item.href}
                       className={cn(
-                        "w-full flex items-center justify-between p-6 rounded-[2rem] transition-all font-black text-[10px] uppercase tracking-[0.3em] group/nav relative overflow-hidden",
-                        item.active 
-                          ? "bg-indigo-600 text-white shadow-[0_20px_40px_-10px_rgba(79,70,229,0.5)] skew-x-[-12deg]" 
-                          : "text-slate-500 hover:bg-white hover:text-indigo-600 border border-transparent hover:border-white/60"
+                        "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
+                        item.active
+                          ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/30"
+                          : "text-slate-600 hover:bg-slate-100 hover:text-indigo-700"
                       )}
                     >
-                      <span className={cn("flex items-center gap-6", item.active && "skew-x-[12deg]")}>
-                        <item.icon className="w-5 h-5" />
-                        {item.label}
-                      </span>
-                      {item.active && <div className="w-2 h-2 bg-white rounded-full animate-ping skew-x-[12deg]"></div>}
-                    </button>
+                      <item.icon className="w-4 h-4 flex-shrink-0" />
+                      {item.label}
+                      {item.active && <ChevronRight className="ml-auto w-4 h-4 opacity-60" />}
+                    </Link>
                   ))}
+                </nav>
+
+                <div className="mt-4 pt-4 border-t border-slate-100">
+                  <a
+                    href="/api/auth/logout"
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-500 hover:bg-red-50 hover:text-red-600 transition-all duration-200"
+                  >
+                    <LogOut className="w-4 h-4 flex-shrink-0" />
+                    Sign Out
+                  </a>
                 </div>
               </div>
             </aside>
 
-            {/* Content Area - Resource Manifest */}
-            <div className="lg:col-span-8">
-              <div className="bg-white/40 backdrop-blur-[60px] rounded-[4.5rem] p-12 lg:p-20 border-2 border-white/80 shadow-2xl h-full relative overflow-hidden group/content">
-                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-indigo-500/5 rounded-full blur-[100px] group-hover/content:bg-indigo-500/10 transition-colors duration-1000"></div>
-                
-                <div className="relative z-10">
-                  <div className="flex flex-col md:flex-row justify-between items-start mb-20 gap-12">
-                    <div>
-                      <h2 className="text-6xl font-black uppercase tracking-tighter text-indigo-950 italic underline decoration-indigo-200 decoration-[12px] underline-offset-8">Archive</h2>
-                      <p className="text-slate-400 font-bold uppercase tracking-[0.4em] text-[10px] mt-6 opacity-60">Log of all historical material acquisitions</p>
-                    </div>
-                    <Button variant="outline" className="rounded-full h-16 px-10 text-[9px] font-black uppercase tracking-[0.3em] border-2 bg-white/60 backdrop-blur-md border-white hover:bg-indigo-950 hover:text-white transition-all shadow-xl">
-                       Global Shipment Tracking
-                    </Button>
-                  </div>
+            {/* ── Main Content ────────────────────────────────── */}
+            <div className="lg:col-span-9 space-y-6">
 
-                  {orders.nodes.length === 0 ? (
-                    <div className="bg-white/30 backdrop-blur-md rounded-[4rem] p-24 text-center border-2 border-dashed border-white/60 group/empty">
-                      <div className="w-24 h-24 bg-white/80 rounded-[2rem] flex items-center justify-center mx-auto mb-10 shadow-2xl border border-white group-hover/empty:scale-110 transition-transform">
-                        <Package className="w-12 h-12 text-indigo-200" />
+              {/* Orders Section */}
+              <div id="orders" className="bg-white/80 backdrop-blur-xl rounded-3xl border border-white shadow-lg shadow-indigo-100/30 overflow-hidden">
+                {/* Section header */}
+                <div className="flex items-center justify-between px-8 py-6 border-b border-slate-100">
+                  <div>
+                    <h2 className="text-lg font-bold text-slate-900">Order History</h2>
+                    <p className="text-sm text-slate-500 mt-0.5">Track and manage your past orders</p>
+                  </div>
+                  {orders.length > 0 && (
+                    <span className="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full">
+                      {orders.length} order{orders.length !== 1 ? "s" : ""}
+                    </span>
+                  )}
+                </div>
+
+                {/* Orders list */}
+                <div className="divide-y divide-slate-100">
+                  {orders.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-20 px-8 text-center">
+                      <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mb-4 shadow-inner">
+                        <ShoppingBag className="w-8 h-8 text-indigo-300" />
                       </div>
-                      <p className="text-slate-400 font-black uppercase tracking-[0.4em] text-[10px]">Manifest remains unoccupied</p>
-                      <Link href="/shop" className="mt-12 group inline-block text-white font-black uppercase tracking-[0.3em] text-[10px] bg-indigo-600 px-12 py-6 rounded-full hover:bg-black transition-all shadow-2xl">
-                         <span className="flex items-center gap-4">Initialize Acquisition <ArrowRight className="w-4 h-4" /></span>
+                      <h3 className="text-base font-semibold text-slate-700 mb-1">No orders yet</h3>
+                      <p className="text-sm text-slate-400 max-w-xs mb-6">
+                        When you place an order, it will appear here so you can track its status.
+                      </p>
+                      <Link
+                        href="/shop"
+                        className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-6 py-3 rounded-xl transition-colors shadow-md shadow-indigo-500/30"
+                      >
+                        Start Shopping
+                        <ArrowRight className="w-4 h-4" />
                       </Link>
                     </div>
                   ) : (
-                    <div className="space-y-10">
-                      {orders.nodes.map((order: any) => (
-                        <Link 
-                          href={`/account/orders/${order.id.split("/").pop()}`} 
-                          key={order.id}
-                          className="group/order block"
-                        >
-                          <div className="flex flex-col md:flex-row md:items-center justify-between p-10 rounded-[3.5rem] bg-white/50 backdrop-blur-xl border-2 border-white shadow-xl hover:bg-white hover:translate-y-[-8px] transition-all duration-700 relative overflow-hidden">
-                            <div className="absolute inset-y-0 right-0 w-24 bg-indigo-950 opacity-0 group-hover/order:opacity-5 transition-opacity"></div>
-                            
-                            <div className="flex items-center gap-10 relative z-10">
-                              <div className="w-20 h-20 rounded-[1.5rem] bg-indigo-950 text-white shadow-2xl flex items-center justify-center border-2 border-white/20 group-hover/order:rotate-12 transition-transform duration-700">
-                                <Package className="w-10 h-10" />
-                              </div>
-                              <div className="text-left">
-                                <span className="text-indigo-400 text-[9px] font-black uppercase tracking-[0.3em] mb-2 block">Protocol-00{order.orderNumber}</span>
-                                <h3 className="font-black text-2xl uppercase tracking-tighter text-indigo-950 italic">Acquisition Manifest</h3>
-                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em] mt-3 bg-white/40 px-4 py-1.5 rounded-full border border-white/40 inline-block">
-                                  {new Date(order.processedAt).toLocaleDateString("en-US", {
-                                    month: "long", day: "numeric", year: "numeric"
-                                  })}
-                                </p>
-                              </div>
-                            </div>
-                            
-                            <div className="flex flex-col items-end gap-5 mt-10 md:mt-0 relative z-10">
-                               <span className="text-4xl font-black text-indigo-900 tracking-tighter italic group-hover/order:scale-110 transition-transform underline decoration-indigo-200 decoration-4">
-                                  {parseFloat(order.totalPrice.amount).toLocaleString("en-US", {
-                                    style: "currency",
-                                    currency: order.totalPrice.currencyCode,
-                                  })}
-                               </span>
-                               <div className="flex items-center gap-4">
-                                 <span className={cn(
-                                   "text-[9px] font-black uppercase tracking-[0.4em] px-6 py-2.5 rounded-full shadow-lg border border-white/60 backdrop-blur-md",
-                                   order.financialStatus === "PAID" ? "bg-green-100/40 text-green-700" : "bg-amber-100/40 text-amber-700"
-                                 )}>
-                                   {order.financialStatus}
-                                 </span>
-                                 <ArrowRight className="w-5 h-5 text-indigo-200 group-hover/order:translate-x-3 transition-transform duration-500" />
-                               </div>
+                    orders.map((order: any) => (
+                      <Link
+                        key={order.id}
+                        href={`/account/orders/${order.id.split("/").pop()}`}
+                        className="group flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-8 py-5 hover:bg-indigo-50/50 transition-colors duration-200"
+                      >
+                        {/* Order info */}
+                        <div className="flex items-center gap-4">
+                          <div className="w-11 h-11 rounded-xl bg-indigo-100 flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-200 transition-colors">
+                            <Package className="w-5 h-5 text-indigo-600" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-slate-900 group-hover:text-indigo-700 transition-colors">
+                              Order #{order.orderNumber}
+                            </p>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <Clock className="w-3 h-3 text-slate-400" />
+                              <p className="text-xs text-slate-500">
+                                {new Date(order.processedAt).toLocaleDateString("en-US", {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                })}
+                              </p>
                             </div>
                           </div>
-                        </Link>
-                      ))}
-                    </div>
+                        </div>
+
+                        {/* Order meta */}
+                        <div className="flex items-center gap-4 sm:gap-6 sm:ml-auto">
+                          <StatusBadge status={order.financialStatus} />
+                          <span className="text-base font-bold text-slate-900">
+                            {parseFloat(order.totalPrice.amount).toLocaleString("en-US", {
+                              style: "currency",
+                              currency: order.totalPrice.currencyCode,
+                            })}
+                          </span>
+                          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-indigo-500 group-hover:translate-x-0.5 transition-all" />
+                        </div>
+                      </Link>
+                    ))
                   )}
                 </div>
+              </div>
+
+              {/* Quick Links */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Link
+                  href="/account/profile"
+                  className="group bg-white/80 backdrop-blur-xl rounded-2xl border border-white shadow-md shadow-indigo-100/20 p-6 flex items-center gap-4 hover:border-indigo-200 hover:shadow-indigo-200/40 transition-all duration-200"
+                >
+                  <div className="w-11 h-11 rounded-xl bg-indigo-100 flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-600 transition-colors duration-200">
+                    <User className="w-5 h-5 text-indigo-600 group-hover:text-white transition-colors" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-slate-900">Edit Profile</p>
+                    <p className="text-xs text-slate-400 mt-0.5">Update your name and contact info</p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-indigo-500 group-hover:translate-x-0.5 transition-all flex-shrink-0" />
+                </Link>
+
+                <Link
+                  href="/shop"
+                  className="group bg-white/80 backdrop-blur-xl rounded-2xl border border-white shadow-md shadow-indigo-100/20 p-6 flex items-center gap-4 hover:border-indigo-200 hover:shadow-indigo-200/40 transition-all duration-200"
+                >
+                  <div className="w-11 h-11 rounded-xl bg-indigo-100 flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-600 transition-colors duration-200">
+                    <ShoppingBag className="w-5 h-5 text-indigo-600 group-hover:text-white transition-colors" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-slate-900">Continue Shopping</p>
+                    <p className="text-xs text-slate-400 mt-0.5">Browse the latest products</p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-indigo-500 group-hover:translate-x-0.5 transition-all flex-shrink-0" />
+                </Link>
               </div>
             </div>
           </div>
