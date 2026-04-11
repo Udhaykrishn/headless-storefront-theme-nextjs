@@ -4,138 +4,112 @@ import Link from "next/link";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { getCollections } from "@/lib/shopify";
+import { ChevronRight, LayoutGrid } from "lucide-react";
 
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "Collections | RebootX",
-  description: "Browse all our curated collections of premium products.",
+  title: "Laptop Series | RebootX",
+  description: "Browse our curated laptop series and find the perfect refurbished device for your workflow.",
 };
 
 export default async function CollectionsPage() {
   const collections = await getCollections(24);
 
   return (
-    <div className="min-h-screen flex flex-col text-slate-900 overflow-hidden relative">
-      {/* Background elements */}
-      <div className="absolute top-[10%] left-[-5%] w-[40%] h-[40%] rounded-full bg-indigo-500/5 blur-[120px] -z-10 animate-pulse"></div>
-      <div className="absolute bottom-[20%] right-[-5%] w-[35%] h-[35%] rounded-full bg-purple-500/5 blur-[100px] -z-10"></div>
-
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans">
       <Header />
-      <main className="flex-1 max-w-[1400px] mx-auto px-6 lg:px-12 py-24 w-full">
-        {/* Page Header */}
-        <div className="mb-24 text-center">
-          <span className="text-[10px] font-black uppercase tracking-[0.5em] text-indigo-400 mb-6 block drop-shadow-sm">
-            Editorial Selection
-          </span>
-          <h1 className="text-8xl font-black tracking-tighter uppercase text-indigo-950 italic underline decoration-indigo-200 decoration-8 drop-shadow-2xl">
-            Collections <span className="text-indigo-400 italic">2026</span>
+      
+      <main className="flex-1 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-24 w-full">
+        {/* ── Page Header ── */}
+        <div className="mb-16 text-center max-w-2xl mx-auto pt-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-sm font-semibold mb-6">
+            <LayoutGrid className="w-4 h-4" />
+            <span>Curated Categories</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 mb-6">
+            Laptop Series
           </h1>
-          <p className="text-sm text-slate-500 max-w-xl mx-auto mt-10 font-bold uppercase tracking-widest leading-relaxed">
-            Explore our curated masterpieces, hand-picked for the modern
-            connoisseur of fine lifestyle goods.
+          <p className="text-lg text-slate-600 leading-relaxed">
+            Explore our professionally refurbished laptop categories. From ultrabooks 
+            to high-performance workstations, find the perfect device tailored to your needs.
           </p>
         </div>
 
+        {/* ── Empty State ── */}
         {collections.length === 0 ? (
-          <div className="bg-white/30 backdrop-blur-3xl rounded-[4rem] p-32 text-center border border-white/40 shadow-2xl">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="64"
-              height="64"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="mb-10 opacity-10 mx-auto"
+          <div className="bg-white rounded-3xl p-16 text-center border border-slate-200 shadow-sm flex flex-col items-center justify-center min-h-[400px]">
+            <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-6">
+              <LayoutGrid className="w-8 h-8 text-slate-400" />
+            </div>
+            <h2 className="text-2xl font-bold text-slate-900 mb-2">
+              No Series Available
+            </h2>
+            <p className="text-slate-500 max-w-md mx-auto">
+              We&apos;re currently updating our curated series. Please check back later or explore all our products in the shop.
+            </p>
+            <Link 
+              href="/shop" 
+              className="mt-8 inline-flex items-center justify-center px-6 py-3 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition-colors shadow-sm"
             >
-              <rect width="18" height="18" x="3" y="3" rx="2" />
-              <path d="M3 9h18" />
-              <path d="M9 21V9" />
-            </svg>
-            <p className="text-2xl font-black uppercase tracking-widest text-slate-400">
-              Archive Empty
-            </p>
-            <p className="text-[10px] mt-4 font-bold uppercase tracking-[0.2em] text-indigo-300">
-              New arrivals manifesting shortly
-            </p>
+              Browse Shop
+            </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-16">
+          /* ── Collections Grid ── */
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {collections.map((collection) => (
               <Link
                 key={collection.id}
                 href={`/collections/${collection.handle}`}
-                className="group block"
+                className="group flex flex-col bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-300 transform hover:-translate-y-1"
               >
-                <div className="relative aspect-[3/4] rounded-[3.5rem] overflow-hidden bg-white/30 backdrop-blur-2xl shadow-xl border border-white/50 mb-10 group-hover:shadow-[0_40px_80px_-20px_rgba(79,70,229,0.2)] transition-all duration-700 hover:translate-y-[-10px]">
+                {/* Image Section */}
+                <div className="relative aspect-[4/3] bg-slate-100 overflow-hidden">
                   {collection.image ? (
                     <Image
                       src={collection.image.url}
                       alt={collection.image.altText || collection.title}
                       fill
-                      className="object-cover transition-transform duration-[1.5s] group-hover:scale-110 ease-out"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     />
                   ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 flex items-center justify-center">
-                      <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300 italic">
-                        No Visual Asset
-                      </span>
+                    <div className="absolute inset-0 bg-slate-50 flex items-center justify-center">
+                      <LayoutGrid className="w-12 h-12 text-slate-300" />
                     </div>
                   )}
-
-                  {/* Floating Glass UI Overlay */}
-                  <div className="absolute inset-x-6 bottom-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-700 ease-out z-10">
-                    <div className="bg-white/40 backdrop-blur-xl p-8 rounded-[2rem] border border-white/60 shadow-2xl">
-                      <span className="text-[8px] font-black uppercase tracking-[0.4em] text-indigo-600 mb-2 block">
-                        Premium Range
-                      </span>
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-xl font-black uppercase tracking-tighter text-indigo-950 italic">
-                          Open Gallery
-                        </h3>
-                        <div className="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-lg">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="3"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <line x1="7" x2="17" y1="17" y2="7" />
-                            <polyline points="7 7 17 7 17 17" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Subtle vignette */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                  {/* Subtle overlay gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
 
-                <div className="text-center md:text-left px-4">
-                  <h2 className="text-3xl font-black text-indigo-950 uppercase tracking-tighter italic group-hover:text-indigo-600 transition-colors">
+                {/* Content Section */}
+                <div className="flex flex-col flex-1 p-6 sm:p-8">
+                  <h2 className="text-2xl font-bold text-slate-900 mb-3 group-hover:text-indigo-600 transition-colors line-clamp-1">
                     {collection.title}
                   </h2>
-                  {collection.description && (
-                    <p className="text-[10px] text-slate-400 mt-3 font-bold uppercase tracking-[0.2em] line-clamp-2 leading-relaxed max-w-xs">
+                  
+                  {collection.description ? (
+                    <p className="text-sm text-slate-600 line-clamp-2 leading-relaxed mb-6 flex-1">
                       {collection.description}
                     </p>
+                  ) : (
+                    <p className="text-sm text-slate-600 mb-6 flex-1">
+                      Explore our premium selection of {collection.title.toLowerCase()} devices.
+                    </p>
                   )}
-                  <div className="h-0.5 w-0 group-hover:w-full bg-indigo-200 mt-6 transition-all duration-700 shadow-sm"></div>
+                  
+                  <div className="flex items-center text-sm font-semibold text-indigo-600 transition-colors group-hover:text-indigo-700">
+                    <span>View Series</span>
+                    <ChevronRight className="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </div>
               </Link>
             ))}
           </div>
         )}
       </main>
+
       <Footer />
     </div>
   );
