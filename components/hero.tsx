@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export function Hero() {
@@ -7,7 +8,7 @@ export function Hero() {
     <section className="relative py-20 lg:py-32 overflow-hidden bg-slate-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center">
-          <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 tracking-tight leading-tight">
+          <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 tracking-tight leading-tight pt-12 md:pt-0">
             Refurbished <br />
             <span className="text-indigo-600">Laptops</span>
           </h1>
@@ -18,19 +19,23 @@ export function Hero() {
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row gap-4 items-center justify-center">
-            <Button
-              size="lg"
-              className="px-8 h-14 text-base font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg transition-all"
-            >
-              Shop Collection
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="px-8 h-14 text-base font-semibold rounded-full border-2 border-slate-200 hover:bg-white transition-all text-slate-900"
-            >
-              Learn More
-            </Button>
+            <Link href="/shop">
+              <Button
+                size="lg"
+                className="px-8 h-14 text-base font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg transition-all"
+              >
+                Shop Collection
+              </Button>
+            </Link>
+            <Link href="/about">
+              <Button
+                variant="outline"
+                size="lg"
+                className="px-8 h-14 text-base font-semibold rounded-full border-2 border-slate-200 hover:bg-white transition-all text-slate-900"
+              >
+                Learn More
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

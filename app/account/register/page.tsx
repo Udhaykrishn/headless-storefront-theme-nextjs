@@ -97,10 +97,9 @@ export default async function RegisterPage() {
             {/* Heading */}
             <div className="mb-8">
               <h1 className="text-2xl font-bold text-slate-900">
-                Create your account
+                Create account
               </h1>
               <p className="text-sm text-slate-500 mt-1.5">
-                Free forever — no credit card required to sign up.
               </p>
             </div>
 
