@@ -36,6 +36,7 @@ export default function RootLayout({
     >
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-white text-slate-900 selection:bg-indigo-500 selection:text-white`}
+        suppressHydrationWarning
       >
         <CartInitializer />
         {children}
