@@ -1,16 +1,28 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
-import { updateCustomerProfile } from "@/app/actions/customer";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import { Loader2, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useActionState, useEffect } from "react";
+import { toast } from "sonner";
+import { updateCustomerProfile } from "@/app/actions/customer";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
-export default function ProfileForm({ customer }: { customer: any }) {
+export default function ProfileForm({
+  customer,
+}: {
+  customer: {
+    firstName: string;
+    lastName: string;
+    email?: string;
+    phone?: string;
+  };
+}) {
   const router = useRouter();
-  const [state, action, isPending] = useActionState(updateCustomerProfile, null as any);
+  const [state, action, isPending] = useActionState(
+    updateCustomerProfile,
+    null as { success?: boolean; error?: string } | null,
+  );
 
   useEffect(() => {
     if (state?.success) {
@@ -27,10 +39,14 @@ export default function ProfileForm({ customer }: { customer: any }) {
       {/* Name row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-slate-600 block">
+          <label
+            htmlFor="firstName"
+            className="text-xs font-semibold text-slate-600 block"
+          >
             First Name <span className="text-red-400">*</span>
           </label>
           <Input
+            id="firstName"
             name="firstName"
             defaultValue={customer.firstName}
             placeholder="John"
@@ -39,10 +55,14 @@ export default function ProfileForm({ customer }: { customer: any }) {
           />
         </div>
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-slate-600 block">
+          <label
+            htmlFor="lastName"
+            className="text-xs font-semibold text-slate-600 block"
+          >
             Last Name <span className="text-red-400">*</span>
           </label>
           <Input
+            id="lastName"
             name="lastName"
             defaultValue={customer.lastName}
             placeholder="Doe"
@@ -54,10 +74,14 @@ export default function ProfileForm({ customer }: { customer: any }) {
 
       {/* Email */}
       <div className="space-y-1.5">
-        <label className="text-xs font-semibold text-slate-600 block">
+        <label
+          htmlFor="email"
+          className="text-xs font-semibold text-slate-600 block"
+        >
           Email Address <span className="text-red-400">*</span>
         </label>
         <Input
+          id="email"
           name="email"
           type="email"
           defaultValue={customer.email}
@@ -69,17 +93,24 @@ export default function ProfileForm({ customer }: { customer: any }) {
 
       {/* Phone */}
       <div className="space-y-1.5">
-        <label className="text-xs font-semibold text-slate-600 block">
-          Phone Number <span className="text-slate-400 font-normal">(Optional)</span>
+        <label
+          htmlFor="phone"
+          className="text-xs font-semibold text-slate-600 block"
+        >
+          Phone Number{" "}
+          <span className="text-slate-400 font-normal">(Optional)</span>
         </label>
         <Input
+          id="phone"
           name="phone"
           type="tel"
           defaultValue={customer.phone || ""}
           placeholder="+1 234 567 890"
           className="h-11 rounded-xl bg-white border-slate-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm px-4 transition-all"
         />
-        <p className="text-xs text-slate-400">Used for order delivery notifications</p>
+        <p className="text-xs text-slate-400">
+          Used for order delivery notifications
+        </p>
       </div>
 
       {/* Submit */}

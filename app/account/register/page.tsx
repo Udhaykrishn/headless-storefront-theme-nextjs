@@ -1,8 +1,8 @@
-import { getCustomer } from "@/app/actions/customer";
-import { redirect } from "next/navigation";
-import RegisterForm from "./RegisterForm";
+import { HeadphonesIcon, Star, Zap } from "lucide-react";
 import Link from "next/link";
-import { Zap, Star, HeadphonesIcon } from "lucide-react";
+import { redirect } from "next/navigation";
+import { getCustomer } from "@/app/actions/customer";
+import RegisterForm from "./RegisterForm";
 
 export default async function RegisterPage() {
   const customer = await getCustomer();
@@ -13,7 +13,6 @@ export default async function RegisterPage() {
 
   return (
     <div className="min-h-screen flex bg-slate-50 selection:bg-indigo-600 selection:text-white">
-
       {/* ── Left Panel — Brand ───────────────────────────── */}
       <div className="hidden lg:flex lg:w-[44%] relative bg-indigo-950 flex-col justify-between p-12 overflow-hidden">
         {/* Background decoration */}
@@ -30,11 +29,13 @@ export default async function RegisterPage() {
         {/* Center content */}
         <div className="relative z-10">
           <h2 className="text-4xl font-bold text-white leading-tight mb-4">
-            Join thousands of<br />
+            Join thousands of
+            <br />
             <span className="text-indigo-300">happy customers.</span>
           </h2>
           <p className="text-indigo-200/70 text-sm leading-relaxed max-w-xs">
-            Create your free account to unlock faster checkout, order tracking, and exclusive member benefits.
+            Create your free account to unlock faster checkout, order tracking,
+            and exclusive member benefits.
           </p>
 
           {/* Benefits */}
@@ -57,13 +58,19 @@ export default async function RegisterPage() {
           <div className="mt-10 bg-indigo-900/50 rounded-2xl p-5 border border-indigo-800/50">
             <div className="flex gap-1 mb-2">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-3.5 h-3.5 fill-indigo-300 text-indigo-300" />
+                <Star
+                  key={`star-${i}`}
+                  className="w-3.5 h-3.5 fill-indigo-300 text-indigo-300"
+                />
               ))}
             </div>
             <p className="text-sm text-indigo-200/90 leading-relaxed italic">
-              &ldquo;The whole process was seamless. My refurbished laptop arrived perfectly and the account portal is so easy to use.&rdquo;
+              &ldquo;The whole process was seamless. My refurbished laptop
+              arrived perfectly and the account portal is so easy to use.&rdquo;
             </p>
-            <p className="text-xs text-indigo-400 mt-2 font-medium">— Ahmed R., verified buyer</p>
+            <p className="text-xs text-indigo-400 mt-2 font-medium">
+              — Ahmed R., verified buyer
+            </p>
           </div>
         </div>
 
@@ -75,7 +82,6 @@ export default async function RegisterPage() {
 
       {/* ── Right Panel — Form ───────────────────────────── */}
       <div className="flex-1 flex flex-col min-h-screen">
-
         {/* Mobile logo */}
         <div className="lg:hidden flex items-center justify-between px-6 pt-6 pb-4">
           <Link href="/">
@@ -88,10 +94,11 @@ export default async function RegisterPage() {
         {/* Form area */}
         <div className="flex-1 flex items-center justify-center px-6 py-12">
           <div className="w-full max-w-md">
-
             {/* Heading */}
             <div className="mb-8">
-              <h1 className="text-2xl font-bold text-slate-900">Create your account</h1>
+              <h1 className="text-2xl font-bold text-slate-900">
+                Create your account
+              </h1>
               <p className="text-sm text-slate-500 mt-1.5">
                 Free forever — no credit card required to sign up.
               </p>
@@ -118,11 +125,17 @@ export default async function RegisterPage() {
             {/* Terms */}
             <p className="mt-6 text-center text-xs text-slate-400 leading-relaxed">
               By creating an account, you agree to our{" "}
-              <Link href="/terms" className="underline hover:text-slate-600 transition-colors">
+              <Link
+                href="/terms"
+                className="underline hover:text-slate-600 transition-colors"
+              >
                 Terms of Service
               </Link>{" "}
               and{" "}
-              <Link href="/privacy" className="underline hover:text-slate-600 transition-colors">
+              <Link
+                href="/privacy"
+                className="underline hover:text-slate-600 transition-colors"
+              >
                 Privacy Policy
               </Link>
               .

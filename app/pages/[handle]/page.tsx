@@ -1,8 +1,8 @@
-import { getPage } from "@/lib/shopify";
-import { notFound } from "next/navigation";
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { Footer } from "@/components/footer";
+import { Header } from "@/components/header";
+import { getPage } from "@/lib/shopify";
 
 export const revalidate = 60;
 
@@ -17,7 +17,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     if (!page) return { title: "Page | RebootX" };
     return {
       title: `${page.seo?.title || page.title} | RebootX`,
-      description: page.seo?.description || `Read about ${page.title} on RebootX.`,
+      description:
+        page.seo?.description || `Read about ${page.title} on RebootX.`,
     };
   } catch {
     return { title: "Page | RebootX" };

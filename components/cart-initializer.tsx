@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import { useCartStore } from "@/lib/store";
 import { getCartData } from "@/app/actions/cart";
+import { useCartStore } from "@/lib/store";
 
 export function CartInitializer() {
   const { cartId, setCartData } = useCartStore();

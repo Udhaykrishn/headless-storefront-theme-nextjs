@@ -1,8 +1,8 @@
-import { getCustomer } from "@/app/actions/customer";
-import { redirect } from "next/navigation";
-import LoginForm from "./login-form";
+import { Package, RotateCcw, ShieldCheck } from "lucide-react";
 import Link from "next/link";
-import { ShieldCheck, Package, RotateCcw } from "lucide-react";
+import { redirect } from "next/navigation";
+import { getCustomer } from "@/app/actions/customer";
+import LoginForm from "./login-form";
 
 export default async function LoginPage() {
   const customer = await getCustomer();
@@ -13,7 +13,6 @@ export default async function LoginPage() {
 
   return (
     <div className="min-h-screen flex bg-slate-50 selection:bg-indigo-600 selection:text-white">
-
       {/* ── Left Panel — Brand ───────────────────────────── */}
       <div className="hidden lg:flex lg:w-[44%] relative bg-indigo-950 flex-col justify-between p-12 overflow-hidden">
         {/* Background decoration */}
@@ -30,11 +29,13 @@ export default async function LoginPage() {
         {/* Center content */}
         <div className="relative z-10">
           <h2 className="text-4xl font-bold text-white leading-tight mb-4">
-            Your account,<br />
+            Your account,
+            <br />
             <span className="text-indigo-300">your orders.</span>
           </h2>
           <p className="text-indigo-200/70 text-sm leading-relaxed max-w-xs">
-            Sign in to track your orders, manage your profile, and get a faster checkout experience.
+            Sign in to track your orders, manage your profile, and get a faster
+            checkout experience.
           </p>
 
           {/* Trust points */}
@@ -62,7 +63,6 @@ export default async function LoginPage() {
 
       {/* ── Right Panel — Form ───────────────────────────── */}
       <div className="flex-1 flex flex-col min-h-screen">
-
         {/* Mobile logo */}
         <div className="lg:hidden flex items-center justify-between px-6 pt-6 pb-4">
           <Link href="/">
@@ -75,10 +75,11 @@ export default async function LoginPage() {
         {/* Form area */}
         <div className="flex-1 flex items-center justify-center px-6 py-12">
           <div className="w-full max-w-md">
-
             {/* Heading */}
             <div className="mb-8">
-              <h1 className="text-2xl font-bold text-slate-900">Sign in to your account</h1>
+              <h1 className="text-2xl font-bold text-slate-900">
+                Sign in to your account
+              </h1>
               <p className="text-sm text-slate-500 mt-1.5">
                 Welcome back! Continue where you left off.
               </p>
@@ -105,11 +106,17 @@ export default async function LoginPage() {
             {/* Terms */}
             <p className="mt-6 text-center text-xs text-slate-400 leading-relaxed">
               By signing in, you agree to our{" "}
-              <Link href="/terms" className="underline hover:text-slate-600 transition-colors">
+              <Link
+                href="/terms"
+                className="underline hover:text-slate-600 transition-colors"
+              >
                 Terms of Service
               </Link>{" "}
               and{" "}
-              <Link href="/privacy" className="underline hover:text-slate-600 transition-colors">
+              <Link
+                href="/privacy"
+                className="underline hover:text-slate-600 transition-colors"
+              >
                 Privacy Policy
               </Link>
               .

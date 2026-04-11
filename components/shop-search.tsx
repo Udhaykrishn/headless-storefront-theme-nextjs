@@ -1,9 +1,9 @@
 "use client";
 
+import { Search } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
 
 export function ShopSearch({ defaultValue = "" }: { defaultValue?: string }) {
   const router = useRouter();

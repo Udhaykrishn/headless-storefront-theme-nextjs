@@ -1,13 +1,13 @@
 "use server";
 
 import {
-  shopifyClient,
   CART_CREATE_MUTATION,
   CART_LINES_ADD_MUTATION,
-  GET_CART_QUERY,
   CART_LINES_REMOVE_MUTATION,
   CART_LINES_UPDATE_MUTATION,
-  CartInfo,
+  type CartInfo,
+  GET_CART_QUERY,
+  shopifyClient,
 } from "@/lib/shopify";
 
 export async function createCart() {

@@ -1,9 +1,9 @@
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
-import { getCollections } from "@/lib/shopify";
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import type { Metadata } from "next";
+import { Footer } from "@/components/footer";
+import { Header } from "@/components/header";
+import { getCollections } from "@/lib/shopify";
 
 export const revalidate = 60;
 
@@ -25,12 +25,15 @@ export default async function CollectionsPage() {
       <main className="flex-1 max-w-[1400px] mx-auto px-6 lg:px-12 py-24 w-full">
         {/* Page Header */}
         <div className="mb-24 text-center">
-          <span className="text-[10px] font-black uppercase tracking-[0.5em] text-indigo-400 mb-6 block drop-shadow-sm">Editorial Selection</span>
+          <span className="text-[10px] font-black uppercase tracking-[0.5em] text-indigo-400 mb-6 block drop-shadow-sm">
+            Editorial Selection
+          </span>
           <h1 className="text-8xl font-black tracking-tighter uppercase text-indigo-950 italic underline decoration-indigo-200 decoration-8 drop-shadow-2xl">
             Collections <span className="text-indigo-400 italic">2026</span>
           </h1>
           <p className="text-sm text-slate-500 max-w-xl mx-auto mt-10 font-bold uppercase tracking-widest leading-relaxed">
-            Explore our curated masterpieces, hand-picked for the modern connoisseur of fine lifestyle goods.
+            Explore our curated masterpieces, hand-picked for the modern
+            connoisseur of fine lifestyle goods.
           </p>
         </div>
 
@@ -52,8 +55,12 @@ export default async function CollectionsPage() {
               <path d="M3 9h18" />
               <path d="M9 21V9" />
             </svg>
-            <p className="text-2xl font-black uppercase tracking-widest text-slate-400">Archive Empty</p>
-            <p className="text-[10px] mt-4 font-bold uppercase tracking-[0.2em] text-indigo-300">New arrivals manifesting shortly</p>
+            <p className="text-2xl font-black uppercase tracking-widest text-slate-400">
+              Archive Empty
+            </p>
+            <p className="text-[10px] mt-4 font-bold uppercase tracking-[0.2em] text-indigo-300">
+              New arrivals manifesting shortly
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-16">
@@ -73,18 +80,37 @@ export default async function CollectionsPage() {
                     />
                   ) : (
                     <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 flex items-center justify-center">
-                      <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300 italic">No Visual Asset</span>
+                      <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300 italic">
+                        No Visual Asset
+                      </span>
                     </div>
                   )}
 
                   {/* Floating Glass UI Overlay */}
                   <div className="absolute inset-x-6 bottom-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-700 ease-out z-10">
                     <div className="bg-white/40 backdrop-blur-xl p-8 rounded-[2rem] border border-white/60 shadow-2xl">
-                      <span className="text-[8px] font-black uppercase tracking-[0.4em] text-indigo-600 mb-2 block">Premium Range</span>
+                      <span className="text-[8px] font-black uppercase tracking-[0.4em] text-indigo-600 mb-2 block">
+                        Premium Range
+                      </span>
                       <div className="flex items-center justify-between">
-                        <h3 className="text-xl font-black uppercase tracking-tighter text-indigo-950 italic">Open Gallery</h3>
+                        <h3 className="text-xl font-black uppercase tracking-tighter text-indigo-950 italic">
+                          Open Gallery
+                        </h3>
                         <div className="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-lg">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="7" x2="17" y1="17" y2="7" /><polyline points="7 7 17 7 17 17" /></svg>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <line x1="7" x2="17" y1="17" y2="7" />
+                            <polyline points="7 7 17 7 17 17" />
+                          </svg>
                         </div>
                       </div>
                     </div>

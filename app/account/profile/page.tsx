@@ -1,10 +1,10 @@
-import { getCustomer } from "@/app/actions/customer";
-import { redirect } from "next/navigation";
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
-import ProfileForm from "@/app/account/profile/profile-form";
+import { ChevronLeft, Mail, Shield, User } from "lucide-react";
 import Link from "next/link";
-import { ChevronLeft, User, Shield, Mail } from "lucide-react";
+import { redirect } from "next/navigation";
+import ProfileForm from "@/app/account/profile/profile-form";
+import { getCustomer } from "@/app/actions/customer";
+import { Footer } from "@/components/footer";
+import { Header } from "@/components/header";
 
 export default async function ProfilePage() {
   const customer = await getCustomer();
@@ -13,7 +13,8 @@ export default async function ProfilePage() {
     redirect("/account/login");
   }
 
-  const initials = `${customer.firstName?.[0] ?? ""}${customer.lastName?.[0] ?? ""}`.toUpperCase();
+  const initials =
+    `${customer.firstName?.[0] ?? ""}${customer.lastName?.[0] ?? ""}`.toUpperCase();
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-indigo-600 selection:text-white">
@@ -43,9 +44,15 @@ export default async function ProfilePage() {
             {initials}
           </div>
           <div>
-            <p className="text-xs font-semibold text-indigo-500 uppercase tracking-widest mb-0.5">Account Settings</p>
-            <h1 className="text-xl lg:text-2xl font-bold text-slate-900">Edit Profile</h1>
-            <p className="text-sm text-slate-500 mt-0.5">Update your personal information</p>
+            <p className="text-xs font-semibold text-indigo-500 uppercase tracking-widest mb-0.5">
+              Account Settings
+            </p>
+            <h1 className="text-xl lg:text-2xl font-bold text-slate-900">
+              Edit Profile
+            </h1>
+            <p className="text-sm text-slate-500 mt-0.5">
+              Update your personal information
+            </p>
           </div>
         </div>
 
@@ -56,8 +63,12 @@ export default async function ProfilePage() {
               <Mail className="w-4 h-4 text-indigo-600" />
             </div>
             <div className="min-w-0">
-              <p className="text-[11px] text-slate-400 font-medium uppercase tracking-wide">Email</p>
-              <p className="text-sm font-semibold text-slate-900 truncate">{customer.email}</p>
+              <p className="text-[11px] text-slate-400 font-medium uppercase tracking-wide">
+                Email
+              </p>
+              <p className="text-sm font-semibold text-slate-900 truncate">
+                {customer.email}
+              </p>
             </div>
           </div>
           <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white shadow-md shadow-indigo-100/20 p-5 flex items-center gap-3">
@@ -65,8 +76,12 @@ export default async function ProfilePage() {
               <Shield className="w-4 h-4 text-emerald-600" />
             </div>
             <div>
-              <p className="text-[11px] text-slate-400 font-medium uppercase tracking-wide">Account Status</p>
-              <p className="text-sm font-semibold text-emerald-700">Verified & Active</p>
+              <p className="text-[11px] text-slate-400 font-medium uppercase tracking-wide">
+                Account Status
+              </p>
+              <p className="text-sm font-semibold text-emerald-700">
+                Verified & Active
+              </p>
             </div>
           </div>
         </div>
@@ -77,7 +92,9 @@ export default async function ProfilePage() {
           <div className="relative z-10">
             <div className="flex items-center gap-2.5 mb-6">
               <User className="w-4 h-4 text-indigo-500" />
-              <h2 className="text-sm font-bold text-slate-700 uppercase tracking-wide">Personal Information</h2>
+              <h2 className="text-sm font-bold text-slate-700 uppercase tracking-wide">
+                Personal Information
+              </h2>
             </div>
             <ProfileForm customer={customer!} />
           </div>

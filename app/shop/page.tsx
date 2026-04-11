@@ -1,13 +1,17 @@
-import { getProducts } from "@/lib/shopify";
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
-import Image from "next/image";
+import {
+  ArrowDownWideNarrow,
+  ArrowUpNarrowWide,
+  Clock,
+  TrendingUp,
+} from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Footer } from "@/components/footer";
+import { Header } from "@/components/header";
+import { ProductCard } from "@/components/product-card";
 import { ShopSearch } from "@/components/shop-search";
 import { ShopSort } from "@/components/shop-sort";
-import { TrendingUp, Clock, ArrowUpNarrowWide, ArrowDownWideNarrow } from "lucide-react";
-import { ProductCard } from "@/components/product-card";
+import { Button } from "@/components/ui/button";
+import { getProducts } from "@/lib/shopify";
 
 export default async function ShopPage({
   searchParams,
@@ -18,7 +22,8 @@ export default async function ShopPage({
   const sort =
     typeof resolvedParams.sort === "string" ? resolvedParams.sort : "";
   const query = typeof resolvedParams.q === "string" ? resolvedParams.q : "";
-  const view = typeof resolvedParams.view === "string" ? resolvedParams.view : "grid";
+  const view =
+    typeof resolvedParams.view === "string" ? resolvedParams.view : "grid";
   const after =
     typeof resolvedParams.after === "string" ? resolvedParams.after : undefined;
   const before =
@@ -79,10 +84,11 @@ export default async function ShopPage({
                 <div className="hidden lg:flex items-center gap-2 px-1">
                   <Link
                     href={`/shop?sort=best-selling${query ? `&q=${query}` : ""}`}
-                    className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all border whitespace-nowrap ${!sort || sort === "best-selling"
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all border whitespace-nowrap ${
+                      !sort || sort === "best-selling"
                         ? "bg-indigo-600 text-white border-indigo-600 shadow-sm"
                         : "bg-white text-gray-600 border-gray-200 hover:border-indigo-200 hover:bg-indigo-50"
-                      }`}
+                    }`}
                   >
                     <TrendingUp className="w-4 h-4" />
                     Best Selling
@@ -90,10 +96,11 @@ export default async function ShopPage({
 
                   <Link
                     href={`/shop?sort=newest${query ? `&q=${query}` : ""}`}
-                    className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all border whitespace-nowrap ${sort === "newest"
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all border whitespace-nowrap ${
+                      sort === "newest"
                         ? "bg-indigo-600 text-white border-indigo-600 shadow-sm"
                         : "bg-white text-gray-600 border-gray-200 hover:border-indigo-200 hover:bg-indigo-50"
-                      }`}
+                    }`}
                   >
                     <Clock className="w-4 h-4" />
                     Newest
@@ -101,10 +108,11 @@ export default async function ShopPage({
 
                   <Link
                     href={`/shop?sort=price-asc${query ? `&q=${query}` : ""}`}
-                    className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all border whitespace-nowrap ${sort === "price-asc"
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all border whitespace-nowrap ${
+                      sort === "price-asc"
                         ? "bg-indigo-600 text-white border-indigo-600 shadow-sm"
                         : "bg-white text-gray-600 border-gray-200 hover:border-indigo-200 hover:bg-indigo-50"
-                      }`}
+                    }`}
                   >
                     <ArrowUpNarrowWide className="w-4 h-4" />
                     Price: Low to High
@@ -112,10 +120,11 @@ export default async function ShopPage({
 
                   <Link
                     href={`/shop?sort=price-desc${query ? `&q=${query}` : ""}`}
-                    className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all border whitespace-nowrap ${sort === "price-desc"
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all border whitespace-nowrap ${
+                      sort === "price-desc"
                         ? "bg-indigo-600 text-white border-indigo-600 shadow-sm"
                         : "bg-white text-gray-600 border-gray-200 hover:border-indigo-200 hover:bg-indigo-50"
-                      }`}
+                    }`}
                   >
                     <ArrowDownWideNarrow className="w-4 h-4" />
                     Price: High to Low
@@ -128,21 +137,51 @@ export default async function ShopPage({
                     className={`p-2.5 rounded-xl transition-all border h-10 w-10 flex items-center justify-center ${view === "grid" ? "bg-indigo-600 text-white border-indigo-600 shadow-md" : "bg-white text-gray-400 border-gray-200 hover:border-indigo-200"}`}
                     title="Grid View"
                   >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <rect x="3" y="3" width="7" height="7" />
+                      <rect x="14" y="3" width="7" height="7" />
+                      <rect x="14" y="14" width="7" height="7" />
+                      <rect x="3" y="14" width="7" height="7" />
+                    </svg>
                   </Link>
                   <Link
                     href={`/shop?${new URLSearchParams({ ...resolvedParams, view: "list" }).toString()}`}
                     className={`p-2.5 rounded-xl transition-all border h-10 w-10 flex items-center justify-center ${view === "list" ? "bg-indigo-600 text-white border-indigo-600 shadow-md" : "bg-white text-gray-400 border-gray-200 hover:border-indigo-200"}`}
                     title="List View"
                   >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <line x1="3" y1="6" x2="21" y2="6" />
+                      <line x1="3" y1="12" x2="21" y2="12" />
+                      <line x1="3" y1="18" x2="21" y2="18" />
+                    </svg>
                   </Link>
                 </div>
               </div>
             </div>
             {query && (
               <p className="text-xs sm:text-sm text-gray-500 mt-2 md:text-right">
-                Showing results for <span className="font-semibold text-gray-900 italic">"{query}"</span>
+                Showing results for{" "}
+                <span className="font-semibold text-gray-900 italic">
+                  "{query}"
+                </span>
               </p>
             )}
           </div>
@@ -196,9 +235,19 @@ export default async function ShopPage({
               </div>
             ) : (
               <>
-                <div className={view === "grid" ? "grid grid-cols-2 gap-3 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3" : "flex flex-col gap-6"}>
+                <div
+                  className={
+                    view === "grid"
+                      ? "grid grid-cols-2 gap-3 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3"
+                      : "flex flex-col gap-6"
+                  }
+                >
                   {products.map((product) => (
-                    <ProductCard key={product.id} product={product} view={view as any} />
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      view={view as any}
+                    />
                   ))}
                 </div>
 

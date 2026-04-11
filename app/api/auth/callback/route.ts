@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 import { getAccessToken } from "@/lib/auth";
 
 export async function GET(request: Request) {
@@ -12,13 +12,17 @@ export async function GET(request: Request) {
   const codeVerifier = cookieStore.get("auth_code_verifier")?.value;
 
   if (!code || state !== savedState || !codeVerifier) {
-    return NextResponse.redirect(new URL("/account/login?error=Invalid session state", request.url));
+    return NextResponse.redirect(
+      new URL("/account/login?error=Invalid session state", request.url),
+    );
   }
 
   const tokenData = await getAccessToken(code, codeVerifier);
 
   if (!tokenData) {
-    return NextResponse.redirect(new URL("/account/login?error=Authentication failed", request.url));
+    return NextResponse.redirect(
+      new URL("/account/login?error=Authentication failed", request.url),
+    );
   }
 
   // Set the access token in an HTTP-only cookie
@@ -42,7 +46,7 @@ export async function GET(request: Request) {
 
   // Use refresh token if provided
   if (tokenData.refresh_token) {
-     cookieStore.set("shopify_customer_refresh_token", tokenData.refresh_token, {
+    cookieStore.set("shopify_customer_refresh_token", tokenData.refresh_token, {
       httpOnly: true,
       secure: true,
       sameSite: "lax",

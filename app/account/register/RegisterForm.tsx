@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { AlertCircle, ShieldCheck, Sparkles, UserPlus } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { UserPlus, ShieldCheck, AlertCircle, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function RegisterForm() {
   const searchParams = useSearchParams();
@@ -27,7 +27,9 @@ export default function RegisterForm() {
       <div className="bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 rounded-2xl p-5">
         <div className="flex items-center gap-2 mb-3">
           <Sparkles className="w-4 h-4 text-indigo-500" />
-          <p className="text-sm font-semibold text-indigo-900">What you get for free</p>
+          <p className="text-sm font-semibold text-indigo-900">
+            What you get for free
+          </p>
         </div>
         <ul className="space-y-2">
           {[
@@ -35,7 +37,10 @@ export default function RegisterForm() {
             "Faster checkout with saved details",
             "Early access to restocks",
           ].map((item) => (
-            <li key={item} className="flex items-center gap-2 text-xs text-indigo-700/80">
+            <li
+              key={item}
+              className="flex items-center gap-2 text-xs text-indigo-700/80"
+            >
               <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 flex-shrink-0" />
               {item}
             </li>
@@ -55,7 +60,9 @@ export default function RegisterForm() {
       {/* Trust row */}
       <div className="flex items-center justify-center gap-1.5 pt-1">
         <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
-        <span className="text-xs text-slate-400">Secured by Shopify — no password needed</span>
+        <span className="text-xs text-slate-400">
+          Secured by Shopify — no password needed
+        </span>
       </div>
     </div>
   );

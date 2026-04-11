@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Figtree, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { cn } from "@/lib/utils";
-import { Toaster } from "@/components/ui/sonner";
-import { CartSheet } from "@/components/cart-sheet";
 import { CartInitializer } from "@/components/cart-initializer";
+import { CartSheet } from "@/components/cart-sheet";
+import { Toaster } from "@/components/ui/sonner";
+import { cn } from "@/lib/utils";
 
 const figtree = Figtree({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -29,7 +29,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("font-sans", figtree.variable)} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={cn("font-sans", figtree.variable)}
+      suppressHydrationWarning
+    >
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-white text-slate-900 selection:bg-indigo-500 selection:text-white`}
       >

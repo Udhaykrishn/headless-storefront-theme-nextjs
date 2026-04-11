@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { AlertCircle, LogIn, ShieldCheck } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { ShieldCheck, LogIn, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function LoginForm() {
   const searchParams = useSearchParams();
@@ -28,10 +28,13 @@ export default function LoginForm() {
           <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center flex-shrink-0">
             <LogIn className="w-4 h-4 text-white" />
           </div>
-          <p className="text-sm font-semibold text-indigo-900">Single Sign-On via Shopify</p>
+          <p className="text-sm font-semibold text-indigo-900">
+            Single Sign-On via Shopify
+          </p>
         </div>
         <p className="text-xs text-indigo-700/70 leading-relaxed">
-          We use Shopify's secure authentication. You'll be redirected to sign in and automatically returned here.
+          We use Shopify's secure authentication. You'll be redirected to sign
+          in and automatically returned here.
         </p>
       </div>
 
@@ -47,7 +50,9 @@ export default function LoginForm() {
       {/* Trust row */}
       <div className="flex items-center justify-center gap-1.5 pt-1">
         <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
-        <span className="text-xs text-slate-400">Secured by Shopify — your data is safe</span>
+        <span className="text-xs text-slate-400">
+          Secured by Shopify — your data is safe
+        </span>
       </div>
     </div>
   );

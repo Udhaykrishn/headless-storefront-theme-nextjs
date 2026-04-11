@@ -1,31 +1,31 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetFooter,
-} from "@/components/ui/sheet";
-import { useCartStore } from "@/lib/store";
+  ArrowRight,
+  Loader2,
+  Lock,
+  Minus,
+  Plus,
+  ShoppingBag,
+  Trash2,
+} from "lucide-react";
+import Image from "next/image";
+import { useEffect, useState, useTransition } from "react";
+import { toast } from "sonner";
 import {
   getCartData,
   removeFromCart,
   updateCartLine,
 } from "@/app/actions/cart";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import {
-  Loader2,
-  ShoppingBag,
-  Trash2,
-  Minus,
-  Plus,
-  ArrowRight,
-  Lock,
-} from "lucide-react";
-import { toast } from "sonner";
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { useCartStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
 export function CartSheet() {
@@ -50,7 +50,7 @@ export function CartSheet() {
         .catch(() => setCartData(null, 0))
         .finally(() => setLoading(false));
     }
-  }, [isCartOpen, cartId]);
+  }, [isCartOpen, cartId, setCartData]);
 
   function markUpdating(lineId: string, active: boolean) {
     setUpdatingLines((prev) => {
@@ -98,15 +98,11 @@ export function CartSheet() {
     });
   }
 
-  const isEmpty =
-    !cartId ||
-    !cart ||
-    (cart && cart.lines.edges.length === 0);
+  const isEmpty = !cartId || !cart || (cart && cart.lines.edges.length === 0);
 
   return (
     <Sheet open={isCartOpen} onOpenChange={(open) => !open && closeCart()}>
       <SheetContent className="w-full sm:max-w-[420px] flex flex-col bg-white p-0 gap-0 border-l border-slate-200 shadow-2xl">
-
         {/* ── Header ── */}
         <SheetHeader className="px-6 pt-6 pb-5 border-b border-slate-100">
           <SheetTitle className="flex items-center gap-2.5 text-base font-semibold text-slate-900">
@@ -116,7 +112,8 @@ export function CartSheet() {
             Your Cart
             {cart && cart.lines.edges.length > 0 && (
               <span className="ml-auto text-xs font-medium text-slate-400 tabular-nums">
-                {cart.totalQuantity} {cart.totalQuantity === 1 ? "item" : "items"}
+                {cart.totalQuantity}{" "}
+                {cart.totalQuantity === 1 ? "item" : "items"}
               </span>
             )}
           </SheetTitle>
@@ -124,7 +121,6 @@ export function CartSheet() {
 
         {/* ── Scrollable item list ── */}
         <div className="flex-1 overflow-y-auto">
-
           {/* Loading skeleton */}
           {loading && (
             <div className="flex justify-center items-center h-full py-20">
@@ -139,8 +135,12 @@ export function CartSheet() {
                 <ShoppingBag className="w-7 h-7 text-slate-300" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-slate-700">Your cart is empty</p>
-                <p className="text-xs text-slate-400 mt-1">Add items to get started</p>
+                <p className="text-sm font-semibold text-slate-700">
+                  Your cart is empty
+                </p>
+                <p className="text-xs text-slate-400 mt-1">
+                  Add items to get started
+                </p>
               </div>
             </div>
           )}
@@ -160,7 +160,7 @@ export function CartSheet() {
                     key={line.id}
                     className={cn(
                       "flex gap-4 py-5 transition-opacity duration-200",
-                      isUpdating && "opacity-50 pointer-events-none"
+                      isUpdating && "opacity-50 pointer-events-none",
                     )}
                   >
                     {/* Thumbnail */}
@@ -209,7 +209,9 @@ export function CartSheet() {
                         {/* Stepper */}
                         <div className="flex items-center gap-0 border border-slate-200 rounded-lg overflow-hidden bg-white">
                           <button
-                            onClick={() => handleQuantity(line.id, line.quantity, -1)}
+                            onClick={() =>
+                              handleQuantity(line.id, line.quantity, -1)
+                            }
                             disabled={isPending || isUpdating}
                             className="w-8 h-8 flex items-center justify-center text-slate-500 hover:bg-slate-50 hover:text-slate-800 transition-colors disabled:opacity-40 active:bg-slate-100"
                             aria-label="Decrease quantity"
@@ -220,7 +222,9 @@ export function CartSheet() {
                             {line.quantity}
                           </span>
                           <button
-                            onClick={() => handleQuantity(line.id, line.quantity, 1)}
+                            onClick={() =>
+                              handleQuantity(line.id, line.quantity, 1)
+                            }
                             disabled={isPending || isUpdating}
                             className="w-8 h-8 flex items-center justify-center text-slate-500 hover:bg-slate-50 hover:text-slate-800 transition-colors disabled:opacity-40 active:bg-slate-100"
                             aria-label="Increase quantity"
@@ -269,7 +273,9 @@ export function CartSheet() {
                 </span>
               </div>
               <div className="flex justify-between items-center pt-2 border-t border-slate-100">
-                <span className="text-base font-bold text-slate-900">Total</span>
+                <span className="text-base font-bold text-slate-900">
+                  Total
+                </span>
                 <span className="text-base font-bold text-slate-900 tabular-nums">
                   {parseFloat(cart.cost.totalAmount.amount).toLocaleString(
                     "en-US",

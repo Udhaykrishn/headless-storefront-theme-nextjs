@@ -1,5 +1,5 @@
-import { getProduct } from "@/lib/shopify";
 import { notFound } from "next/navigation";
+import { getProduct } from "@/lib/shopify";
 import { ProductDetailView } from "./product-detail-view";
 
 export async function generateMetadata({

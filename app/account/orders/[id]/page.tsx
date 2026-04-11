@@ -1,44 +1,84 @@
-import { getOrder } from "@/app/actions/customer";
-import { redirect } from "next/navigation";
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
-import Link from "next/link";
 import {
-  ChevronLeft,
-  Package,
-  MapPin,
-  CreditCard,
-  Truck,
+  ArrowRight,
   CheckCircle2,
+  ChevronLeft,
   Circle,
   Clock,
-  ArrowRight,
+  CreditCard,
   Download,
+  MapPin,
+  Package,
+  Truck,
 } from "lucide-react";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getOrder } from "@/app/actions/customer";
+import { Footer } from "@/components/footer";
+import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, { label: string; class: string }> = {
-    PAID: { label: "Paid", class: "bg-emerald-100 text-emerald-700 border-emerald-200" },
-    PENDING: { label: "Pending", class: "bg-amber-100 text-amber-700 border-amber-200" },
-    REFUNDED: { label: "Refunded", class: "bg-red-100 text-red-700 border-red-200" },
-    PARTIALLY_REFUNDED: { label: "Partial Refund", class: "bg-orange-100 text-orange-700 border-orange-200" },
+    PAID: {
+      label: "Paid",
+      class: "bg-emerald-100 text-emerald-700 border-emerald-200",
+    },
+    PENDING: {
+      label: "Pending",
+      class: "bg-amber-100 text-amber-700 border-amber-200",
+    },
+    REFUNDED: {
+      label: "Refunded",
+      class: "bg-red-100 text-red-700 border-red-200",
+    },
+    PARTIALLY_REFUNDED: {
+      label: "Partial Refund",
+      class: "bg-orange-100 text-orange-700 border-orange-200",
+    },
   };
-  const s = map[status] ?? { label: status, class: "bg-slate-100 text-slate-600 border-slate-200" };
+  const s = map[status] ?? {
+    label: status,
+    class: "bg-slate-100 text-slate-600 border-slate-200",
+  };
   return (
-    <span className={cn("text-xs font-semibold px-3 py-1 rounded-full border", s.class)}>
+    <span
+      className={cn(
+        "text-xs font-semibold px-3 py-1 rounded-full border",
+        s.class,
+      )}
+    >
       {s.label}
     </span>
   );
 }
 
 const TIMELINE = [
-  { icon: CheckCircle2, label: "Order Placed", desc: "Your order has been received", done: true },
-  { icon: Package, label: "Processing", desc: "We're preparing your items", done: true },
-  { icon: Truck, label: "Shipped", desc: "Your order is on its way", done: false },
-  { icon: CheckCircle2, label: "Delivered", desc: "Package delivered successfully", done: false },
+  {
+    icon: CheckCircle2,
+    label: "Order Placed",
+    desc: "Your order has been received",
+    done: true,
+  },
+  {
+    icon: Package,
+    label: "Processing",
+    desc: "We're preparing your items",
+    done: true,
+  },
+  {
+    icon: Truck,
+    label: "Shipped",
+    desc: "Your order is on its way",
+    done: false,
+  },
+  {
+    icon: CheckCircle2,
+    label: "Delivered",
+    desc: "Package delivered successfully",
+    done: false,
+  },
 ];
 
 export default async function OrderDetailPage({
@@ -64,7 +104,6 @@ export default async function OrderDetailPage({
 
       <main className="flex-1 py-10 lg:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
-
           {/* Back */}
           <div className="mb-8">
             <Link
@@ -79,7 +118,9 @@ export default async function OrderDetailPage({
           {/* Page header */}
           <div className="mb-8 bg-white/80 backdrop-blur-xl rounded-3xl border border-white shadow-lg shadow-indigo-100/30 px-8 py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <p className="text-xs font-semibold text-indigo-500 uppercase tracking-widest mb-1">Order</p>
+              <p className="text-xs font-semibold text-indigo-500 uppercase tracking-widest mb-1">
+                Order
+              </p>
               <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">
                 #{order.orderNumber}
               </h1>
@@ -116,16 +157,17 @@ export default async function OrderDetailPage({
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
             {/* ── Left Column ─────────────────────────────────── */}
             <div className="lg:col-span-8 space-y-6">
-
               {/* Order Items */}
               <div className="bg-white/80 backdrop-blur-xl rounded-3xl border border-white shadow-lg shadow-indigo-100/20 overflow-hidden">
                 <div className="border-b border-slate-100 px-8 py-5">
-                  <h2 className="text-base font-bold text-slate-900">Items Ordered</h2>
+                  <h2 className="text-base font-bold text-slate-900">
+                    Items Ordered
+                  </h2>
                   <p className="text-sm text-slate-500 mt-0.5">
-                    {order.lineItems.edges.length} item{order.lineItems.edges.length !== 1 ? "s" : ""}
+                    {order.lineItems.edges.length} item
+                    {order.lineItems.edges.length !== 1 ? "s" : ""}
                   </p>
                 </div>
 
@@ -133,7 +175,10 @@ export default async function OrderDetailPage({
                   {order.lineItems.edges.map((edge: any) => {
                     const item = edge.node;
                     return (
-                      <div key={item.variant.id} className="flex gap-5 px-8 py-5 group">
+                      <div
+                        key={item.variant.id}
+                        className="flex gap-5 px-8 py-5 group"
+                      >
                         {/* Product image */}
                         <div className="relative w-20 h-24 rounded-2xl overflow-hidden bg-slate-100 flex-shrink-0 border border-slate-200">
                           {item.variant.image ? (
@@ -155,13 +200,16 @@ export default async function OrderDetailPage({
                           <h3 className="text-sm font-semibold text-slate-900 leading-snug group-hover:text-indigo-700 transition-colors">
                             {item.title}
                           </h3>
-                          {item.variant.title && item.variant.title !== "Default Title" && (
-                            <span className="text-xs text-slate-500 mt-1 bg-slate-100 px-2 py-0.5 rounded-md inline-block w-fit">
-                              {item.variant.title}
-                            </span>
-                          )}
+                          {item.variant.title &&
+                            item.variant.title !== "Default Title" && (
+                              <span className="text-xs text-slate-500 mt-1 bg-slate-100 px-2 py-0.5 rounded-md inline-block w-fit">
+                                {item.variant.title}
+                              </span>
+                            )}
                           <div className="flex items-center gap-4 mt-2">
-                            <span className="text-xs text-slate-500">Qty: {item.quantity}</span>
+                            <span className="text-xs text-slate-500">
+                              Qty: {item.quantity}
+                            </span>
                             <Link
                               href={`/products/${item.variant.product.handle}`}
                               className="text-xs text-indigo-600 font-medium hover:text-indigo-800 inline-flex items-center gap-1"
@@ -174,12 +222,16 @@ export default async function OrderDetailPage({
                         {/* Price */}
                         <div className="text-right flex-shrink-0 flex flex-col justify-center">
                           <p className="text-sm font-bold text-slate-900">
-                            {parseFloat(item.variant.price.amount).toLocaleString("en-US", {
+                            {parseFloat(
+                              item.variant.price.amount,
+                            ).toLocaleString("en-US", {
                               style: "currency",
                               currency: item.variant.price.currencyCode,
                             })}
                           </p>
-                          <p className="text-xs text-slate-400 mt-0.5">per item</p>
+                          <p className="text-xs text-slate-400 mt-0.5">
+                            per item
+                          </p>
                         </div>
                       </div>
                     );
@@ -189,29 +241,42 @@ export default async function OrderDetailPage({
 
               {/* Shipping Timeline */}
               <div className="bg-white/80 backdrop-blur-xl rounded-3xl border border-white shadow-lg shadow-indigo-100/20 px-8 py-6">
-                <h2 className="text-base font-bold text-slate-900 mb-6">Order Status</h2>
+                <h2 className="text-base font-bold text-slate-900 mb-6">
+                  Order Status
+                </h2>
                 <div className="relative">
                   {/* Vertical line */}
                   <div className="absolute left-5 top-5 bottom-5 w-px bg-slate-200" />
 
                   <div className="space-y-6">
-                    {TIMELINE.map((step, index) => (
-                      <div key={index} className="flex items-start gap-4 relative">
-                        <div className={cn(
-                          "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 z-10 border-2 transition-colors",
-                          step.done
-                            ? "bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-500/30"
-                            : "bg-white border-slate-200 text-slate-300"
-                        )}>
+                    {TIMELINE.map((step) => (
+                      <div
+                        key={step.label}
+                        className="flex items-start gap-4 relative"
+                      >
+                        <div
+                          className={cn(
+                            "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 z-10 border-2 transition-colors",
+                            step.done
+                              ? "bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-500/30"
+                              : "bg-white border-slate-200 text-slate-300",
+                          )}
+                        >
                           {step.done ? (
                             <CheckCircle2 className="w-5 h-5" />
                           ) : (
                             <Circle className="w-5 h-5" />
                           )}
                         </div>
-                        <div className={cn("pt-1.5", !step.done && "opacity-40")}>
-                          <p className="text-sm font-semibold text-slate-900">{step.label}</p>
-                          <p className="text-xs text-slate-500 mt-0.5">{step.desc}</p>
+                        <div
+                          className={cn("pt-1.5", !step.done && "opacity-40")}
+                        >
+                          <p className="text-sm font-semibold text-slate-900">
+                            {step.label}
+                          </p>
+                          <p className="text-xs text-slate-500 mt-0.5">
+                            {step.desc}
+                          </p>
                         </div>
                       </div>
                     ))}
@@ -222,18 +287,22 @@ export default async function OrderDetailPage({
 
             {/* ── Right Column ─────────────────────────────────── */}
             <div className="lg:col-span-4 space-y-5">
-
               {/* Order Summary */}
               <div className="bg-white/80 backdrop-blur-xl rounded-3xl border border-white shadow-lg shadow-indigo-100/20 p-6">
-                <h3 className="text-base font-bold text-slate-900 mb-5">Order Summary</h3>
+                <h3 className="text-base font-bold text-slate-900 mb-5">
+                  Order Summary
+                </h3>
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between text-slate-600">
                     <span>Subtotal</span>
                     <span className="font-medium text-slate-900">
-                      {parseFloat(order.totalPrice.amount).toLocaleString("en-US", {
-                        style: "currency",
-                        currency: order.totalPrice.currencyCode,
-                      })}
+                      {parseFloat(order.totalPrice.amount).toLocaleString(
+                        "en-US",
+                        {
+                          style: "currency",
+                          currency: order.totalPrice.currencyCode,
+                        },
+                      )}
                     </span>
                   </div>
                   <div className="flex justify-between text-slate-600">
@@ -248,10 +317,13 @@ export default async function OrderDetailPage({
                   <div className="flex justify-between">
                     <span className="font-bold text-slate-900">Total</span>
                     <span className="font-bold text-lg text-indigo-700">
-                      {parseFloat(order.totalPrice.amount).toLocaleString("en-US", {
-                        style: "currency",
-                        currency: order.totalPrice.currencyCode,
-                      })}
+                      {parseFloat(order.totalPrice.amount).toLocaleString(
+                        "en-US",
+                        {
+                          style: "currency",
+                          currency: order.totalPrice.currencyCode,
+                        },
+                      )}
                     </span>
                   </div>
                 </div>
@@ -263,21 +335,32 @@ export default async function OrderDetailPage({
                   <div className="w-8 h-8 rounded-xl bg-indigo-100 flex items-center justify-center">
                     <MapPin className="w-4 h-4 text-indigo-600" />
                   </div>
-                  <h3 className="text-sm font-bold text-slate-900">Shipping Address</h3>
+                  <h3 className="text-sm font-bold text-slate-900">
+                    Shipping Address
+                  </h3>
                 </div>
                 {order.shippingAddress ? (
                   <div className="text-sm text-slate-600 space-y-1 bg-slate-50 rounded-2xl p-4 border border-slate-100">
-                    <p className="font-semibold text-slate-900">{customer.firstName} {customer.lastName}</p>
+                    <p className="font-semibold text-slate-900">
+                      {customer.firstName} {customer.lastName}
+                    </p>
                     <p>{order.shippingAddress.address1}</p>
-                    {order.shippingAddress.address2 && <p>{order.shippingAddress.address2}</p>}
+                    {order.shippingAddress.address2 && (
+                      <p>{order.shippingAddress.address2}</p>
+                    )}
                     <p>
-                      {order.shippingAddress.city}, {order.shippingAddress.provinceCode}{" "}
+                      {order.shippingAddress.city},{" "}
+                      {order.shippingAddress.province}{" "}
                       {order.shippingAddress.zip}
                     </p>
-                    <p className="text-indigo-600 font-medium">{order.shippingAddress.country}</p>
+                    <p className="text-indigo-600 font-medium">
+                      {order.shippingAddress.country}
+                    </p>
                   </div>
                 ) : (
-                  <p className="text-sm text-slate-400 italic">No address on file</p>
+                  <p className="text-sm text-slate-400 italic">
+                    No address on file
+                  </p>
                 )}
               </div>
 
@@ -295,7 +378,9 @@ export default async function OrderDetailPage({
                       VISA
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-slate-900">•••• 4242</p>
+                      <p className="text-sm font-medium text-slate-900">
+                        •••• 4242
+                      </p>
                       <StatusBadge status={order.financialStatus} />
                     </div>
                   </div>
