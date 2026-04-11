@@ -65,7 +65,8 @@ export function Header() {
                 {[
                   { label: "Shop", href: "/shop" },
                   { label: "Laptop Series", href: "/collections" },
-                  { label: "Our Process", href: "/pages/about" },
+                  { label: "About Us", href: "/about" },
+                  { label: "Account", href: "/account" },
                 ].map((item) => (
                   <Link
                     key={item.label}
@@ -93,7 +94,7 @@ export function Header() {
           {[
             { label: "Shop", href: "/shop" },
             { label: "Laptop Series", href: "/collections" },
-            { label: "Our Process", href: "/pages/about" },
+            { label: "About Us", href: "/about" },
           ].map((item) => (
             <Link
               key={item.label}
@@ -111,7 +112,7 @@ export function Header() {
             <Button
               variant="ghost"
               size="icon"
-              className="hidden sm:inline-flex text-slate-700 hover:text-slate-900"
+              className="inline-flex text-slate-700 hover:text-slate-900"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
