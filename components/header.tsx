@@ -2,9 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useCartStore } from "@/lib/store";
 import {
   Sheet,
@@ -16,7 +14,7 @@ import {
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const { openCart, cartId } = useCartStore();
+  const { openCart, cartId, totalQuantity } = useCartStore();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,13 +26,12 @@ export function Header() {
 
   return (
     <header
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        isScrolled
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled
           ? "bg-white/80 backdrop-blur-lg border-b border-slate-200 py-3"
           : "bg-transparent py-5"
-      }`}
+        }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Mobile Nav */}
         <div className="flex md:hidden">
           <Sheet>
@@ -58,19 +55,23 @@ export function Header() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left">
-              <SheetHeader>
+              <SheetHeader className="px-6 pt-6">
                 <SheetTitle className="text-left font-bold text-xl tracking-tight">
-                  NEXT<span className="text-indigo-600">STORE</span>
+                  Reboot<span className="text-indigo-600">X</span>
                 </SheetTitle>
               </SheetHeader>
-              <div className="flex flex-col gap-4 mt-8">
-                {["New Arrivals", "Collections", "Shop", "About"].map((item) => (
-                  <Link 
-                    key={item} 
-                    href={`/${item.toLowerCase().replace(" ", "-")}`} 
+              <div className="flex flex-col gap-4 mt-8 px-6">
+                {[
+                  { label: "Shop", href: "/shop" },
+                  { label: "Laptop Series", href: "/collections" },
+                  { label: "Our Process", href: "/pages/about" }
+                ].map((item) => (
+                  <Link
+                    key={item.label}
+                    href={item.href}
                     className="text-lg font-medium hover:text-indigo-600 transition-colors"
                   >
-                    {item}
+                    {item.label}
                   </Link>
                 ))}
               </div>
@@ -83,16 +84,15 @@ export function Header() {
           href="/"
           className="text-2xl font-bold tracking-tight text-slate-900"
         >
-          NEXT<span className="text-indigo-600">STORE</span>
+          Reboot<span className="text-indigo-600">X</span>
         </Link>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
           {[
-            { label: "New Arrivals", href: "/shop?sort=newest" },
-            { label: "Collections", href: "/collections" },
             { label: "Shop", href: "/shop" },
-            { label: "About", href: "/pages/about" }
+            { label: "Laptop Series", href: "/collections" },
+            { label: "Our Process", href: "/pages/about" }
           ].map((item) => (
             <Link
               key={item.label}
@@ -106,30 +106,6 @@ export function Header() {
 
         {/* Actions */}
         <div className="flex items-center gap-4">
-          <form action="/search" method="GET" className="hidden lg:flex items-center relative">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="absolute left-3 text-slate-400"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.3-4.3" />
-            </svg>
-            <Input
-              type="search"
-              name="q"
-              placeholder="Search..."
-              className="pl-10 bg-slate-100 border-none focus-visible:ring-indigo-500 w-48 h-10 text-sm"
-            />
-          </form>
-          
           <Link href="/account">
             <Button
               variant="ghost"
@@ -173,8 +149,10 @@ export function Header() {
               <path d="M3 6h18" />
               <path d="M16 10a4 4 0 0 1-8 0" />
             </svg>
-            {cartId && (
-              <span className="absolute top-2 right-2 h-2 w-2 bg-indigo-600 rounded-full"></span>
+            {totalQuantity > 0 && (
+              <span className="absolute -top-1 -right-1 h-5 w-5 bg-indigo-600 text-white text-[10px] font-bold flex items-center justify-center rounded-full ring-2 ring-white">
+                {totalQuantity}
+              </span>
             )}
           </Button>
         </div>

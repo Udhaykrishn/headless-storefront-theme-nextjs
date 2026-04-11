@@ -16,7 +16,7 @@ import { Loader2, ShoppingBag, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 export function CartSheet() {
-  const { isCartOpen, closeCart, cartId, setCartId } = useCartStore();
+  const { isCartOpen, closeCart, cartId, setCartData } = useCartStore();
   const [cart, setCart] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -26,10 +26,13 @@ export function CartSheet() {
       setLoading(true);
       getCartData(cartId)
         .then((data) => {
-          if (!data) setCartId(null);
-          else setCart(data);
+          if (!data) setCartData(null, 0);
+          else {
+            setCart(data);
+            setCartData(data.id, data.totalQuantity);
+          }
         })
-        .catch(() => setCartId(null))
+        .catch(() => setCartData(null, 0))
         .finally(() => setLoading(false));
     }
   }, [isCartOpen, cartId]);
@@ -40,6 +43,7 @@ export function CartSheet() {
       try {
         const updatedCart = await removeFromCart(cartId, [lineId]);
         setCart(updatedCart);
+        setCartData(updatedCart.id, updatedCart.totalQuantity);
         toast.success("Item removed");
       } catch (e) {
         toast.error("Failed to remove item");

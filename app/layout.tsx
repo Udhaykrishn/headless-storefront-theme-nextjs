@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
 import { CartSheet } from "@/components/cart-sheet";
+import { CartInitializer } from "@/components/cart-initializer";
 
 const figtree = Figtree({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -18,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Luxe eCommerce",
+  title: "RebootX eCommerce",
   description: "Premium eCommerce built with Next.js and Shopify",
 };
 
@@ -32,6 +33,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-white text-slate-900 selection:bg-indigo-500 selection:text-white`}
       >
+        <CartInitializer />
         {children}
         <CartSheet />
         <Toaster />

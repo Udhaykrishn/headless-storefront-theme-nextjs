@@ -71,6 +71,14 @@ export const GET_PRODUCTS_QUERY = `
           priceRange {
             maxVariantPrice { amount, currencyCode }
           }
+          variants(first: 1) {
+            edges {
+              node {
+                id
+                availableForSale
+              }
+            }
+          }
           images(first: 1) {
             edges { node { url, altText } }
           }
@@ -133,6 +141,14 @@ export const SEARCH_PRODUCTS_QUERY = `
           title
           handle
           priceRange { maxVariantPrice { amount, currencyCode } }
+          variants(first: 1) {
+            edges {
+              node {
+                id
+                availableForSale
+              }
+            }
+          }
           images(first: 1) { edges { node { url, altText } } }
         }
       }
@@ -222,7 +238,10 @@ export const GET_PRODUCT_BY_HANDLE_QUERY = `
       id
       handle
       title
+      description
       descriptionHtml
+      vendor
+      productType
       variants(first: 100) { 
         edges { 
           node { 
@@ -234,7 +253,7 @@ export const GET_PRODUCT_BY_HANDLE_QUERY = `
       }
       options { name, values }
       priceRange { maxVariantPrice { amount, currencyCode } }
-      images(first: 5) { edges { node { url, altText } } }
+      images(first: 10) { edges { node { url, altText } } }
     }
   }
 `;
@@ -245,6 +264,7 @@ export const CART_CREATE_MUTATION = `
       cart {
         id
         checkoutUrl
+        totalQuantity
         lines(first: 10) {
           edges {
             node {
@@ -277,6 +297,7 @@ export const CART_LINES_ADD_MUTATION = `
     cartLinesAdd(cartId: $cartId, lines: $lines) {
       cart {
         id
+        totalQuantity
         lines(first: 10) {
           edges {
             node {
@@ -306,6 +327,7 @@ export const CART_LINES_REMOVE_MUTATION = `
     cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
       cart {
         id
+        totalQuantity
         lines(first: 10) {
           edges {
             node {
@@ -335,6 +357,7 @@ export const GET_CART_QUERY = `
     cart(id: $cartId) {
       id
       checkoutUrl
+      totalQuantity
       lines(first: 100) {
         edges {
           node {
@@ -364,7 +387,10 @@ export interface ShopifyProduct {
   id: string;
   title: string;
   handle: string;
+  description?: string;
   descriptionHtml: string;
+  vendor?: string;
+  productType?: string;
   priceRange: {
     maxVariantPrice: {
       amount: string;
@@ -457,6 +483,7 @@ export const GET_CUSTOMER_QUERY = `
 export interface CartInfo {
   id: string;
   checkoutUrl: string;
+  totalQuantity: number;
   lines: {
     edges: {
       node: {

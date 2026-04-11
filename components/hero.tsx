@@ -8,12 +8,12 @@ export function Hero() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center">
           <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 tracking-tight leading-tight">
-            Next Generation <br />
-            <span className="text-indigo-600">Tech Storefront</span>
+            Refurbished <br />
+            <span className="text-indigo-600">Laptops</span>
           </h1>
           
           <p className="mt-6 text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            Premium products curated for performance and reliability. Experience the future of technology with our latest collection.
+            Expertly restored, rigorously tested, and guaranteed to perform. Get the professional gear you need at a fraction of the cost.
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row gap-4 items-center justify-center">

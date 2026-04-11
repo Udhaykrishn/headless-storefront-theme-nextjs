@@ -14,13 +14,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { handle } = await params;
   try {
     const page = await getPage(handle);
-    if (!page) return { title: "Page | LUXE" };
+    if (!page) return { title: "Page | RebootX" };
     return {
-      title: `${page.seo?.title || page.title} | LUXE`,
-      description: page.seo?.description || `Read about ${page.title} on LUXE.`,
+      title: `${page.seo?.title || page.title} | RebootX`,
+      description: page.seo?.description || `Read about ${page.title} on RebootX.`,
     };
   } catch {
-    return { title: "Page | LUXE" };
+    return { title: "Page | RebootX" };
   }
 }
 
@@ -39,8 +39,8 @@ export default async function StaticPage({ params }: Props) {
         <h1 className="text-4xl md:text-5xl font-black tracking-tighter mb-12 text-center">
           {page.title}
         </h1>
-        
-        <div 
+
+        <div
           className="prose prose-lg max-w-none 
             prose-headings:font-black prose-headings:tracking-tighter
             prose-p:text-gray-600 prose-p:leading-relaxed

@@ -1,9 +1,15 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
-import { Plus, ArrowRight } from "lucide-react";
+import { ArrowRight, Grid2X2, Square } from "lucide-react";
+import { ProductCard } from "./product-card";
+import { Button } from "./ui/button";
 
 // biome-ignore lint/suspicious/noExplicitAny: Passing any since shopify node type is extensive
 export function FeaturedProducts({ products }: { products: any[] }) {
+  const [mobileCols, setMobileCols] = useState<1 | 2>(2);
+
   if (!products || products.length === 0) {
     return null;
   }
@@ -11,73 +17,50 @@ export function FeaturedProducts({ products }: { products: any[] }) {
   return (
     <section className="py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
           <div className="max-w-xl">
             <h2 className="text-3xl font-bold text-slate-900 tracking-tight">
-              Featured Products
+              Top Refurbished Deals
             </h2>
             <p className="mt-4 text-slate-600">
-              Discover our most popular tech essentials, selected for quality and performance.
+              Our highest-rated laptops, restored to factory standards and ready for work.
             </p>
           </div>
-          <Link href="/shop" className="group flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">
-            View All Products
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </Link>
+          
+          <div className="flex items-center justify-between w-full md:w-auto gap-6 mt-4 md:mt-0">
+            {/* Mobile-only column toggle */}
+            <div className="flex md:hidden items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setMobileCols(1)}
+                className={`h-9 w-9 p-0 rounded-lg transition-all ${mobileCols === 1 ? "bg-white shadow-sm text-indigo-600" : "text-slate-500 hover:text-slate-900"}`}
+                title="Single product per row"
+              >
+                <Square className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setMobileCols(2)}
+                className={`h-9 w-9 p-0 rounded-lg transition-all ${mobileCols === 2 ? "bg-white shadow-sm text-indigo-600" : "text-slate-500 hover:text-slate-900"}`}
+                title="Two products per row"
+              >
+                <Grid2X2 className="w-4 h-4" />
+              </Button>
+            </div>
+
+            <Link href="/shop" className="group flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors ml-auto md:ml-0">
+              View All Products
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {products.map((product) => {
-            const price = parseFloat(
-              product.priceRange?.maxVariantPrice?.amount || "0",
-            );
-            const currencyCode =
-              product.priceRange?.maxVariantPrice?.currencyCode || "USD";
-            const imageUrl = product.images?.edges[0]?.node?.url;
-            const altText =
-              product.images?.edges[0]?.node?.altText || product.title;
-
-            return (
-              <div
-                key={product.id}
-                className="group flex flex-col h-full bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all duration-300"
-              >
-                <Link href={`/products/${product.handle}`} className="block relative aspect-square overflow-hidden bg-slate-50">
-                  {imageUrl ? (
-                    <Image
-                      src={imageUrl}
-                      alt={altText}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-400 text-xs">
-                      No Image Available
-                    </div>
-                  )}
-                </Link>
-
-                <div className="p-6 flex flex-col grow">
-                  <h3 className="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-2 leading-snug">
-                    {product.title}
-                  </h3>
-                  
-                  <div className="mt-4 flex items-center justify-between">
-                    <p className="text-xl font-bold text-slate-900">
-                      {new Intl.NumberFormat("en-US", {
-                        style: "currency",
-                        currency: currencyCode,
-                      }).format(price)}
-                    </p>
-                    <div className="p-2 rounded-lg bg-slate-100 text-slate-900 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                       <Plus className="w-5 h-5" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+        <div className={`grid gap-4 sm:gap-8 ${mobileCols === 1 ? "grid-cols-1" : "grid-cols-2"} sm:grid-cols-2 lg:grid-cols-4`}>
+          {products.map((product) => (
+            <ProductCard key={product.id} product={product} view="grid" />
+          ))}
         </div>
       </div>
     </section>
