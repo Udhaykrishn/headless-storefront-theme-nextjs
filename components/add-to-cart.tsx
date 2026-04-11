@@ -1,11 +1,11 @@
 "use client";
 
+import { Check, Loader2, ShoppingCart } from "lucide-react";
 import { useState } from "react";
-import { useCartStore } from "@/lib/store";
-import { addToCart } from "@/app/actions/cart";
 import { toast } from "sonner";
-import { Loader2, ShoppingCart, Check } from "lucide-react";
-import { ShopifyProduct } from "@/lib/shopify";
+import { addToCart } from "@/app/actions/cart";
+import type { ShopifyProduct } from "@/lib/shopify";
+import { useCartStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
 export function AddToCart({ product }: { product: ShopifyProduct }) {
@@ -55,7 +55,12 @@ export function AddToCart({ product }: { product: ShopifyProduct }) {
 
   // Filter out "Title" default option (Shopify default for products without variants)
   const meaningfulOptions = product.options.filter(
-    (opt) => !(opt.name === "Title" && opt.values.length === 1 && opt.values[0] === "Default Title")
+    (opt) =>
+      !(
+        opt.name === "Title" &&
+        opt.values.length === 1 &&
+        opt.values[0] === "Default Title"
+      ),
   );
 
   const isOutOfStock = selectedVariant && !selectedVariant.availableForSale;
@@ -92,7 +97,7 @@ export function AddToCart({ product }: { product: ShopifyProduct }) {
                         "px-4 py-2 text-sm font-medium rounded-lg border-2 transition-all duration-150",
                         isSelected
                           ? "border-indigo-600 bg-indigo-600 text-white shadow-sm shadow-indigo-200"
-                          : "border-slate-200 bg-white text-slate-700 hover:border-indigo-300 hover:text-indigo-600"
+                          : "border-slate-200 bg-white text-slate-700 hover:border-indigo-300 hover:text-indigo-600",
                       )}
                     >
                       {value}
@@ -115,8 +120,8 @@ export function AddToCart({ product }: { product: ShopifyProduct }) {
           isOutOfStock
             ? "bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200"
             : justAdded
-            ? "bg-emerald-600 text-white shadow-lg shadow-emerald-200"
-            : "bg-indigo-600 text-white hover:bg-indigo-700 active:scale-[0.98] shadow-lg shadow-indigo-200 disabled:opacity-60 disabled:cursor-not-allowed"
+              ? "bg-emerald-600 text-white shadow-lg shadow-emerald-200"
+              : "bg-indigo-600 text-white hover:bg-indigo-700 active:scale-[0.98] shadow-lg shadow-indigo-200 disabled:opacity-60 disabled:cursor-not-allowed",
         )}
       >
         {isPending ? (

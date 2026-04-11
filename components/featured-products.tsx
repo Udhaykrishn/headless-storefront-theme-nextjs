@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
 import { ArrowRight, Grid2X2, Square } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 import { ProductCard } from "./product-card";
 import { Button } from "./ui/button";
 
@@ -23,10 +23,11 @@ export function FeaturedProducts({ products }: { products: any[] }) {
               Top Refurbished Deals
             </h2>
             <p className="mt-4 text-slate-600">
-              Our highest-rated laptops, restored to factory standards and ready for work.
+              Our highest-rated laptops, restored to factory standards and ready
+              for work.
             </p>
           </div>
-          
+
           <div className="flex items-center justify-between w-full md:w-auto gap-6 mt-4 md:mt-0">
             {/* Mobile-only column toggle */}
             <div className="flex md:hidden items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
@@ -50,14 +51,19 @@ export function FeaturedProducts({ products }: { products: any[] }) {
               </Button>
             </div>
 
-            <Link href="/shop" className="group flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors ml-auto md:ml-0">
+            <Link
+              href="/shop"
+              className="group flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors ml-auto md:ml-0"
+            >
               View All Products
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
         </div>
 
-        <div className={`grid gap-4 sm:gap-8 ${mobileCols === 1 ? "grid-cols-1" : "grid-cols-2"} sm:grid-cols-2 lg:grid-cols-4`}>
+        <div
+          className={`grid gap-4 sm:gap-8 ${mobileCols === 1 ? "grid-cols-1" : "grid-cols-2"} sm:grid-cols-2 lg:grid-cols-4`}
+        >
           {products.map((product) => (
             <ProductCard key={product.id} product={product} view="grid" />
           ))}

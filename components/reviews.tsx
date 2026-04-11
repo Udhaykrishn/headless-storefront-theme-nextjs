@@ -43,7 +43,8 @@ export function Reviews() {
             Customer Reviews
           </h2>
           <p className="mt-4 text-slate-600">
-            See why thousands of professionals trust RebootX for their high-performance computing needs.
+            See why thousands of professionals trust RebootX for their
+            high-performance computing needs.
           </p>
         </div>
 
@@ -61,7 +62,7 @@ export function Reviews() {
                   />
                 ))}
               </div>
-              
+
               <blockquote className="flex-grow">
                 <p className="text-lg text-slate-700 leading-relaxed italic">
                   "{review.content}"
@@ -71,11 +72,15 @@ export function Reviews() {
               <div className="mt-8 flex items-center gap-4 pt-6 border-t border-slate-100">
                 <Avatar className="h-12 w-12 border border-slate-200">
                   <AvatarImage src={review.avatar} alt={review.name} />
-                  <AvatarFallback className="bg-slate-100 text-slate-600 font-semibold">{review.name.charAt(0)}</AvatarFallback>
+                  <AvatarFallback className="bg-slate-100 text-slate-600 font-semibold">
+                    {review.name.charAt(0)}
+                  </AvatarFallback>
                 </Avatar>
                 <div>
                   <div className="font-bold text-slate-900">{review.name}</div>
-                  <div className="text-xs text-slate-500 font-medium">{review.handle}</div>
+                  <div className="text-xs text-slate-500 font-medium">
+                    {review.handle}
+                  </div>
                 </div>
               </div>
             </div>

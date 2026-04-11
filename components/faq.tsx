@@ -30,7 +30,7 @@ const FAQS = [
   },
 ];
 
-import { Mail, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 
 export function Faq() {
   return (
@@ -41,9 +41,11 @@ export function Faq() {
             Frequently Asked Questions
           </h2>
           <p className="mt-4 text-slate-600 leading-relaxed">
-            Everything you need to know about our products, shipping, and returns. Can't find the answer you're looking for? Reach out to our team.
+            Everything you need to know about our products, shipping, and
+            returns. Can't find the answer you're looking for? Reach out to our
+            team.
           </p>
-          
+
           <div className="mt-8">
             <a
               href="mailto:support@nextstore.com"
@@ -55,12 +57,8 @@ export function Faq() {
         </div>
 
         <div className="lg:w-2/3">
-          <Accordion
-            type="single"
-            collapsible
-            className="w-full space-y-4"
-          >
-            {FAQS.map((faq, index) => (
+          <Accordion type="single" collapsible className="w-full space-y-4">
+            {FAQS.map((faq, _index) => (
               <AccordionItem
                 key={faq.question}
                 value={faq.question}

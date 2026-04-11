@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useCartStore } from "@/lib/store";
 import {
   Sheet,
   SheetContent,
@@ -11,6 +10,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useCartStore } from "@/lib/store";
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -26,10 +26,11 @@ export function Header() {
 
   return (
     <header
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+        isScrolled
           ? "bg-white/80 backdrop-blur-lg border-b border-slate-200 py-3"
           : "bg-transparent py-5"
-        }`}
+      }`}
     >
       <div className="max-w-7xl mx-auto px-6 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Mobile Nav */}
@@ -64,7 +65,7 @@ export function Header() {
                 {[
                   { label: "Shop", href: "/shop" },
                   { label: "Laptop Series", href: "/collections" },
-                  { label: "Our Process", href: "/pages/about" }
+                  { label: "Our Process", href: "/pages/about" },
                 ].map((item) => (
                   <Link
                     key={item.label}
@@ -92,7 +93,7 @@ export function Header() {
           {[
             { label: "Shop", href: "/shop" },
             { label: "Laptop Series", href: "/collections" },
-            { label: "Our Process", href: "/pages/about" }
+            { label: "Our Process", href: "/pages/about" },
           ].map((item) => (
             <Link
               key={item.label}

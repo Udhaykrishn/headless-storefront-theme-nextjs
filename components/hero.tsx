@@ -11,9 +11,10 @@ export function Hero() {
             Refurbished <br />
             <span className="text-indigo-600">Laptops</span>
           </h1>
-          
+
           <p className="mt-6 text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            Expertly restored, rigorously tested, and guaranteed to perform. Get the professional gear you need at a fraction of the cost.
+            Expertly restored, rigorously tested, and guaranteed to perform. Get
+            the professional gear you need at a fraction of the cost.
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row gap-4 items-center justify-center">

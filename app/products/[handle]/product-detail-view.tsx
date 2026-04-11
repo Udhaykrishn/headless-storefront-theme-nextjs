@@ -1,23 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import {
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  Package,
+  RotateCcw,
+  ShieldCheck,
+  Star,
+  ThumbsUp,
+  Truck,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { AddToCart } from "@/components/add-to-cart";
-import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { Header } from "@/components/header";
 import type { ShopifyProduct } from "@/lib/shopify";
-import {
-  ChevronRight,
-  Star,
-  Truck,
-  ShieldCheck,
-  RotateCcw,
-  CheckCircle2,
-  ThumbsUp,
-  Package,
-  ChevronLeft,
-} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const REVIEWS = [
@@ -57,7 +57,7 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
   }).format(parseFloat(price.amount));
 
   const isAvailable = product.variants.edges.some(
-    (e) => e.node.availableForSale
+    (e) => e.node.availableForSale,
   );
 
   return (
@@ -68,10 +68,7 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
         {/* ── Breadcrumb ── */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <nav className="flex items-center gap-2 text-xs text-slate-500">
-            <Link
-              href="/"
-              className="hover:text-indigo-600 transition-colors"
-            >
+            <Link href="/" className="hover:text-indigo-600 transition-colors">
               Home
             </Link>
             <ChevronRight className="w-3 h-3" />
@@ -115,7 +112,7 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
                     <button
                       onClick={() =>
                         setActiveIndex(
-                          (i) => (i - 1 + allImages.length) % allImages.length
+                          (i) => (i - 1 + allImages.length) % allImages.length,
                         )
                       }
                       className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white shadow-md border border-slate-200 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-indigo-50 hover:border-indigo-200"
@@ -148,13 +145,13 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
                 <div className="flex gap-3 overflow-x-auto pb-1">
                   {allImages.map((img, i) => (
                     <button
-                      key={i}
+                      key={img.url}
                       onClick={() => setActiveIndex(i)}
                       className={cn(
                         "relative flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all duration-200",
                         i === activeIndex
                           ? "border-indigo-600 shadow-md shadow-indigo-100"
-                          : "border-slate-200 hover:border-slate-400"
+                          : "border-slate-200 hover:border-slate-400",
                       )}
                       aria-label={`View image ${i + 1}`}
                     >
@@ -227,7 +224,7 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
                         "w-4 h-4",
                         s <= 4
                           ? "fill-amber-400 text-amber-400"
-                          : "fill-amber-200 text-amber-200"
+                          : "fill-amber-200 text-amber-200",
                       )}
                     />
                   ))}
@@ -318,7 +315,7 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
                     "flex-shrink-0 py-4 px-6 text-sm font-medium border-b-2 transition-colors",
                     activeTab === tab.key
                       ? "border-indigo-600 text-indigo-600"
-                      : "border-transparent text-slate-500 hover:text-slate-800"
+                      : "border-transparent text-slate-500 hover:text-slate-800",
                   )}
                 >
                   {tab.label}
@@ -451,9 +448,9 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {REVIEWS.map((review, i) => (
+              {REVIEWS.map((review) => (
                 <div
-                  key={i}
+                  key={review.name}
                   className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 flex flex-col gap-4 hover:shadow-md transition-shadow"
                 >
                   <div className="flex items-start justify-between">
@@ -473,7 +470,7 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
                             "w-3.5 h-3.5",
                             s <= review.rating
                               ? "fill-amber-400 text-amber-400"
-                              : "fill-slate-200 text-slate-200"
+                              : "fill-slate-200 text-slate-200",
                           )}
                         />
                       ))}

@@ -14,9 +14,9 @@ export const shopifyClient = new GraphQLClient(endpoint, {
 
 export const customerAccountClient = (accessToken: string) => {
   // Based on your specific shop discovery:
-  const shopId = "96111690044"; 
+  const shopId = "96111690044";
   const url = `https://shopify.com/${shopId}/account/customer/api/2026-04/graphql`;
-  
+
   return new GraphQLClient(url, {
     headers: {
       "Content-Type": "application/json",
@@ -322,6 +322,36 @@ export const CART_LINES_ADD_MUTATION = `
   }
 `;
 
+export const CART_LINES_UPDATE_MUTATION = `
+  mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
+    cartLinesUpdate(cartId: $cartId, lines: $lines) {
+      cart {
+        id
+        totalQuantity
+        lines(first: 100) {
+          edges {
+            node {
+              id
+              quantity
+              merchandise {
+                ... on ProductVariant {
+                  id, title, product { title, handle },
+                  price { amount, currencyCode }, image { url, altText }
+                }
+              }
+            }
+          }
+        }
+        cost {
+          subtotalAmount { amount, currencyCode }
+          totalAmount { amount, currencyCode }
+        }
+      }
+      userErrors { field, message }
+    }
+  }
+`;
+
 export const CART_LINES_REMOVE_MUTATION = `
   mutation cartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {
     cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
@@ -532,7 +562,7 @@ export async function getProducts({
 } = {}) {
   // Setup pagination variables limit 20. If neither first nor last is provided, default to first 20.
   let f = first;
-  let l = last;
+  const l = last;
   if (!first && !last) {
     f = 20;
   }

@@ -1,20 +1,32 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
-import { updateCustomerProfile } from "@/app/actions/customer";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useActionState, useEffect } from "react";
+import { toast } from "sonner";
+import { updateCustomerProfile } from "@/app/actions/customer";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
-export default function ProfileForm({ customer }: { customer: any }) {
+export default function ProfileForm({
+  customer,
+}: {
+  customer: {
+    firstName: string;
+    lastName: string;
+    email?: string;
+    phone?: string;
+  };
+}) {
   const router = useRouter();
-  const [state, action, isPending] = useActionState(updateCustomerProfile, null as any);
+  const [state, action, isPending] = useActionState(
+    updateCustomerProfile,
+    null as { success?: boolean; error?: string } | null,
+  );
 
   useEffect(() => {
     if (state?.success) {
-      toast.success("Identity profile synchronized successfully");
+      toast.success("Profile updated successfully");
       router.refresh();
     }
     if (state?.error) {
@@ -23,72 +35,98 @@ export default function ProfileForm({ customer }: { customer: any }) {
   }, [state, router]);
 
   return (
-    <form action={action} className="space-y-12 max-w-2xl group/form relative">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-        <div className="space-y-4">
-          <label className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 ml-4 italic block">Primary Name</label>
-          <div className="relative group/input">
-            <Input 
-              name="firstName" 
-              defaultValue={customer.firstName} 
-              placeholder="First Name" 
-              required 
-              className="h-20 rounded-[1.5rem] bg-white/40 backdrop-blur-md border-2 border-white/60 focus:bg-white focus:border-indigo-600 focus:shadow-[0_20px_40px_-10px_rgba(79,70,229,0.3)] transition-all px-8 text-sm font-bold placeholder:text-slate-300 placeholder:italic"
-            />
-          </div>
+    <form action={action} className="space-y-5">
+      {/* Name row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="space-y-1.5">
+          <label
+            htmlFor="firstName"
+            className="text-xs font-semibold text-slate-600 block"
+          >
+            First Name <span className="text-red-400">*</span>
+          </label>
+          <Input
+            id="firstName"
+            name="firstName"
+            defaultValue={customer.firstName}
+            placeholder="John"
+            required
+            className="h-11 rounded-xl bg-white border-slate-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm px-4 transition-all"
+          />
         </div>
-        <div className="space-y-4">
-          <label className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 ml-4 italic block">Surname Archive</label>
-          <div className="relative group/input">
-            <Input 
-              name="lastName" 
-              defaultValue={customer.lastName} 
-              placeholder="Last Name" 
-              required 
-              className="h-20 rounded-[1.5rem] bg-white/40 backdrop-blur-md border-2 border-white/60 focus:bg-white focus:border-indigo-600 focus:shadow-[0_20px_40px_-10px_rgba(79,70,229,0.3)] transition-all px-8 text-sm font-bold placeholder:text-slate-300 placeholder:italic"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <label className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 ml-4 italic block">Communication Protocol (Email)</label>
-        <div className="relative group/input">
-          <Input 
-            name="email" 
-            type="email" 
-            defaultValue={customer.email} 
-            placeholder="Email Address" 
-            required 
-            className="h-20 rounded-[2rem] bg-white/40 backdrop-blur-md border-2 border-white/60 focus:bg-white focus:border-indigo-600 focus:shadow-[0_20px_40px_-10px_rgba(79,70,229,0.3)] transition-all px-10 text-sm font-bold placeholder:text-slate-300 placeholder:italic"
+        <div className="space-y-1.5">
+          <label
+            htmlFor="lastName"
+            className="text-xs font-semibold text-slate-600 block"
+          >
+            Last Name <span className="text-red-400">*</span>
+          </label>
+          <Input
+            id="lastName"
+            name="lastName"
+            defaultValue={customer.lastName}
+            placeholder="Doe"
+            required
+            className="h-11 rounded-xl bg-white border-slate-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm px-4 transition-all"
           />
         </div>
       </div>
 
-      <div className="space-y-4">
-        <label className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 ml-4 italic block">Neural Link (Phone Optional)</label>
-        <div className="relative group/input">
-          <Input 
-            name="phone" 
-            type="tel" 
-            defaultValue={customer.phone || ""} 
-            placeholder="+1 234 567 890" 
-            className="h-20 rounded-[2rem] bg-white/40 backdrop-blur-md border-2 border-white/60 focus:bg-white focus:border-indigo-600 focus:shadow-[0_20px_40px_-10px_rgba(79,70,229,0.3)] transition-all px-10 text-sm font-bold placeholder:text-slate-300 placeholder:italic"
-          />
-        </div>
+      {/* Email */}
+      <div className="space-y-1.5">
+        <label
+          htmlFor="email"
+          className="text-xs font-semibold text-slate-600 block"
+        >
+          Email Address <span className="text-red-400">*</span>
+        </label>
+        <Input
+          id="email"
+          name="email"
+          type="email"
+          defaultValue={customer.email}
+          placeholder="john@example.com"
+          required
+          className="h-11 rounded-xl bg-white border-slate-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm px-4 transition-all"
+        />
       </div>
 
-      <div className="pt-10">
-        <Button 
-          type="submit" 
-          size="lg" 
-          className="w-full md:w-auto px-16 h-24 text-[11px] font-black uppercase tracking-[0.5em] rounded-[2rem] bg-indigo-950 hover:bg-black transition-all shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] flex items-center justify-center gap-6 skew-x-[-12deg]"
+      {/* Phone */}
+      <div className="space-y-1.5">
+        <label
+          htmlFor="phone"
+          className="text-xs font-semibold text-slate-600 block"
+        >
+          Phone Number{" "}
+          <span className="text-slate-400 font-normal">(Optional)</span>
+        </label>
+        <Input
+          id="phone"
+          name="phone"
+          type="tel"
+          defaultValue={customer.phone || ""}
+          placeholder="+1 234 567 890"
+          className="h-11 rounded-xl bg-white border-slate-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm px-4 transition-all"
+        />
+        <p className="text-xs text-slate-400">
+          Used for order delivery notifications
+        </p>
+      </div>
+
+      {/* Submit */}
+      <div className="pt-2">
+        <Button
+          type="submit"
+          size="default"
+          className="gap-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 shadow-md shadow-indigo-500/30 transition-all"
           disabled={isPending}
         >
-          <span className="skew-x-[12deg] flex items-center gap-6">
-            {isPending && <Loader2 className="h-6 w-6 animate-spin" />}
-            Commit Configuration
-          </span>
+          {isPending ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Save className="h-4 w-4" />
+          )}
+          {isPending ? "Saving..." : "Save Changes"}
         </Button>
       </div>
     </form>

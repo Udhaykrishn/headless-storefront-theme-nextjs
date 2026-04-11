@@ -1,5 +1,3 @@
-import { cookies } from "next/headers";
-
 const CLIENT_ID = process.env.SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID;
 const SHOP_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
 const REDIRECT_URI = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/auth/callback`;
@@ -10,12 +8,12 @@ export async function getAuthConfiguration() {
     `https://${SHOP_DOMAIN}/.well-known/openid-configuration`,
     `https://${SHOP_DOMAIN}/auth/customer/.well-known/openid-configuration`,
   ];
-  
+
   for (const url of discoveryUrls) {
     try {
       const response = await fetch(url);
       if (response.ok) return await response.json();
-    } catch (e) {
+    } catch (_e) {
       console.warn(`Discovery failed on ${url}, trying next...`);
     }
   }
@@ -24,17 +22,19 @@ export async function getAuthConfiguration() {
   try {
     const { getShopId } = await import("./shopify");
     const shopId = await getShopId();
-    
+
     if (shopId) {
       const shopIdUrl = `https://shopify.com/${shopId}/auth/customer/.well-known/openid-configuration`;
       const response = await fetch(shopIdUrl);
       if (response.ok) return await response.json();
     }
-  } catch (error) {
+  } catch (_error) {
     console.error("Shop ID fallback discovery failed");
   }
-    
-  throw new Error(`OIDC Discovery failed. Please ensure "New Customer Accounts" is enabled in Shopify Admin > Settings > Customer Accounts.`);
+
+  throw new Error(
+    `OIDC Discovery failed. Please ensure "New Customer Accounts" is enabled in Shopify Admin > Settings > Customer Accounts.`,
+  );
 }
 
 export async function generateCodeVerifier() {

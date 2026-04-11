@@ -1,19 +1,12 @@
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
-import { getCollection } from "@/lib/shopify";
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { Metadata } from "next";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Footer } from "@/components/footer";
+import { Header } from "@/components/header";
 import { ProductCard } from "@/components/product-card";
+import { Button } from "@/components/ui/button";
+import { getCollection } from "@/lib/shopify";
 
 export const revalidate = 60;
 
@@ -29,7 +22,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     if (!collection) return { title: "Collection | RebootX" };
     return {
       title: `${collection.title} | RebootX`,
-      description: collection.description || `Shop our ${collection.title} collection.`,
+      description:
+        collection.description || `Shop our ${collection.title} collection.`,
     };
   } catch {
     return { title: "Collection | RebootX" };
@@ -46,24 +40,36 @@ export default async function CollectionPage({ params, searchParams }: Props) {
   let sortKey = "BEST_SELLING";
   let reverse = false;
 
-  if (sort === "newest") { sortKey = "CREATED"; reverse = true; }
-  else if (sort === "price-asc") { sortKey = "PRICE"; reverse = false; }
-  else if (sort === "price-desc") { sortKey = "PRICE"; reverse = true; }
-  else if (sort === "title-asc") { sortKey = "TITLE"; reverse = false; }
-
-  let collection;
-  try {
-    collection = await getCollection({ handle, sortKey, reverse, after });
-  } catch {
-    notFound();
+  if (sort === "newest") {
+    sortKey = "CREATED";
+    reverse = true;
+  } else if (sort === "price-asc") {
+    sortKey = "PRICE";
+    reverse = false;
+  } else if (sort === "price-desc") {
+    sortKey = "PRICE";
+    reverse = true;
+  } else if (sort === "title-asc") {
+    sortKey = "TITLE";
+    reverse = false;
   }
+
+  const collection = await getCollection({
+    handle,
+    sortKey,
+    reverse,
+    after,
+  }).catch(() => null);
 
   if (!collection) notFound();
 
-  const products = collection.products.edges.map((e) => ({ ...e.node, cursor: e.cursor }));
+  const products = collection.products.edges.map((e) => ({
+    ...e.node,
+    cursor: e.cursor,
+  }));
   const pageInfo = collection.products.pageInfo;
 
-  const sortParams = sort ? `&sort=${sort}` : "";
+  const _sortParams = sort ? `&sort=${sort}` : "";
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col text-gray-900">
@@ -88,9 +94,16 @@ export default async function CollectionPage({ params, searchParams }: Props) {
           <div className="relative z-10 h-full flex flex-col justify-end max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
             {/* Breadcrumbs */}
             <nav className="flex items-center gap-2 text-sm text-white/60 mb-3">
-              <Link href="/" className="hover:text-white transition-colors">Home</Link>
+              <Link href="/" className="hover:text-white transition-colors">
+                Home
+              </Link>
               <span>/</span>
-              <Link href="/collections" className="hover:text-white transition-colors">Collections</Link>
+              <Link
+                href="/collections"
+                className="hover:text-white transition-colors"
+              >
+                Collections
+              </Link>
               <span>/</span>
               <span className="text-white">{collection.title}</span>
             </nav>
@@ -98,7 +111,9 @@ export default async function CollectionPage({ params, searchParams }: Props) {
               {collection.title}
             </h1>
             {collection.description && (
-              <p className="text-white/70 mt-2 max-w-xl text-sm">{collection.description}</p>
+              <p className="text-white/70 mt-2 max-w-xl text-sm">
+                {collection.description}
+              </p>
             )}
           </div>
         </div>
@@ -111,7 +126,9 @@ export default async function CollectionPage({ params, searchParams }: Props) {
               {products.length} product{products.length !== 1 ? "s" : ""}
             </p>
             <div className="flex items-center gap-3">
-              <span className="text-sm text-gray-600 hidden sm:block">Sort by:</span>
+              <span className="text-sm text-gray-600 hidden sm:block">
+                Sort by:
+              </span>
               <div className="flex gap-2 flex-wrap">
                 {[
                   { label: "Best Selling", value: "" },
@@ -122,10 +139,11 @@ export default async function CollectionPage({ params, searchParams }: Props) {
                   <Link
                     key={opt.value}
                     href={`/collections/${handle}?sort=${opt.value}`}
-                    className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${sort === opt.value
+                    className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                      sort === opt.value
                         ? "bg-black text-white border-black"
                         : "border-gray-300 text-gray-600 hover:border-gray-900 hover:text-gray-900"
-                      }`}
+                    }`}
                   >
                     {opt.label}
                   </Link>
@@ -136,9 +154,13 @@ export default async function CollectionPage({ params, searchParams }: Props) {
 
           {products.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-32 text-gray-400">
-              <p className="text-xl font-medium">No products in this collection yet</p>
+              <p className="text-xl font-medium">
+                No products in this collection yet
+              </p>
               <Link href="/shop">
-                <Button variant="outline" className="mt-6">Browse all products</Button>
+                <Button variant="outline" className="mt-6">
+                  Browse all products
+                </Button>
               </Link>
             </div>
           ) : (
@@ -152,12 +174,16 @@ export default async function CollectionPage({ params, searchParams }: Props) {
               {/* Pagination */}
               <div className="mt-12 flex justify-center gap-4">
                 {pageInfo.hasPreviousPage && (
-                  <Link href={`/collections/${handle}?${new URLSearchParams({ ...(sort && { sort }), before: pageInfo.startCursor }).toString()}`}>
+                  <Link
+                    href={`/collections/${handle}?${new URLSearchParams({ ...(sort && { sort }), before: pageInfo.startCursor }).toString()}`}
+                  >
                     <Button variant="outline">← Previous</Button>
                   </Link>
                 )}
                 {pageInfo.hasNextPage && (
-                  <Link href={`/collections/${handle}?${new URLSearchParams({ ...(sort && { sort }), after: pageInfo.endCursor }).toString()}`}>
+                  <Link
+                    href={`/collections/${handle}?${new URLSearchParams({ ...(sort && { sort }), after: pageInfo.endCursor }).toString()}`}
+                  >
                     <Button variant="outline">Next →</Button>
                   </Link>
                 )}

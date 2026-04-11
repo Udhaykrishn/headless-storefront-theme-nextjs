@@ -1,16 +1,42 @@
 "use server";
 
+import { cookies } from "next/headers";
 import {
-  shopifyClient,
   CUSTOMER_ACCESS_TOKEN_CREATE_MUTATION,
   CUSTOMER_CREATE_MUTATION,
-  GET_CUSTOMER_QUERY,
+  shopifyClient,
 } from "@/lib/shopify";
-import { cookies } from "next/headers";
 
 const TOKEN_KEY = "shopify_customer_access_token";
 
-export async function createCustomer(prevState: any, formData: FormData) {
+interface UserError {
+  message: string;
+  field?: string[];
+}
+
+interface ShopifyCustomer {
+  id: string;
+  firstName: string;
+  lastName: string;
+  emailAddress?: { emailAddress: string };
+  phoneNumber?: { phoneNumber: string };
+  email?: string;
+  phone?: string;
+  orders: {
+    edges: Array<{
+      node: {
+        id: string;
+        name: string;
+        processedAt: string;
+        financialStatus: string;
+        fulfillmentStatus: string;
+        totalPrice: { amount: string; currencyCode: string };
+      };
+    }>;
+  };
+}
+
+export async function createCustomer(prevState: unknown, formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const firstName = formData.get("firstName") as string;
@@ -19,7 +45,7 @@ export async function createCustomer(prevState: any, formData: FormData) {
   const input = { email, password, firstName, lastName };
 
   const data = await shopifyClient.request<{
-    customerCreate: { customer: any; customerUserErrors: any[] };
+    customerCreate: { customer: unknown; customerUserErrors: UserError[] };
   }>(CUSTOMER_CREATE_MUTATION, { input });
 
   if (data.customerCreate.customerUserErrors.length > 0) {
@@ -30,7 +56,7 @@ export async function createCustomer(prevState: any, formData: FormData) {
   return loginCustomer(prevState, formData);
 }
 
-export async function loginCustomer(prevState: any, formData: FormData) {
+export async function loginCustomer(_prevState: unknown, formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
@@ -39,7 +65,7 @@ export async function loginCustomer(prevState: any, formData: FormData) {
   const data = await shopifyClient.request<{
     customerAccessTokenCreate: {
       customerAccessToken: { accessToken: string; expiresAt: string };
-      customerUserErrors: any[];
+      customerUserErrors: UserError[];
     };
   }>(CUSTOMER_ACCESS_TOKEN_CREATE_MUTATION, { input });
 
@@ -76,11 +102,13 @@ export async function getCustomer() {
   if (!token?.value) return null;
 
   try {
-    const { customerAccountClient, GET_CUSTOMER_ACCOUNT_QUERY } = await import("@/lib/shopify");
-    const data = await customerAccountClient(token.value).request<{ customer: any }>(
-      GET_CUSTOMER_ACCOUNT_QUERY
+    const { customerAccountClient, GET_CUSTOMER_ACCOUNT_QUERY } = await import(
+      "@/lib/shopify"
     );
-    
+    const data = await customerAccountClient(token.value).request<{
+      customer: ShopifyCustomer;
+    }>(GET_CUSTOMER_ACCOUNT_QUERY);
+
     // Normalize the data (Customer Account API uses emailAddress/phoneNumber objects)
     const customer = data.customer;
     return {
@@ -89,7 +117,7 @@ export async function getCustomer() {
       phone: customer.phoneNumber?.phoneNumber,
       orders: {
         ...customer.orders,
-        edges: customer.orders?.edges.map((edge: any) => ({
+        edges: customer.orders?.edges.map((edge) => ({
           ...edge,
           node: {
             ...edge.node,
@@ -110,7 +138,10 @@ export async function getCustomerToken() {
   return tokenCookie?.value ?? null;
 }
 
-export async function updateCustomerProfile(prevState: any, formData: FormData) {
+export async function updateCustomerProfile(
+  _prevState: unknown,
+  formData: FormData,
+) {
   const cookieStore = await cookies();
   const tokenCookie = cookieStore.get(TOKEN_KEY);
   if (!tokenCookie?.value) return { error: "Not authenticated" };
@@ -121,7 +152,7 @@ export async function updateCustomerProfile(prevState: any, formData: FormData) 
   };
 
   const { customerAccountClient } = await import("@/lib/shopify");
-  
+
   const mutation = `
     mutation customerUpdate($input: CustomerUpdateInput!) {
       customerUpdate(input: $input) {
@@ -133,7 +164,7 @@ export async function updateCustomerProfile(prevState: any, formData: FormData) 
 
   try {
     const data = await customerAccountClient(tokenCookie.value).request<{
-      customerUpdate: { customer: any; userErrors: any[] };
+      customerUpdate: { customer: { id: string }; userErrors: UserError[] };
     }>(mutation, { input });
 
     if (data.customerUpdate.userErrors.length > 0) {
@@ -176,6 +207,7 @@ export async function getOrder(orderId: string) {
                       title
                       price { amount, currencyCode }
                       image { url, altText }
+                      product { handle }
                     }
                   }
                 }
@@ -191,14 +223,13 @@ export async function getOrder(orderId: string) {
   `;
 
   try {
-    const data = await customerAccountClient(tokenCookie.value).request<{ customer: any }>(
-      query,
-      { id: orderId } 
-    );
-    
+    const data = await customerAccountClient(tokenCookie.value).request<{
+      customer: { orders: { edges: Array<{ node: any }> } };
+    }>(query, { id: orderId });
+
     const order = data.customer.orders.edges[0]?.node;
     if (!order) return null;
-    
+
     return {
       ...order,
       orderNumber: order.name, // Map for UI compatibility

@@ -1,10 +1,10 @@
 "use client";
 
+import { Loader2, Plus } from "lucide-react";
 import { useState } from "react";
-import { Plus, Loader2 } from "lucide-react";
-import { useCartStore } from "@/lib/store";
-import { addToCart } from "@/app/actions/cart";
 import { toast } from "sonner";
+import { addToCart } from "@/app/actions/cart";
+import { useCartStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
 interface QuickAddProps {
@@ -13,7 +13,11 @@ interface QuickAddProps {
   className?: string;
 }
 
-export function QuickAdd({ variantId, availableForSale, className }: QuickAddProps) {
+export function QuickAdd({
+  variantId,
+  availableForSale,
+  className,
+}: QuickAddProps) {
   const [isPending, setIsPending] = useState(false);
   const { cartId, setCartData, openCart } = useCartStore();
 
@@ -47,7 +51,7 @@ export function QuickAdd({ variantId, availableForSale, className }: QuickAddPro
       disabled={!availableForSale || isPending}
       className={cn(
         "p-2 rounded-lg bg-slate-100 text-slate-900 hover:bg-indigo-600 hover:text-white transition-all duration-200 disabled:opacity-50 disabled:hover:bg-slate-100 disabled:hover:text-slate-900",
-        className
+        className,
       )}
       aria-label="Quick add to cart"
     >
