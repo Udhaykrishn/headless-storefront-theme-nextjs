@@ -2,9 +2,7 @@
 
 import {
   CheckCircle2,
-  ChevronLeft,
   ChevronRight,
-  Package,
   RotateCcw,
   ShieldCheck,
   Star,
@@ -19,6 +17,7 @@ import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import type { ShopifyProduct } from "@/lib/shopify";
 import { cn } from "@/lib/utils";
+import { ProductGallery } from "@/components/product-gallery";
 
 const REVIEWS = [
   {
@@ -43,12 +42,9 @@ const REVIEWS = [
 
 export function ProductDetailView({ product }: { product: ShopifyProduct }) {
   const allImages = product.images.edges.map((e) => e.node);
-  const [activeIndex, setActiveIndex] = useState(0);
   const [activeTab, setActiveTab] = useState<
     "description" | "specs" | "shipping"
   >("description");
-
-  const mainImage = allImages[activeIndex];
 
   const price = product.priceRange.maxVariantPrice;
   const formattedPrice = new Intl.NumberFormat("en-US", {
@@ -90,82 +86,7 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
             {/* Left: Image Gallery */}
             <div className="space-y-4">
-              {/* Main image */}
-              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-white border border-slate-200 shadow-lg group">
-                {mainImage ? (
-                  <Image
-                    src={mainImage.url}
-                    alt={mainImage.altText || product.title}
-                    fill
-                    className="object-contain p-6 transition-transform duration-500 group-hover:scale-105"
-                    priority
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-slate-300">
-                    <Package className="w-24 h-24" />
-                  </div>
-                )}
-
-                {/* Nav arrows */}
-                {allImages.length > 1 && (
-                  <>
-                    <button
-                      onClick={() =>
-                        setActiveIndex(
-                          (i) => (i - 1 + allImages.length) % allImages.length,
-                        )
-                      }
-                      className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white shadow-md border border-slate-200 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-indigo-50 hover:border-indigo-200"
-                      aria-label="Previous image"
-                    >
-                      <ChevronLeft className="w-4 h-4 text-slate-600" />
-                    </button>
-                    <button
-                      onClick={() =>
-                        setActiveIndex((i) => (i + 1) % allImages.length)
-                      }
-                      className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white shadow-md border border-slate-200 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-indigo-50 hover:border-indigo-200"
-                      aria-label="Next image"
-                    >
-                      <ChevronRight className="w-4 h-4 text-slate-600" />
-                    </button>
-                  </>
-                )}
-
-                {/* Counter */}
-                {allImages.length > 1 && (
-                  <div className="absolute bottom-3 right-3 px-2.5 py-1 bg-black/50 backdrop-blur-sm text-white text-xs font-medium rounded-full">
-                    {activeIndex + 1} / {allImages.length}
-                  </div>
-                )}
-              </div>
-
-              {/* Thumbnails */}
-              {allImages.length > 1 && (
-                <div className="flex gap-3 overflow-x-auto pb-1">
-                  {allImages.map((img, i) => (
-                    <button
-                      key={img.url}
-                      onClick={() => setActiveIndex(i)}
-                      className={cn(
-                        "relative flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all duration-200",
-                        i === activeIndex
-                          ? "border-indigo-600 shadow-md shadow-indigo-100"
-                          : "border-slate-200 hover:border-slate-400",
-                      )}
-                      aria-label={`View image ${i + 1}`}
-                    >
-                      <Image
-                        src={img.url}
-                        alt={img.altText || `Image ${i + 1}`}
-                        fill
-                        className="object-contain p-1.5 bg-white"
-                        sizes="80px"
-                      />
-                    </button>
-                  ))}
-                </div>
-              )}
+              <ProductGallery images={allImages} title={product.title} />
 
               {/* Trust badges */}
               <div className="grid grid-cols-3 gap-3">
@@ -345,7 +266,7 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
                   </h2>
                   <div className="rounded-xl border border-slate-200 overflow-hidden divide-y divide-slate-100">
                     {[
-                      { label: "Brand", value: product.vendor || "—" },
+                      { label: "Brand", value: product.title.split(" ")[0] },
                       { label: "Model", value: product.title },
                       {
                         label: "Type",
