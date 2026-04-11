@@ -6,6 +6,7 @@ import {
   CART_LINES_ADD_MUTATION,
   GET_CART_QUERY,
   CART_LINES_REMOVE_MUTATION,
+  CART_LINES_UPDATE_MUTATION,
   CartInfo,
 } from "@/lib/shopify";
 
@@ -59,4 +60,23 @@ export async function getCartData(cartId: string) {
     cartId,
   });
   return data.cart;
+}
+
+export async function updateCartLine(
+  cartId: string,
+  lineId: string,
+  quantity: number,
+) {
+  const data = await shopifyClient.request<{
+    cartLinesUpdate: { cart: CartInfo; userErrors: any[] };
+  }>(CART_LINES_UPDATE_MUTATION, {
+    cartId,
+    lines: [{ id: lineId, quantity }],
+  });
+
+  if (data.cartLinesUpdate.userErrors.length > 0) {
+    throw new Error(data.cartLinesUpdate.userErrors[0].message);
+  }
+
+  return data.cartLinesUpdate.cart;
 }

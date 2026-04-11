@@ -322,6 +322,36 @@ export const CART_LINES_ADD_MUTATION = `
   }
 `;
 
+export const CART_LINES_UPDATE_MUTATION = `
+  mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
+    cartLinesUpdate(cartId: $cartId, lines: $lines) {
+      cart {
+        id
+        totalQuantity
+        lines(first: 100) {
+          edges {
+            node {
+              id
+              quantity
+              merchandise {
+                ... on ProductVariant {
+                  id, title, product { title, handle },
+                  price { amount, currencyCode }, image { url, altText }
+                }
+              }
+            }
+          }
+        }
+        cost {
+          subtotalAmount { amount, currencyCode }
+          totalAmount { amount, currencyCode }
+        }
+      }
+      userErrors { field, message }
+    }
+  }
+`;
+
 export const CART_LINES_REMOVE_MUTATION = `
   mutation cartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {
     cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
