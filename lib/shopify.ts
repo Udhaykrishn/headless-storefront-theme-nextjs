@@ -13,7 +13,8 @@ export const shopifyClient = new GraphQLClient(endpoint, {
 });
 
 export const customerAccountClient = (accessToken: string) => {
-  const url = `https://${domain}/account/customer/api/2026-04/graphql`;
+  const shopId = "79508275445";
+  const url = `https://shopify.com/${shopId}/account/customer/api/2026-04/graphql`;
 
   return new GraphQLClient(url, {
     headers: {

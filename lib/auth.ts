@@ -3,10 +3,22 @@ const SHOP_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
 const REDIRECT_URI = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/auth/callback`;
 
 export async function getAuthConfiguration() {
-  // The root discovery URL is often the most reliable for New Customer Accounts
+  // Try Shop ID based discovery first (most robust for New Customer Accounts)
+  try {
+    const { getShopId } = await import("./shopify");
+    const shopId = await getShopId();
+    if (shopId) {
+      const shopIdUrl = `https://shopify.com/${shopId}/auth/customer/.well-known/openid-configuration`;
+      const response = await fetch(shopIdUrl);
+      if (response.ok) return await response.json();
+    }
+  } catch (_e) {
+    console.warn("Shop ID discovery failed, trying domain-based...");
+  }
+
   const discoveryUrls = [
-    `https://${SHOP_DOMAIN}/.well-known/openid-configuration`,
     `https://${SHOP_DOMAIN}/auth/customer/.well-known/openid-configuration`,
+    `https://${SHOP_DOMAIN}/.well-known/openid-configuration`,
   ];
 
   for (const url of discoveryUrls) {
@@ -16,20 +28,6 @@ export async function getAuthConfiguration() {
     } catch (_e) {
       console.warn(`Discovery failed on ${url}, trying next...`);
     }
-  }
-
-  // Final fallback attempt via Shop ID
-  try {
-    const { getShopId } = await import("./shopify");
-    const shopId = await getShopId();
-
-    if (shopId) {
-      const shopIdUrl = `https://shopify.com/${shopId}/auth/customer/.well-known/openid-configuration`;
-      const response = await fetch(shopIdUrl);
-      if (response.ok) return await response.json();
-    }
-  } catch (_error) {
-    console.error("Shop ID fallback discovery failed");
   }
 
   throw new Error(
