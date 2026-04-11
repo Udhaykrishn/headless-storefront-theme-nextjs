@@ -17,6 +17,22 @@ export async function createCart() {
   return data.cartCreate.cart;
 }
 
+export async function createCheckout(merchandiseId: string, quantity: number) {
+  const data = await shopifyClient.request<{
+    cartCreate: { cart: { checkoutUrl: string }; userErrors: any[] };
+  }>(CART_CREATE_MUTATION, {
+    input: {
+      lines: [{ merchandiseId, quantity }],
+    },
+  });
+
+  if (data.cartCreate.userErrors.length > 0) {
+    throw new Error(data.cartCreate.userErrors[0].message);
+  }
+
+  return data.cartCreate.cart.checkoutUrl;
+}
+
 export async function addToCart(
   cartId: string | null,
   lines: { merchandiseId: string; quantity: number }[],

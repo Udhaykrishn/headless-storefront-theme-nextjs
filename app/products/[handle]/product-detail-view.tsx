@@ -266,7 +266,7 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
                   </h2>
                   <div className="rounded-xl border border-slate-200 overflow-hidden divide-y divide-slate-100">
                     {[
-                      { label: "Brand", value: product.vendor || "—" },
+                      { label: "Brand", value: product.title.split(" ")[0] },
                       { label: "Model", value: product.title },
                       {
                         label: "Type",

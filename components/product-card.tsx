@@ -92,11 +92,11 @@ export function ProductCard({
         <div className="p-6 flex flex-col grow justify-between">
           <div>
             <Link href={`/products/${product.handle}`}>
-              <h3 className="text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-2 leading-tight">
+              <h3 className="text-lg font-semibold tracking-tight text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-2 leading-tight">
                 {product.title}
               </h3>
             </Link>
-            <p className="mt-2 text-2xl font-bold text-slate-900">
+            <p className="mt-1.5 text-xl font-bold text-slate-900 tabular-nums">
               {formattedPrice}
             </p>
           </div>
@@ -143,13 +143,13 @@ export function ProductCard({
 
       <div className="p-6 flex flex-col grow">
         <Link href={`/products/${product.handle}`}>
-          <h3 className="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-2 leading-snug">
+          <h3 className="text-base font-semibold tracking-tight text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-2 leading-snug">
             {product.title}
           </h3>
         </Link>
 
         <div className="mt-4 flex items-center justify-between mt-auto">
-          <p className="text-xl font-bold text-slate-900">{formattedPrice}</p>
+          <p className="text-lg font-bold text-slate-900 tabular-nums">{formattedPrice}</p>
           {variantId && (
             <QuickAdd
               variantId={variantId}

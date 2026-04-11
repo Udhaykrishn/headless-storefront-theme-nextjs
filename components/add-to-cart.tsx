@@ -1,15 +1,16 @@
 "use client";
 
-import { Check, Loader2, ShoppingCart } from "lucide-react";
+import { Check, Loader2, ShoppingCart, Zap } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { addToCart } from "@/app/actions/cart";
+import { addToCart, createCheckout } from "@/app/actions/cart";
 import type { ShopifyProduct } from "@/lib/shopify";
 import { useCartStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
 export function AddToCart({ product }: { product: ShopifyProduct }) {
   const [isPending, setIsPending] = useState(false);
+  const [isBuyNowPending, setIsBuyNowPending] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
   const { cartId, setCartData, openCart } = useCartStore();
 
@@ -50,6 +51,21 @@ export function AddToCart({ product }: { product: ShopifyProduct }) {
       );
     } finally {
       setIsPending(false);
+    }
+  }
+
+  async function handleBuyNow() {
+    if (!selectedVariant) return;
+
+    setIsBuyNowPending(true);
+    try {
+      const checkoutUrl = await createCheckout(selectedVariant.id, 1);
+      window.location.href = checkoutUrl;
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to start checkout",
+      );
+      setIsBuyNowPending(false);
     }
   }
 
@@ -110,36 +126,63 @@ export function AddToCart({ product }: { product: ShopifyProduct }) {
         </div>
       )}
 
-      {/* Add to Cart button */}
-      <button
-        type="button"
-        onClick={handleAdd}
-        disabled={isPending || Boolean(isOutOfStock)}
-        className={cn(
-          "w-full h-14 rounded-xl text-base font-semibold flex items-center justify-center gap-2.5 transition-all duration-200",
-          isOutOfStock
-            ? "bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200"
-            : justAdded
-              ? "bg-emerald-600 text-white shadow-lg shadow-emerald-200"
-              : "bg-indigo-600 text-white hover:bg-indigo-700 active:scale-[0.98] shadow-lg shadow-indigo-200 disabled:opacity-60 disabled:cursor-not-allowed",
-        )}
-      >
-        {isPending ? (
-          <Loader2 className="w-5 h-5 animate-spin" />
-        ) : justAdded ? (
-          <>
-            <Check className="w-5 h-5" />
-            Added to Cart
-          </>
-        ) : isOutOfStock ? (
-          "Out of Stock"
-        ) : (
-          <>
-            <ShoppingCart className="w-5 h-5" />
-            Add to Cart
-          </>
-        )}
-      </button>
+      {/* Action Buttons */}
+      <div className="flex flex-col gap-3">
+        {/* Buy Now button */}
+        <button
+          type="button"
+          onClick={handleBuyNow}
+          disabled={isPending || isBuyNowPending || Boolean(isOutOfStock)}
+          className={cn(
+            "w-full h-14 rounded-xl text-base font-bold flex items-center justify-center gap-2.5 transition-all duration-200 shadow-xl active:scale-[0.98]",
+            isOutOfStock
+              ? "bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200 shadow-none"
+              : "bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-100 disabled:opacity-60 disabled:cursor-not-allowed",
+          )}
+        >
+          {isBuyNowPending ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : isOutOfStock ? (
+            "Out of Stock"
+          ) : (
+            <>
+              <Zap className="w-5 h-5 fill-amber-400 text-amber-400" />
+              Buy it now
+            </>
+          )}
+        </button>
+
+        {/* Add to Cart button */}
+        <button
+          type="button"
+          onClick={handleAdd}
+          disabled={isPending || isBuyNowPending || Boolean(isOutOfStock)}
+          className={cn(
+            "w-full h-14 rounded-xl text-base font-semibold flex items-center justify-center gap-2.5 transition-all duration-200 border-2",
+            isOutOfStock
+              ? "bg-slate-50 text-slate-400 cursor-not-allowed border-slate-200"
+              : justAdded
+                ? "bg-emerald-50 text-emerald-600 border-emerald-200 shadow-lg shadow-emerald-50"
+                : "bg-white text-indigo-600 border-indigo-600 hover:bg-indigo-50 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed",
+          )}
+        >
+          {isPending ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : justAdded ? (
+            <>
+              <Check className="w-5 h-5" />
+              Added to Cart
+            </>
+          ) : isOutOfStock ? (
+            "Cannot add to cart"
+          ) : (
+            <>
+              <ShoppingCart className="w-5 h-5" />
+              Add to Cart
+            </>
+          )}
+        </button>
+      </div>
     </div>
   );
 }
