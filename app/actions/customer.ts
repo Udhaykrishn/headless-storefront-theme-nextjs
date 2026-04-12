@@ -253,7 +253,7 @@ export async function createCustomerAddress(_prevState: unknown, formData: FormD
     city: formData.get("city") as string,
     province: formData.get("province") as string,
     zip: formData.get("zip") as string,
-    country: formData.get("country") as string,
+    country: (formData.get("country") as string) || "India",
     phone: formData.get("phone") as string,
   };
 
@@ -268,11 +268,12 @@ export async function createCustomerAddress(_prevState: unknown, formData: FormD
     });
 
     if (data.customerAddressCreate.customerUserErrors.length > 0) {
+      console.error("Shopify Address Error:", data.customerAddressCreate.customerUserErrors);
       return { error: data.customerAddressCreate.customerUserErrors[0].message };
     }
     return { success: true };
-  } catch (error) {
-    console.error("Address creation failed", error);
+  } catch (error: any) {
+    console.error("Address creation failed", error?.response?.errors || error);
     return { error: "Failed to create address" };
   }
 }

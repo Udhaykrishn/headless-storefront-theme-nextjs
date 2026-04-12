@@ -47,16 +47,16 @@ export default function AddressForm() {
 
       <div className="space-y-1.5">
         <label htmlFor="address1" className="text-xs font-semibold text-slate-600 block">
-          Street Address <span className="text-red-400">*</span>
+          Address <span className="text-red-400">*</span>
         </label>
-        <Input id="address1" name="address1" required placeholder="123 Main St" className="h-10 text-sm" />
+        <Input id="address1" name="address1" required placeholder="Street address" className="h-10 text-sm" />
       </div>
 
       <div className="space-y-1.5">
         <label htmlFor="address2" className="text-xs font-semibold text-slate-600 block">
-          Apartment, suite, etc.
+          Apartment, suite, etc. (optional)
         </label>
-        <Input id="address2" name="address2" placeholder="Appt 4B" className="h-10 text-sm" />
+        <Input id="address2" name="address2" placeholder="Apt 4B" className="h-10 text-sm" />
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -68,25 +68,17 @@ export default function AddressForm() {
         </div>
         <div className="space-y-1.5">
           <label htmlFor="province" className="text-xs font-semibold text-slate-600 block">
-            State/Province <span className="text-red-400">*</span>
+            State <span className="text-red-400">*</span>
           </label>
-          <Input id="province" name="province" required className="h-10 text-sm" />
+          <Input id="province" name="province" required className="h-10 text-sm" placeholder="e.g. Maharashtra" />
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div className="space-y-1.5">
-          <label htmlFor="zip" className="text-xs font-semibold text-slate-600 block">
-            ZIP/Postal Code <span className="text-red-400">*</span>
-          </label>
-          <Input id="zip" name="zip" required className="h-10 text-sm" />
-        </div>
-        <div className="space-y-1.5">
-          <label htmlFor="country" className="text-xs font-semibold text-slate-600 block">
-            Country <span className="text-red-400">*</span>
-          </label>
-          <Input id="country" name="country" required defaultValue="United States" className="h-10 text-sm" />
-        </div>
+      <div className="space-y-1.5">
+        <label htmlFor="zip" className="text-xs font-semibold text-slate-600 block">
+          PIN code <span className="text-red-400">*</span>
+        </label>
+        <Input id="zip" name="zip" required className="h-10 text-sm" placeholder="400001" />
       </div>
       
       <div className="space-y-1.5">
