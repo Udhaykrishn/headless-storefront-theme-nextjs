@@ -17,8 +17,7 @@ import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { icon: Package, label: "My Orders", href: "#orders", active: true },
-  { icon: User, label: "Profile", href: "/account/profile" },
-  { icon: MapPin, label: "Addresses", href: "/account/addresses" },
+  { icon: User, label: "Settings", href: "/account/profile" },
 ];
 
 function StatusBadge({ status }: { status: string }) {

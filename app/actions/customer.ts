@@ -245,9 +245,12 @@ export async function createCustomerAddress(_prevState: unknown, formData: FormD
   const tokenCookie = cookieStore.get(TOKEN_KEY);
   if (!tokenCookie?.value) return { error: "Not authenticated" };
 
+  // Fetch customer to use as default for names if not provided (now that we removed them from form)
+  const customer = await getCustomer();
+
   const address = {
-    firstName: formData.get("firstName") as string,
-    lastName: formData.get("lastName") as string,
+    firstName: (formData.get("firstName") as string) || customer?.firstName || "",
+    lastName: (formData.get("lastName") as string) || customer?.lastName || "",
     address1: formData.get("address1") as string,
     address2: formData.get("address2") as string,
     city: formData.get("city") as string,
