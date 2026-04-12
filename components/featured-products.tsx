@@ -68,6 +68,17 @@ export function FeaturedProducts({ products }: { products: any[] }) {
             <ProductCard key={product.id} product={product} view="grid" />
           ))}
         </div>
+
+        <div className="mt-16 text-center">
+          <Link href="/shop">
+            <Button
+              size="lg"
+              className="px-10 h-14 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-lg shadow-indigo-100 hover:shadow-indigo-200 transition-all hover:-translate-y-0.5"
+            >
+              Shop All Laptops
+            </Button>
+          </Link>
+        </div>
       </div>
     </section>
   );

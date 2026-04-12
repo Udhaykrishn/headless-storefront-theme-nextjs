@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   Accordion,
   AccordionContent,
@@ -30,49 +31,54 @@ const FAQS = [
   },
 ];
 
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, MessageCircle } from "lucide-react";
+import { Button } from "./ui/button";
 
 export function Faq() {
   return (
-    <section className="py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row gap-16 lg:gap-24">
-        <div className="lg:w-1/3">
-          <h2 className="text-3xl font-bold text-slate-900 tracking-tight">
-            Frequently Asked Questions
+    <section className="py-24">
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-extrabold text-slate-900 tracking-tight">
+            FAQs
           </h2>
-          <p className="mt-4 text-slate-600 leading-relaxed">
-            Everything you need to know about our products, shipping, and
-            returns. Can't find the answer you're looking for? Reach out to our
-            team.
-          </p>
-
-          <div className="mt-8">
-            <a
-              href="mailto:support@nextstore.com"
-              className="inline-flex items-center gap-2 text-indigo-600 font-semibold hover:text-indigo-700 transition-colors"
-            >
-              Contact Support <ArrowUpRight className="w-4 h-4" />
-            </a>
-          </div>
         </div>
 
-        <div className="lg:w-2/3">
-          <Accordion type="single" collapsible className="w-full space-y-4">
-            {FAQS.map((faq, _index) => (
-              <AccordionItem
-                key={faq.question}
-                value={faq.question}
-                className="border rounded-xl px-6 bg-white shadow-sm overflow-hidden"
-              >
-                <AccordionTrigger className="text-left font-bold text-slate-900 py-6 hover:no-underline hover:text-indigo-600 transition-colors">
-                  {faq.question}
-                </AccordionTrigger>
-                <AccordionContent className="text-slate-600 leading-relaxed pb-6">
-                  {faq.answer}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+        <Accordion type="single" collapsible className="w-full space-y-4">
+          {FAQS.map((faq, _index) => (
+            <AccordionItem
+              key={faq.question}
+              value={faq.question}
+              className="border border-slate-200 rounded-2xl px-6 bg-white shadow-sm hover:shadow-md transition-all overflow-hidden"
+            >
+              <AccordionTrigger className="text-left font-semibold text-slate-900 py-6 hover:no-underline hover:text-indigo-600 transition-colors">
+                {faq.question}
+              </AccordionTrigger>
+              <AccordionContent className="text-slate-600 leading-relaxed pb-6">
+                {faq.answer}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+
+        <div className="mt-20 text-center bg-indigo-50 rounded-3xl p-10 border border-indigo-100/50">
+          <div className="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-indigo-200">
+            <MessageCircle className="w-6 h-6 text-white" />
+          </div>
+          <p className="text-slate-900 font-bold text-lg mb-2">
+            Still have questions?
+          </p>
+          <p className="text-slate-600 mb-8 max-w-sm mx-auto">
+            Can't find the answer you're looking for? Reach out to our team.
+          </p>
+          <Link href="/contact" className="inline-block">
+            <Button
+              size="lg"
+              className="rounded-full px-10 h-14 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-lg shadow-indigo-100 hover:shadow-indigo-200 transition-all"
+            >
+              Contact Support
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
