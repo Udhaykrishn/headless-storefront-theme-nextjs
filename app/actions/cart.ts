@@ -42,22 +42,33 @@ export async function saveCartToCustomer(customerId: string, cartId: string) {
   const { customerAccountClient } = await import("@/lib/shopify");
 
   try {
-    await customerAccountClient(token).request(
-      SET_CUSTOMER_METAFIELD_MUTATION,
-      {
-        metafields: [
-          {
-            key: "cart_id",
-            namespace: "custom",
-            ownerId: customerId,
-            type: "single_line_text_field",
-            value: cartId,
-          },
-        ],
-      },
-    );
+    const data = await customerAccountClient(token).request<{
+      metafieldsSet: {
+        metafields: any[];
+        userErrors: Array<{ message: string; field: string[]; code: string }>;
+      };
+    }>(SET_CUSTOMER_METAFIELD_MUTATION, {
+      metafields: [
+        {
+          key: "cart_id",
+          namespace: "custom",
+          ownerId: customerId,
+          type: "single_line_text_field",
+          value: cartId,
+        },
+      ],
+    });
+
+    if (data.metafieldsSet.userErrors.length > 0) {
+      console.error(
+        "Metafield sync errors:",
+        JSON.stringify(data.metafieldsSet.userErrors, null, 2),
+      );
+    } else {
+      console.log("Successfully saved cartId to customer cloud profile:", cartId);
+    }
   } catch (error) {
-    console.error("Failed to save cart to customer", error);
+    console.error("Failed to save cart to customer (network/auth error):", error);
   }
 }
 

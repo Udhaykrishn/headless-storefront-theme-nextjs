@@ -14,8 +14,8 @@ export async function GET(_request: Request) {
 
   const logoutUrl = new URL(
     config.end_session_endpoint ||
-      config.logout_endpoint ||
-      `https://${process.env.SHOPIFY_STORE_DOMAIN}/account/logout`,
+    config.logout_endpoint ||
+    `https://${process.env.SHOPIFY_STORE_DOMAIN}/account/logout`,
   );
 
   if (idToken) {

@@ -7,10 +7,12 @@ import {
   updateCartBuyerIdentity,
 } from "@/app/actions/cart";
 import { getCustomer } from "@/app/actions/customer";
+import { usePathname } from "next/navigation";
 import { useCartStore } from "@/lib/store";
 
 export function CartInitializer() {
-  const { cartId, setCartData } = useCartStore();
+  const { cartId, totalQuantity, setCartData } = useCartStore();
+  const pathname = usePathname();
   const isSyncing = useRef(false);
 
   useEffect(() => {
@@ -25,9 +27,23 @@ export function CartInitializer() {
         if (customer) {
           const savedCartId = (customer as any).metafield?.value;
 
-          // Case 1: Browser has a cart, but Shopify doesn't have it yet (or it's different)
+          // Case 1: Browser has an active cart, and it's different from what's in the cloud
           if (cartId && cartId !== savedCartId) {
-            await saveCartToCustomer(customer.id, cartId);
+            // We only push to cloud if the local cart has items
+            // If local cart is empty (quantity 0) but cloud has one, we should probably prefer cloud
+            if (totalQuantity > 0) {
+              await saveCartToCustomer(customer.id, cartId);
+              console.log("Synced local cart to customer profile");
+            } 
+            else if (savedCartId) {
+              // Local is empty, but cloud has a cart. Load the cloud one.
+              const remoteCart = await getCartData(savedCartId);
+              if (remoteCart && remoteCart.totalQuantity > 0) {
+                setCartData(remoteCart.id, remoteCart.totalQuantity);
+                isSyncing.current = false;
+                return;
+              }
+            }
           }
           // Case 2: Browser has no cart, but Shopify has one from another device
           else if (!cartId && savedCartId) {
@@ -65,7 +81,7 @@ export function CartInitializer() {
     }
 
     syncCart();
-  }, [cartId, setCartData]);
+  }, [cartId, setCartData, pathname]); // Added pathname to trigger sync on navigation
 
   return null;
 }
