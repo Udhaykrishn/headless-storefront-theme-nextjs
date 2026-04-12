@@ -6,8 +6,8 @@ import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { shopifyClient, GET_CUSTOMER_ADDRESSES_QUERY } from "@/lib/shopify";
 import ProfileForm from "@/app/account/profile/profile-form";
-import AddressForm from "@/app/account/addresses/address-form";
-import AddressDeleteButton from "@/app/account/addresses/address-delete-button";
+import AddressForm from "@/app/account/profile/address-form";
+import AddressDeleteButton from "@/app/account/profile/address-delete-button";
 
 export default async function CombinedProfilePage() {
   const customer = await getCustomer();
