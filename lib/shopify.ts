@@ -53,6 +53,26 @@ export const GET_CUSTOMER_ACCOUNT_QUERY = `
         zip
         country
       }
+      metafield(namespace: "custom", key: "cart_id") {
+        value
+      }
+    }
+  }
+`;
+
+export const SET_CUSTOMER_METAFIELD_MUTATION = `
+  mutation MetafieldsSet($metafields: [MetafieldsSetInput!]!) {
+    metafieldsSet(metafields: $metafields) {
+      metafields {
+        key
+        namespace
+        value
+      }
+      userErrors {
+        field
+        message
+        code
+      }
     }
   }
 `;
