@@ -6,14 +6,14 @@ import {
   CART_LINES_REMOVE_MUTATION,
   CART_LINES_UPDATE_MUTATION,
   CART_BUYER_IDENTITY_UPDATE_MUTATION,
+  SET_CUSTOMER_METAFIELD_MUTATION,
   type CartInfo,
   GET_CART_QUERY,
   shopifyClient,
 } from "@/lib/shopify";
-import { getCustomerToken } from "./customer";
+import { getCustomer, getCustomerToken } from "./customer";
 
 export async function createCart() {
-  const { getCustomer } = await import("./customer");
   const customer = await getCustomer();
   const buyerIdentity = customer?.email ? { email: customer.email } : {};
 
@@ -24,7 +24,41 @@ export async function createCart() {
       buyerIdentity,
     },
   });
-  return data.cartCreate.cart;
+
+  const cart = data.cartCreate.cart;
+
+  // If user is logged in, save the cart ID to their profile
+  if (customer?.id && cart?.id) {
+    await saveCartToCustomer(customer.id, cart.id);
+  }
+
+  return cart;
+}
+
+export async function saveCartToCustomer(customerId: string, cartId: string) {
+  const token = await getCustomerToken();
+  if (!token) return;
+
+  const { customerAccountClient } = await import("@/lib/shopify");
+
+  try {
+    await customerAccountClient(token).request(
+      SET_CUSTOMER_METAFIELD_MUTATION,
+      {
+        metafields: [
+          {
+            key: "cart_id",
+            namespace: "custom",
+            ownerId: customerId,
+            type: "single_line_text_field",
+            value: cartId,
+          },
+        ],
+      },
+    );
+  } catch (error) {
+    console.error("Failed to save cart to customer", error);
+  }
 }
 
 export async function createCheckout(merchandiseId: string, quantity: number) {
