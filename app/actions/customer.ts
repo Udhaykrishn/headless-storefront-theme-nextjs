@@ -146,33 +146,33 @@ export async function updateCustomerProfile(
   const tokenCookie = cookieStore.get(TOKEN_KEY);
   if (!tokenCookie?.value) return { error: "Not authenticated" };
 
-  const input = {
+  const input: any = {
     firstName: formData.get("firstName") as string,
     lastName: formData.get("lastName") as string,
+    email: formData.get("email") as string,
   };
 
-  const { customerAccountClient } = await import("@/lib/shopify");
+  const phone = formData.get("phone") as string;
+  if (phone) {
+    input.phone = phone;
+  }
 
-  const mutation = `
-    mutation customerUpdate($input: CustomerUpdateInput!) {
-      customerUpdate(input: $input) {
-        customer { id }
-        userErrors { field, message }
-      }
-    }
-  `;
+  const { shopifyClient, CUSTOMER_UPDATE_MUTATION } = await import("@/lib/shopify");
 
   try {
-    const data = await customerAccountClient(tokenCookie.value).request<{
-      customerUpdate: { customer: { id: string }; userErrors: UserError[] };
-    }>(mutation, { input });
+    const data = await shopifyClient.request<{
+      customerUpdate: { customer: { id: string }; customerUserErrors: UserError[] };
+    }>(CUSTOMER_UPDATE_MUTATION, { 
+      customerAccessToken: tokenCookie.value,
+      customer: input 
+    });
 
-    if (data.customerUpdate.userErrors.length > 0) {
-      return { error: data.customerUpdate.userErrors[0].message };
+    if (data.customerUpdate.customerUserErrors.length > 0) {
+      return { error: data.customerUpdate.customerUserErrors[0].message };
     }
     return { success: true };
-  } catch (error) {
-    console.error("Profile update failed", error);
+  } catch (error: any) {
+    console.error("Profile update failed", error?.response?.errors || error);
     return { error: "Failed to update profile" };
   }
 }
@@ -237,5 +237,67 @@ export async function getOrder(orderId: string) {
   } catch (error) {
     console.error("Failed to fetch order", error);
     return null;
+  }
+}
+
+export async function createCustomerAddress(_prevState: unknown, formData: FormData) {
+  const cookieStore = await cookies();
+  const tokenCookie = cookieStore.get(TOKEN_KEY);
+  if (!tokenCookie?.value) return { error: "Not authenticated" };
+
+  const address = {
+    firstName: formData.get("firstName") as string,
+    lastName: formData.get("lastName") as string,
+    address1: formData.get("address1") as string,
+    address2: formData.get("address2") as string,
+    city: formData.get("city") as string,
+    province: formData.get("province") as string,
+    zip: formData.get("zip") as string,
+    country: formData.get("country") as string,
+    phone: formData.get("phone") as string,
+  };
+
+  const { shopifyClient, CUSTOMER_ADDRESS_CREATE_MUTATION } = await import("@/lib/shopify");
+
+  try {
+    const data = await shopifyClient.request<{
+      customerAddressCreate: { customerAddress: any; customerUserErrors: UserError[] };
+    }>(CUSTOMER_ADDRESS_CREATE_MUTATION, { 
+      customerAccessToken: tokenCookie.value,
+      address,
+    });
+
+    if (data.customerAddressCreate.customerUserErrors.length > 0) {
+      return { error: data.customerAddressCreate.customerUserErrors[0].message };
+    }
+    return { success: true };
+  } catch (error) {
+    console.error("Address creation failed", error);
+    return { error: "Failed to create address" };
+  }
+}
+
+export async function deleteCustomerAddress(id: string) {
+  const cookieStore = await cookies();
+  const tokenCookie = cookieStore.get(TOKEN_KEY);
+  if (!tokenCookie?.value) return { error: "Not authenticated" };
+
+  const { shopifyClient, CUSTOMER_ADDRESS_DELETE_MUTATION } = await import("@/lib/shopify");
+
+  try {
+    const data = await shopifyClient.request<{
+      customerAddressDelete: { deletedCustomerAddressId: string; customerUserErrors: UserError[] };
+    }>(CUSTOMER_ADDRESS_DELETE_MUTATION, { 
+      customerAccessToken: tokenCookie.value,
+      id,
+    });
+
+    if (data.customerAddressDelete.customerUserErrors.length > 0) {
+      return { error: data.customerAddressDelete.customerUserErrors[0].message };
+    }
+    return { success: true };
+  } catch (error) {
+    console.error("Address deletion failed", error);
+    return { error: "Failed to delete address" };
   }
 }

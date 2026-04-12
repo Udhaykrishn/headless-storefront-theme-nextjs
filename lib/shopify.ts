@@ -733,3 +733,40 @@ export async function getShopId() {
   const gid = data.shop.id; // gid://shopify/Shop/123456
   return gid.split("/").pop();
 }
+
+export const CUSTOMER_ADDRESS_CREATE_MUTATION = `
+  mutation customerAddressCreate($customerAccessToken: String!, $address: MailingAddressInput!) {
+    customerAddressCreate(customerAccessToken: $customerAccessToken, address: $address) {
+      customerAddress {
+        id
+        address1
+        address2
+        city
+        province
+        zip
+        country
+        firstName
+        lastName
+        phone
+      }
+      customerUserErrors {
+        code
+        field
+        message
+      }
+    }
+  }
+`;
+
+export const CUSTOMER_ADDRESS_DELETE_MUTATION = `
+  mutation customerAddressDelete($customerAccessToken: String!, $id: ID!) {
+    customerAddressDelete(customerAccessToken: $customerAccessToken, id: $id) {
+      deletedCustomerAddressId
+      customerUserErrors {
+        code
+        field
+        message
+      }
+    }
+  }
+`;
