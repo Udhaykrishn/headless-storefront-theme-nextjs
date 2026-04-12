@@ -381,6 +381,42 @@ export const CART_LINES_REMOVE_MUTATION = `
   }
 `;
 
+export const CART_BUYER_IDENTITY_UPDATE_MUTATION = `
+  mutation cartBuyerIdentityUpdate($cartId: ID!, $buyerIdentity: CartBuyerIdentityInput!) {
+    cartBuyerIdentityUpdate(cartId: $cartId, buyerIdentity: $buyerIdentity) {
+      cart {
+        id
+        totalQuantity
+        lines(first: 10) {
+          edges {
+            node {
+              id
+              quantity
+              merchandise {
+                ... on ProductVariant {
+                  id, title, product { title, handle },
+                  price { amount, currencyCode }, image { url, altText }
+                }
+              }
+            }
+          }
+        }
+        cost {
+          subtotalAmount { amount, currencyCode },
+          totalAmount { amount, currencyCode }
+        }
+        buyerIdentity {
+          email
+          customer {
+            id
+          }
+        }
+      }
+      userErrors { field, message }
+    }
+  }
+`;
+
 export const GET_CART_QUERY = `
   query getCart($cartId: ID!) {
     cart(id: $cartId) {
@@ -407,6 +443,12 @@ export const GET_CART_QUERY = `
       cost {
         subtotalAmount { amount, currencyCode }
         totalAmount { amount, currencyCode }
+      }
+      buyerIdentity {
+        email
+        customer {
+          id
+        }
       }
     }
   }
@@ -531,6 +573,12 @@ export interface CartInfo {
   cost: {
     subtotalAmount: { amount: string; currencyCode: string };
     totalAmount: { amount: string; currencyCode: string };
+  };
+  buyerIdentity?: {
+    email: string;
+    customer?: {
+      id: string;
+    };
   };
 }
 

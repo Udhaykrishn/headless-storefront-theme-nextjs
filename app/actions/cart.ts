@@ -5,24 +5,39 @@ import {
   CART_LINES_ADD_MUTATION,
   CART_LINES_REMOVE_MUTATION,
   CART_LINES_UPDATE_MUTATION,
+  CART_BUYER_IDENTITY_UPDATE_MUTATION,
   type CartInfo,
   GET_CART_QUERY,
   shopifyClient,
 } from "@/lib/shopify";
+import { getCustomerToken } from "./customer";
 
 export async function createCart() {
+  const { getCustomer } = await import("./customer");
+  const customer = await getCustomer();
+  const buyerIdentity = customer?.email ? { email: customer.email } : {};
+
   const data = await shopifyClient.request<{
     cartCreate: { cart: { id: string }; userErrors: any[] };
-  }>(CART_CREATE_MUTATION, { input: {} });
+  }>(CART_CREATE_MUTATION, {
+    input: {
+      buyerIdentity,
+    },
+  });
   return data.cartCreate.cart;
 }
 
 export async function createCheckout(merchandiseId: string, quantity: number) {
+  const { getCustomer } = await import("./customer");
+  const customer = await getCustomer();
+  const buyerIdentity = customer?.email ? { email: customer.email } : {};
+
   const data = await shopifyClient.request<{
     cartCreate: { cart: { checkoutUrl: string }; userErrors: any[] };
   }>(CART_CREATE_MUTATION, {
     input: {
       lines: [{ merchandiseId, quantity }],
+      buyerIdentity,
     },
   });
 
@@ -95,4 +110,29 @@ export async function updateCartLine(
   }
 
   return data.cartLinesUpdate.cart;
+}
+
+export async function updateCartBuyerIdentity(cartId: string) {
+  const { getCustomer } = await import("./customer");
+  const customer = await getCustomer();
+  if (!customer?.email) return null;
+
+  const data = await shopifyClient.request<{
+    cartBuyerIdentityUpdate: { cart: CartInfo; userErrors: any[] };
+  }>(CART_BUYER_IDENTITY_UPDATE_MUTATION, {
+    cartId,
+    buyerIdentity: {
+      email: customer.email,
+    },
+  });
+
+  if (data.cartBuyerIdentityUpdate.userErrors.length > 0) {
+    console.error(
+      "Cart buyer identity update error:",
+      data.cartBuyerIdentityUpdate.userErrors,
+    );
+    return null;
+  }
+
+  return data.cartBuyerIdentityUpdate.cart;
 }
