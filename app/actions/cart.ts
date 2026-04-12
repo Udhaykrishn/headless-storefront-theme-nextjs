@@ -15,7 +15,9 @@ import { getCustomer, getCustomerToken } from "./customer";
 
 export async function createCart() {
   const customer = await getCustomer();
-  const buyerIdentity = customer?.email ? { email: customer.email } : {};
+  const token = await getCustomerToken();
+  const buyerIdentity: any = customer?.email ? { email: customer.email } : {};
+  if (token) buyerIdentity.customerAccessToken = token;
 
   const data = await shopifyClient.request<{
     cartCreate: { cart: { id: string }; userErrors: any[] };
@@ -73,9 +75,11 @@ export async function saveCartToCustomer(customerId: string, cartId: string) {
 }
 
 export async function createCheckout(merchandiseId: string, quantity: number) {
-  const { getCustomer } = await import("./customer");
+  const { getCustomer, getCustomerToken } = await import("./customer");
   const customer = await getCustomer();
-  const buyerIdentity = customer?.email ? { email: customer.email } : {};
+  const token = await getCustomerToken();
+  const buyerIdentity: any = customer?.email ? { email: customer.email } : {};
+  if (token) buyerIdentity.customerAccessToken = token;
 
   const data = await shopifyClient.request<{
     cartCreate: { cart: { checkoutUrl: string }; userErrors: any[] };
@@ -158,17 +162,19 @@ export async function updateCartLine(
 }
 
 export async function updateCartBuyerIdentity(cartId: string) {
-  const { getCustomer } = await import("./customer");
+  const { getCustomer, getCustomerToken } = await import("./customer");
   const customer = await getCustomer();
+  const token = await getCustomerToken();
   if (!customer?.email) return null;
+
+  const buyerIdentity: any = { email: customer.email };
+  if (token) buyerIdentity.customerAccessToken = token;
 
   const data = await shopifyClient.request<{
     cartBuyerIdentityUpdate: { cart: CartInfo; userErrors: any[] };
   }>(CART_BUYER_IDENTITY_UPDATE_MUTATION, {
     cartId,
-    buyerIdentity: {
-      email: customer.email,
-    },
+    buyerIdentity,
   });
 
   if (data.cartBuyerIdentityUpdate.userErrors.length > 0) {
