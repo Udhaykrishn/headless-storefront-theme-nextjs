@@ -271,13 +271,16 @@ export async function createCustomerAddress(_prevState: unknown, formData: FormD
     });
 
     if (data.customerAddressCreate.customerUserErrors.length > 0) {
+      const firstError = data.customerAddressCreate.customerUserErrors[0];
       console.error("Shopify Address Error:", data.customerAddressCreate.customerUserErrors);
-      return { error: data.customerAddressCreate.customerUserErrors[0].message };
+      return { error: firstError.message };
     }
     return { success: true };
   } catch (error: any) {
     console.error("Address creation failed", error?.response?.errors || error);
-    return { error: "Failed to create address" };
+    // Try to extract a more specific error message from the response if possible
+    const detailedError = error?.response?.errors?.[0]?.message || error?.message || "Failed to create address";
+    return { error: detailedError };
   }
 }
 
