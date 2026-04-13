@@ -43,7 +43,7 @@ export default async function LoginPage() {
             {[
               { icon: Package, text: "Track all your orders in one place" },
               { icon: RotateCcw, text: "Easy returns and order management" },
-              { icon: ShieldCheck, text: "Secured with Shopify encryption" },
+              { icon: ShieldCheck, text: "Secured with enterprise encryption" },
             ].map(({ icon: Icon, text }) => (
               <div key={text} className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-indigo-800/60 flex items-center justify-center flex-shrink-0">
