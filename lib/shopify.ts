@@ -751,37 +751,35 @@ export async function getShopId() {
 }
 
 export const CUSTOMER_ADDRESS_CREATE_MUTATION = `
-  mutation customerAddressCreate($address: CustomerAddressInput!) {
-    customerAddressCreate(address: $address) {
+  mutation customerAddressCreate($customerId: ID!, $address: CustomerAddressInput!) {
+    customerAddressCreate(customerId: $customerId, address: $address) {
       customerAddress {
         id
         address1
         address2
         city
-        province
         zip
-        country
         firstName
         lastName
         phoneNumber
+        zoneCode
+        territoryCode
       }
       userErrors {
         field
         message
-        code
       }
     }
   }
 `;
 
 export const CUSTOMER_ADDRESS_DELETE_MUTATION = `
-  mutation customerAddressDelete($addressId: ID!) {
-    customerAddressDelete(addressId: $addressId) {
+  mutation customerAddressDelete($addressId: ID!, $customerId: ID!) {
+    customerAddressDelete(addressId: $addressId, customerId: $customerId) {
       deletedAddressId
       userErrors {
         field
         message
-        code
       }
     }
   }

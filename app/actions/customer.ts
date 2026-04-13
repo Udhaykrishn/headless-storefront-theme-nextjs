@@ -249,6 +249,30 @@ export async function createCustomerAddress(
   if (!tokenCookie?.value) return { success: false, error: "Not authenticated" };
 
   const customer = await getCustomer();
+  if (!customer?.id) return { success: false, error: "Customer ID not found" };
+
+  // Helper to map common Indian state names to codes (ZoneCode)
+  const stateToCode: Record<string, string> = {
+    "Maharashtra": "MH",
+    "Delhi": "DL",
+    "Karnataka": "KA",
+    "Tamil Nadu": "TN",
+    "Gujarat": "GJ",
+    "Uttar Pradesh": "UP",
+    "West Bengal": "WB",
+    "Rajasthan": "RJ",
+    "Kerala": "KL",
+    "Telangana": "TG",
+    "Andhra Pradesh": "AP",
+    "Punjab": "PB",
+    "Haryana": "HR",
+    "Madhya Pradesh": "MP",
+    "Bihar": "BR",
+    "Odisha": "OR",
+  };
+
+  const province = formData.get("province") as string;
+  const zoneCode = stateToCode[province] || province; // Fallback to raw string if not in map
 
   const address = {
     firstName: customer?.firstName || "",
@@ -256,9 +280,9 @@ export async function createCustomerAddress(
     address1: formData.get("address1") as string,
     address2: formData.get("address2") as string,
     city: formData.get("city") as string,
-    province: formData.get("province") as string,
+    territoryCode: "IN", 
+    zoneCode: zoneCode,
     zip: formData.get("zip") as string,
-    country: "India", // Defaulting to India as requested
     phoneNumber: formData.get("phone") as string,
   };
 
@@ -268,6 +292,7 @@ export async function createCustomerAddress(
     const data = await customerAccountClient(tokenCookie.value).request<{
       customerAddressCreate: { customerAddress: any; userErrors: UserError[] };
     }>(CUSTOMER_ADDRESS_CREATE_MUTATION, { 
+      customerId: customer.id,
       address,
     });
 
@@ -286,6 +311,9 @@ export async function deleteCustomerAddress(addressId: string) {
   const tokenCookie = cookieStore.get(TOKEN_KEY);
   if (!tokenCookie?.value) return { error: "Not authenticated" };
 
+  const customer = await getCustomer();
+  if (!customer?.id) return { error: "Customer ID not found" };
+
   const { customerAccountClient, CUSTOMER_ADDRESS_DELETE_MUTATION } = await import("@/lib/shopify");
 
   try {
@@ -293,6 +321,7 @@ export async function deleteCustomerAddress(addressId: string) {
       customerAddressDelete: { deletedAddressId: string; userErrors: UserError[] };
     }>(CUSTOMER_ADDRESS_DELETE_MUTATION, { 
       addressId,
+      customerId: customer.id,
     });
 
     if (data.customerAddressDelete.userErrors.length > 0) {
