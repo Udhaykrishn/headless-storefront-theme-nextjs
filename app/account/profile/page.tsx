@@ -139,10 +139,10 @@ export default async function CombinedProfilePage() {
                         <p className="text-xs text-slate-500 mb-1">{address.address2}</p>
                       )}
                       <p className="text-xs text-slate-600">
-                        {address.city}, {address.province} {address.zip}
+                        {address.city}, {address.zoneCode} {address.zip}
                       </p>
                       <p className="text-[10px] text-slate-400 mt-2 font-medium">
-                        For: {address.firstName} {address.lastName}
+                        For: {address.firstName} {address.lastName} • {address.territoryCode || 'IN'}
                       </p>
                       <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
                         <AddressDeleteButton addressId={address.id} />
