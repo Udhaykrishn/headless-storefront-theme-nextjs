@@ -106,15 +106,26 @@ export async function getCustomer() {
       "@/lib/shopify"
     );
     const data = await customerAccountClient(token.value).request<{
-      customer: ShopifyCustomer;
+      customer: ShopifyCustomer & { 
+        addresses: { edges: Array<{ node: any }> } 
+      };
     }>(GET_CUSTOMER_ACCOUNT_QUERY);
 
     // Normalize the data (Customer Account API uses emailAddress/phoneNumber objects)
     const customer = data.customer;
+    const addresses = customer.addresses?.edges.map(edge => ({
+      ...edge.node,
+      // Map for legacy UI compatibility if needed
+      province: edge.node.zoneCode,
+      country: edge.node.territoryCode
+    })) || [];
+
     return {
       ...customer,
       email: customer.emailAddress?.emailAddress,
       phone: customer.phoneNumber?.phoneNumber,
+      addresses: { edges: customer.addresses?.edges || [] },
+      normalizedAddresses: addresses,
       orders: {
         ...customer.orders,
         edges: customer.orders?.edges.map((edge) => ({

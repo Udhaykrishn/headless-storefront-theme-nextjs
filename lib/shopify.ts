@@ -49,9 +49,9 @@ export const GET_CUSTOMER_ACCOUNT_QUERY = `
         address1
         address2
         city
-        province
+        zoneCode
         zip
-        country
+        territoryCode
       }
       metafield(namespace: "custom", key: "cart_id") {
         value
@@ -63,9 +63,9 @@ export const GET_CUSTOMER_ACCOUNT_QUERY = `
             address1
             address2
             city
-            province
+            zoneCode
             zip
-            country
+            territoryCode
             firstName
             lastName
             phoneNumber
