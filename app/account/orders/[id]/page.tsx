@@ -210,12 +210,14 @@ export default async function OrderDetailPage({
                             <span className="text-xs text-slate-500">
                               Qty: {item.quantity}
                             </span>
-                            <Link
-                              href={`/products/${item.variant.product.handle}`}
-                              className="text-xs text-indigo-600 font-medium hover:text-indigo-800 inline-flex items-center gap-1"
-                            >
-                              Buy again <ArrowRight className="w-3 h-3" />
-                            </Link>
+                            {item.variant.product?.handle && (
+                              <Link
+                                href={`/products/${item.variant.product.handle}`}
+                                className="text-xs text-indigo-600 font-medium hover:text-indigo-800 inline-flex items-center gap-1"
+                              >
+                                Buy again <ArrowRight className="w-3 h-3" />
+                              </Link>
+                            )}
                           </div>
                         </div>
 
@@ -296,18 +298,26 @@ export default async function OrderDetailPage({
                   <div className="flex justify-between text-slate-600">
                     <span>Subtotal</span>
                     <span className="font-medium text-slate-900">
-                      {parseFloat(order.totalPrice.amount).toLocaleString(
+                      {parseFloat(order.subtotalPrice?.amount || order.totalPrice.amount).toLocaleString(
                         "en-US",
                         {
                           style: "currency",
-                          currency: order.totalPrice.currencyCode,
+                          currency: order.subtotalPrice?.currencyCode || order.totalPrice.currencyCode,
                         },
                       )}
                     </span>
                   </div>
                   <div className="flex justify-between text-slate-600">
                     <span>Shipping</span>
-                    <span className="text-emerald-600 font-medium">Free</span>
+                    <span className="text-emerald-600 font-medium">
+                      {parseFloat(order.totalShippingPrice?.amount || "0") === 0 
+                        ? "Free" 
+                        : parseFloat(order.totalShippingPrice.amount).toLocaleString("en-US", {
+                            style: "currency",
+                            currency: order.totalShippingPrice.currencyCode,
+                          })
+                      }
+                    </span>
                   </div>
                   <div className="flex justify-between text-slate-600">
                     <span>Tax</span>
