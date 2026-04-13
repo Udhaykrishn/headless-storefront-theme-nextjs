@@ -1,16 +1,17 @@
 "use client";
 
-import { Trash2, Loader2 } from "lucide-react";
-import { useTransition } from "react";
-import { deleteCustomerAddress } from "@/app/actions/customer";
-import { toast } from "sonner";
+import { Loader2, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTransition } from "react";
+import { toast } from "sonner";
+import { deleteCustomerAddress } from "@/app/actions/customer";
+import { Button } from "@/components/ui/button";
 
 export default function AddressDeleteButton({ addressId }: { addressId: string }) {
-  const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!confirm("Are you sure you want to delete this address?")) return;
 
     startTransition(async () => {
@@ -25,17 +26,18 @@ export default function AddressDeleteButton({ addressId }: { addressId: string }
   };
 
   return (
-    <button
+    <Button
+      variant="ghost"
+      size="icon"
+      className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
       onClick={handleDelete}
       disabled={isPending}
-      className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
-      title="Delete address"
     >
       {isPending ? (
-        <Loader2 className="w-4 h-4 animate-spin" />
+        <Loader2 className="h-4 w-4 animate-spin" />
       ) : (
-        <Trash2 className="w-4 h-4" />
+        <Trash2 className="h-4 w-4" />
       )}
-    </button>
+    </Button>
   );
 }

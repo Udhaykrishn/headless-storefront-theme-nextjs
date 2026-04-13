@@ -56,6 +56,22 @@ export const GET_CUSTOMER_ACCOUNT_QUERY = `
       metafield(namespace: "custom", key: "cart_id") {
         value
       }
+      addresses(first: 10) {
+        edges {
+          node {
+            id
+            address1
+            address2
+            city
+            province
+            zip
+            country
+            firstName
+            lastName
+            phoneNumber
+          }
+        }
+      }
     }
   }
 `;
@@ -735,8 +751,8 @@ export async function getShopId() {
 }
 
 export const CUSTOMER_ADDRESS_CREATE_MUTATION = `
-  mutation customerAddressCreate($customerAccessToken: String!, $address: MailingAddressInput!) {
-    customerAddressCreate(customerAccessToken: $customerAccessToken, address: $address) {
+  mutation customerAddressCreate($address: CustomerAddressInput!) {
+    customerAddressCreate(address: $address) {
       customerAddress {
         id
         address1
@@ -747,25 +763,25 @@ export const CUSTOMER_ADDRESS_CREATE_MUTATION = `
         country
         firstName
         lastName
-        phone
+        phoneNumber
       }
-      customerUserErrors {
-        code
+      userErrors {
         field
         message
+        code
       }
     }
   }
 `;
 
 export const CUSTOMER_ADDRESS_DELETE_MUTATION = `
-  mutation customerAddressDelete($customerAccessToken: String!, $id: ID!) {
-    customerAddressDelete(customerAccessToken: $customerAccessToken, id: $id) {
-      deletedCustomerAddressId
-      customerUserErrors {
-        code
+  mutation customerAddressDelete($addressId: ID!) {
+    customerAddressDelete(addressId: $addressId) {
+      deletedAddressId
+      userErrors {
         field
         message
+        code
       }
     }
   }
