@@ -43,16 +43,29 @@ export default function AddressForm() {
         />
       </div>
 
-      <div className="space-y-1.5">
-        <label htmlFor="address2" className="text-xs font-semibold text-slate-600 block">
-          Apartment, suite, etc. (optional)
-        </label>
-        <Input 
-          id="address2" 
-          name="address2" 
-          placeholder="Apt 4B" 
-          className="h-11 rounded-xl bg-white border-slate-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm px-4" 
-        />
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1.5">
+          <label htmlFor="address2" className="text-xs font-semibold text-slate-600 block">
+            Apartment, suite, etc.
+          </label>
+          <Input 
+            id="address2" 
+            name="address2" 
+            placeholder="Apt 4B" 
+            className="h-11 rounded-xl bg-white border-slate-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm px-4" 
+          />
+        </div>
+        <div className="space-y-1.5">
+          <label htmlFor="company" className="text-xs font-semibold text-slate-600 block">
+            Company (optional)
+          </label>
+          <Input 
+            id="company" 
+            name="company" 
+            placeholder="Company name"
+            className="h-11 rounded-xl bg-white border-slate-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm px-4" 
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
