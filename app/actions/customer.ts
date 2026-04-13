@@ -339,7 +339,6 @@ export async function createCustomerAddress(
         userErrors: Array<{ field: string[]; message: string; code?: string }> 
       };
     }>(CUSTOMER_ADDRESS_CREATE_MUTATION, { 
-      customerId: customer.id,
       address: customerAccountAddress, 
     });
 
@@ -361,17 +360,12 @@ export async function deleteCustomerAddress(addressId: string) {
   const tokenCookie = cookieStore.get(TOKEN_KEY);
   if (!tokenCookie?.value) return { error: "Not authenticated" };
 
-  const customer = await getCustomer();
-  if (!customer?.id) return { error: "Customer ID not found" };
-
-  const { customerAccountClient, CUSTOMER_ADDRESS_DELETE_MUTATION } = await import("@/lib/shopify");
-
   try {
+    const { customerAccountClient, CUSTOMER_ADDRESS_DELETE_MUTATION } = await import("@/lib/shopify");
     const data = await customerAccountClient(tokenCookie.value).request<{
       customerAddressDelete: { deletedAddressId: string; userErrors: UserError[] };
     }>(CUSTOMER_ADDRESS_DELETE_MUTATION, { 
       addressId,
-      customerId: customer.id,
     });
 
     if (data.customerAddressDelete.userErrors.length > 0) {
