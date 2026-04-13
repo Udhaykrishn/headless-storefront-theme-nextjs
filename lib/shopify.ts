@@ -751,20 +751,34 @@ export async function getShopId() {
 }
 
 export const CUSTOMER_ADDRESS_CREATE_MUTATION = `
-  mutation customerAddressCreate($customerId: ID!, $address: CustomerAddressInput!) {
-    customerAddressCreate(customerId: $customerId, address: $address) {
+  mutation customerAddressCreate($address: CustomerAddressInput!, $defaultAddress: Boolean) {
+    customerAddressCreate(address: $address, defaultAddress: $defaultAddress) {
       customerAddress {
         id
+        firstName
+        lastName
         address1
         address2
         city
-        zip
-        territoryCode
         zoneCode
-        firstName
-        lastName
+        territoryCode
+        zip
         phoneNumber
+        company
       }
+      userErrors {
+        field
+        message
+        code
+      }
+    }
+  }
+`;
+
+export const CUSTOMER_ADDRESS_DELETE_MUTATION = `
+  mutation customerAddressDelete($addressId: ID!) {
+    customerAddressDelete(addressId: $addressId) {
+      deletedAddressId
       userErrors {
         field
         message
@@ -773,13 +787,26 @@ export const CUSTOMER_ADDRESS_CREATE_MUTATION = `
   }
 `;
 
-export const CUSTOMER_ADDRESS_DELETE_MUTATION = `
-  mutation customerAddressDelete($addressId: ID!, $customerId: ID!) {
-    customerAddressDelete(addressId: $addressId, customerId: $customerId) {
-      deletedAddressId
+export const CUSTOMER_ADDRESS_UPDATE_MUTATION = `
+  mutation customerAddressUpdate($addressId: ID!, $address: CustomerAddressInput!) {
+    customerAddressUpdate(addressId: $addressId, address: $address) {
+      customerAddress {
+        id
+        firstName
+        lastName
+        address1
+        address2
+        city
+        zoneCode
+        territoryCode
+        zip
+        phoneNumber
+        company
+      }
       userErrors {
         field
         message
+        code
       }
     }
   }
