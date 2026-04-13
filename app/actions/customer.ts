@@ -304,37 +304,55 @@ export async function createCustomerAddress(
   };
 
   const province = formData.get("province") as string;
-  const zoneCode = stateToCode[province] || province; // Fallback to raw string if not in map
+  const zoneCode = stateToCode[province] || province;
+  
+  // Format phone to E.164 if it's a 10-digit number
+  let phone = formData.get("phone") as string || "";
+  if (phone && phone.length === 10 && !phone.startsWith("+")) {
+    phone = `+91${phone}`;
+  } else if (phone && phone.length === 12 && phone.startsWith("91") && !phone.startsWith("+")) {
+    phone = `+${phone}`;
+  }
 
-  const address = {
+  // Dual Mapping Strategy as per Shopify Guidelines:
+  
+  // 1. Customer Account API Payload (CustomerAddressInput)
+  const customerAccountAddress = {
     firstName: customer?.firstName || "",
     lastName: customer?.lastName || "",
     address1: formData.get("address1") as string,
-    address2: formData.get("address2") as string,
+    address2: (formData.get("address2") as string) || "",
     city: formData.get("city") as string,
     territoryCode: "IN", 
     zoneCode: zoneCode,
     zip: formData.get("zip") as string,
-    phoneNumber: formData.get("phone") as string,
+    phoneNumber: phone,
+    company: (formData.get("company") as string) || "",
   };
 
   const { customerAccountClient, CUSTOMER_ADDRESS_CREATE_MUTATION } = await import("@/lib/shopify");
 
   try {
     const data = await customerAccountClient(tokenCookie.value).request<{
-      customerAddressCreate: { customerAddress: any; userErrors: UserError[] };
+      customerAddressCreate: { 
+        customerAddress: any; 
+        userErrors: Array<{ field: string[]; message: string; code?: string }> 
+      };
     }>(CUSTOMER_ADDRESS_CREATE_MUTATION, { 
       customerId: customer.id,
-      address,
+      address: customerAccountAddress, 
     });
 
     if (data.customerAddressCreate.userErrors.length > 0) {
-      return { success: false, error: data.customerAddressCreate.userErrors[0].message };
+      const error = data.customerAddressCreate.userErrors[0];
+      console.error("Shopify Address Validation Error:", error);
+      return { success: false, error: `${error.message}${error.field ? ` (${error.field.join(", ")})` : ""}` };
     }
+
     return { success: true };
   } catch (error: any) {
-    console.error("Address creation failed", error?.response?.errors || error);
-    return { success: false, error: "Failed to create address" };
+    console.error("Address creation failed [Critical Exception]:", error?.response?.errors || error);
+    return { success: false, error: "Failed to create address. Please check your data." };
   }
 }
 
