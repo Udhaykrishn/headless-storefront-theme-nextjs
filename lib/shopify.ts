@@ -759,11 +759,11 @@ export const CUSTOMER_ADDRESS_CREATE_MUTATION = `
         address2
         city
         zip
+        territoryCode
+        zoneCode
         firstName
         lastName
         phoneNumber
-        zoneCode
-        territoryCode
       }
       userErrors {
         field
