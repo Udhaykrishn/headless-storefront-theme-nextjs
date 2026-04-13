@@ -195,39 +195,37 @@ export async function getOrder(orderId: string) {
 
   const { customerAccountClient } = await import("@/lib/shopify");
 
+  const fullId = orderId.startsWith("gid://") 
+    ? orderId 
+    : `gid://shopify/Order/${orderId}`;
+
   const query = `
     query getOrder($id: ID!) {
-      customer {
-        orders(first: 1, query: $id) {
+      order(id: $id) {
+        id
+        name
+        processedAt
+        financialStatus
+        fulfillmentStatus
+        totalPrice { amount, currencyCode }
+        subtotal { amount, currencyCode }
+        totalShipping { amount, currencyCode }
+        lineItems(first: 50) {
           edges {
             node {
-              id
-              name
-              processedAt
-              financialStatus
-              fulfillmentStatus
-              totalPrice { amount, currencyCode }
-              subtotalPrice { amount, currencyCode }
-              totalShippingPrice { amount, currencyCode }
-              lineItems(first: 50) {
-                edges {
-                  node {
-                    title
-                    quantity
-                    variant {
-                      title
-                      price { amount, currencyCode }
-                      image { url, altText }
-                      product { handle }
-                    }
-                  }
-                }
-              }
-              shippingAddress {
-                firstName, lastName, address1, address2, city, province, zip, country
+              title
+              quantity
+              variantTitle
+              variantId
+              image { url, altText }
+              unitPrice {
+                price { amount, currencyCode }
               }
             }
           }
+        }
+        shippingAddress {
+          firstName, lastName, address1, address2, city, province, zip, country
         }
       }
     }
@@ -235,15 +233,34 @@ export async function getOrder(orderId: string) {
 
   try {
     const data = await customerAccountClient(tokenCookie.value).request<{
-      customer: { orders: { edges: Array<{ node: any }> } };
-    }>(query, { id: orderId });
+      order: any;
+    }>(query, { id: fullId });
 
-    const order = data.customer.orders.edges[0]?.node;
+    const order = data.order;
     if (!order) return null;
 
+    // Map the new API structure to match what the UI expects
     return {
       ...order,
-      orderNumber: order.name, // Map for UI compatibility
+      orderNumber: order.name,
+      subtotalPrice: order.subtotal,
+      totalShippingPrice: order.totalShipping,
+      lineItems: {
+        ...order.lineItems,
+        edges: order.lineItems.edges.map((edge: any) => ({
+          ...edge,
+          node: {
+            ...edge.node,
+            variant: {
+              id: edge.node.variantId,
+              title: edge.node.variantTitle || "Default Title",
+              price: edge.node.unitPrice?.price || { amount: "0", currencyCode: "INR" },
+              image: edge.node.image,
+              product: { handle: "" } // Handle not available in this API, will need a fallback in UI
+            }
+          }
+        }))
+      }
     };
   } catch (error) {
     console.error("Failed to fetch order", error);
