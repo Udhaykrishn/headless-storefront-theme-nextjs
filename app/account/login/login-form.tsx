@@ -9,8 +9,7 @@ export default function LoginForm() {
   const error = searchParams.get("error");
 
   const handleLogin = () => {
-    // This triggers the Shopify OIDC flow which supports Google
-    window.location.href = "/api/auth/login";
+    window.location.href = 'https://rebootx-2.account.myshopify.com/authentication/social/google';
   };
 
   return (
