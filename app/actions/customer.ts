@@ -139,12 +139,12 @@ export async function getCustomerToken() {
 }
 
 export async function updateCustomerProfile(
-  _prevState: unknown,
+  _prevState: any,
   formData: FormData,
-) {
+): Promise<{ success: boolean; error?: string }> {
   const cookieStore = await cookies();
   const tokenCookie = cookieStore.get(TOKEN_KEY);
-  if (!tokenCookie?.value) return { error: "Not authenticated" };
+  if (!tokenCookie?.value) return { success: false, error: "Not authenticated" };
 
   const input: any = {
     firstName: formData.get("firstName") as string,
@@ -168,12 +168,12 @@ export async function updateCustomerProfile(
     });
 
     if (data.customerUpdate.customerUserErrors.length > 0) {
-      return { error: data.customerUpdate.customerUserErrors[0].message };
+      return { success: false, error: data.customerUpdate.customerUserErrors[0].message };
     }
     return { success: true };
   } catch (error: any) {
     console.error("Profile update failed", error?.response?.errors || error);
-    return { error: "Failed to update profile" };
+    return { success: false, error: "Failed to update profile" };
   }
 }
 
@@ -240,10 +240,13 @@ export async function getOrder(orderId: string) {
   }
 }
 
-export async function createCustomerAddress(_prevState: unknown, formData: FormData) {
+export async function createCustomerAddress(
+  _prevState: any,
+  formData: FormData,
+): Promise<{ success: boolean; error?: string }> {
   const cookieStore = await cookies();
   const tokenCookie = cookieStore.get(TOKEN_KEY);
-  if (!tokenCookie?.value) return { error: "Not authenticated" };
+  if (!tokenCookie?.value) return { success: false, error: "Not authenticated" };
 
   // Fetch customer to use as default for names if not provided (now that we removed them from form)
   const customer = await getCustomer();
@@ -273,14 +276,14 @@ export async function createCustomerAddress(_prevState: unknown, formData: FormD
     if (data.customerAddressCreate.customerUserErrors.length > 0) {
       const firstError = data.customerAddressCreate.customerUserErrors[0];
       console.error("Shopify Address Error:", data.customerAddressCreate.customerUserErrors);
-      return { error: firstError.message };
+      return { success: false, error: firstError.message };
     }
     return { success: true };
   } catch (error: any) {
     console.error("Address creation failed", error?.response?.errors || error);
     // Try to extract a more specific error message from the response if possible
     const detailedError = error?.response?.errors?.[0]?.message || error?.message || "Failed to create address";
-    return { error: detailedError };
+    return { success: false, error: detailedError };
   }
 }
 
