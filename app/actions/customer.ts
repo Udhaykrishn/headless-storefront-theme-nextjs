@@ -248,62 +248,55 @@ export async function createCustomerAddress(
   const tokenCookie = cookieStore.get(TOKEN_KEY);
   if (!tokenCookie?.value) return { success: false, error: "Not authenticated" };
 
-  // Fetch customer to use as default for names if not provided (now that we removed them from form)
   const customer = await getCustomer();
 
   const address = {
-    firstName: (formData.get("firstName") as string) || customer?.firstName || "",
-    lastName: (formData.get("lastName") as string) || customer?.lastName || "",
+    firstName: customer?.firstName || "",
+    lastName: customer?.lastName || "",
     address1: formData.get("address1") as string,
     address2: formData.get("address2") as string,
     city: formData.get("city") as string,
     province: formData.get("province") as string,
     zip: formData.get("zip") as string,
-    country: (formData.get("country") as string) || "India",
-    phone: formData.get("phone") as string,
+    country: "India", // Defaulting to India as requested
+    phoneNumber: formData.get("phone") as string,
   };
 
-  const { shopifyClient, CUSTOMER_ADDRESS_CREATE_MUTATION } = await import("@/lib/shopify");
+  const { customerAccountClient, CUSTOMER_ADDRESS_CREATE_MUTATION } = await import("@/lib/shopify");
 
   try {
-    const data = await shopifyClient.request<{
-      customerAddressCreate: { customerAddress: any; customerUserErrors: UserError[] };
+    const data = await customerAccountClient(tokenCookie.value).request<{
+      customerAddressCreate: { customerAddress: any; userErrors: UserError[] };
     }>(CUSTOMER_ADDRESS_CREATE_MUTATION, { 
-      customerAccessToken: tokenCookie.value,
       address,
     });
 
-    if (data.customerAddressCreate.customerUserErrors.length > 0) {
-      const firstError = data.customerAddressCreate.customerUserErrors[0];
-      console.error("Shopify Address Error:", data.customerAddressCreate.customerUserErrors);
-      return { success: false, error: firstError.message };
+    if (data.customerAddressCreate.userErrors.length > 0) {
+      return { success: false, error: data.customerAddressCreate.userErrors[0].message };
     }
     return { success: true };
   } catch (error: any) {
     console.error("Address creation failed", error?.response?.errors || error);
-    // Try to extract a more specific error message from the response if possible
-    const detailedError = error?.response?.errors?.[0]?.message || error?.message || "Failed to create address";
-    return { success: false, error: detailedError };
+    return { success: false, error: "Failed to create address" };
   }
 }
 
-export async function deleteCustomerAddress(id: string) {
+export async function deleteCustomerAddress(addressId: string) {
   const cookieStore = await cookies();
   const tokenCookie = cookieStore.get(TOKEN_KEY);
   if (!tokenCookie?.value) return { error: "Not authenticated" };
 
-  const { shopifyClient, CUSTOMER_ADDRESS_DELETE_MUTATION } = await import("@/lib/shopify");
+  const { customerAccountClient, CUSTOMER_ADDRESS_DELETE_MUTATION } = await import("@/lib/shopify");
 
   try {
-    const data = await shopifyClient.request<{
-      customerAddressDelete: { deletedCustomerAddressId: string; customerUserErrors: UserError[] };
+    const data = await customerAccountClient(tokenCookie.value).request<{
+      customerAddressDelete: { deletedAddressId: string; userErrors: UserError[] };
     }>(CUSTOMER_ADDRESS_DELETE_MUTATION, { 
-      customerAccessToken: tokenCookie.value,
-      id,
+      addressId,
     });
 
-    if (data.customerAddressDelete.customerUserErrors.length > 0) {
-      return { error: data.customerAddressDelete.customerUserErrors[0].message };
+    if (data.customerAddressDelete.userErrors.length > 0) {
+      return { error: data.customerAddressDelete.userErrors[0].message };
     }
     return { success: true };
   } catch (error) {

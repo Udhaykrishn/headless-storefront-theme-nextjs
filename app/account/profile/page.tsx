@@ -19,11 +19,12 @@ export default async function CombinedProfilePage() {
 
   let addresses: any[] = [];
   try {
-    const data = await shopifyClient.request<{
+    const { customerAccountClient, GET_CUSTOMER_ACCOUNT_QUERY } = await import("@/lib/shopify");
+    const data = await customerAccountClient(token).request<{
       customer: {
         addresses: { edges: Array<{ node: any }> };
       };
-    }>(GET_CUSTOMER_ADDRESSES_QUERY, { customerAccessToken: token! });
+    }>(GET_CUSTOMER_ACCOUNT_QUERY);
     
     addresses = data.customer?.addresses?.edges?.map(e => e.node) || [];
   } catch (err) {
