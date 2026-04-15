@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 export default function AddressForm() {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
-  
+
   const [state, action, isPending] = useActionState(
     createCustomerAddress,
     null as { success?: boolean; error?: string } | null,
@@ -34,12 +34,12 @@ export default function AddressForm() {
         <label htmlFor="address1" className="text-xs font-semibold text-slate-600 block">
           Address <span className="text-red-400">*</span>
         </label>
-        <Input 
-          id="address1" 
-          name="address1" 
-          required 
-          placeholder="Street address" 
-          className="h-11 rounded-xl bg-white border-slate-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm px-4" 
+        <Input
+          id="address1"
+          name="address1"
+          required
+          placeholder="Street address"
+          className="h-11 rounded-xl bg-white border-slate-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm px-4"
         />
       </div>
 
@@ -48,22 +48,22 @@ export default function AddressForm() {
           <label htmlFor="address2" className="text-xs font-semibold text-slate-600 block">
             Apartment, suite, etc.
           </label>
-          <Input 
-            id="address2" 
-            name="address2" 
-            placeholder="Apt 4B" 
-            className="h-11 rounded-xl bg-white border-slate-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm px-4" 
+          <Input
+            id="address2"
+            name="address2"
+            placeholder="Apt 4B"
+            className="h-11 rounded-xl bg-white border-slate-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm px-4"
           />
         </div>
         <div className="space-y-1.5">
           <label htmlFor="company" className="text-xs font-semibold text-slate-600 block">
             Company (optional)
           </label>
-          <Input 
-            id="company" 
-            name="company" 
+          <Input
+            id="company"
+            name="company"
             placeholder="Company name"
-            className="h-11 rounded-xl bg-white border-slate-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm px-4" 
+            className="h-11 rounded-xl bg-white border-slate-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm px-4"
           />
         </div>
       </div>
@@ -73,24 +73,25 @@ export default function AddressForm() {
           <label htmlFor="city" className="text-xs font-semibold text-slate-600 block">
             City <span className="text-red-400">*</span>
           </label>
-          <Input 
-            id="city" 
-            name="city" 
-            required 
-            className="h-11 rounded-xl bg-white border-slate-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm px-4" 
+          <Input
+            id="city"
+            name="city"
+            required
+            className="h-11 rounded-xl bg-white border-slate-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm px-4"
           />
         </div>
         <div className="space-y-1.5">
           <label htmlFor="province" className="text-xs font-semibold text-slate-600 block">
             State <span className="text-red-400">*</span>
           </label>
-          <select 
-            id="province" 
-            name="province" 
-            required 
+          <select
+            id="province"
+            name="province"
+            required
+            defaultValue=""
             className="w-full h-11 rounded-xl bg-white border border-slate-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm px-3 outline-none transition-all appearance-none cursor-pointer"
           >
-            <option value="" disabled selected>Select State</option>
+            <option value="" disabled>Select State</option>
             <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
             <option value="Andhra Pradesh">Andhra Pradesh</option>
             <option value="Arunachal Pradesh">Arunachal Pradesh</option>
@@ -136,24 +137,24 @@ export default function AddressForm() {
         <label htmlFor="zip" className="text-xs font-semibold text-slate-600 block">
           PIN code <span className="text-red-400">*</span>
         </label>
-        <Input 
-          id="zip" 
-          name="zip" 
-          required 
-          placeholder="400001" 
-          className="h-11 rounded-xl bg-white border-slate-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm px-4" 
+        <Input
+          id="zip"
+          name="zip"
+          required
+          placeholder="400001"
+          className="h-11 rounded-xl bg-white border-slate-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm px-4"
         />
       </div>
-      
+
       <div className="space-y-1.5">
         <label htmlFor="phone" className="text-xs font-semibold text-slate-600 block">
           Phone
         </label>
-        <Input 
-          id="phone" 
-          name="phone" 
-          placeholder="Optional" 
-          className="h-11 rounded-xl bg-white border-slate-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm px-4" 
+        <Input
+          id="phone"
+          name="phone"
+          placeholder="Optional"
+          className="h-11 rounded-xl bg-white border-slate-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm px-4"
         />
       </div>
 

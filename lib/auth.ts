@@ -1,6 +1,6 @@
 const CLIENT_ID = process.env.SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID;
 const SHOP_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
-const REDIRECT_URI = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/auth/callback`;
+const REDIRECT_URI = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001"}/api/auth/callback`;
 
 export async function getAuthConfiguration() {
   // Try Shop ID based discovery first (most robust for New Customer Accounts)

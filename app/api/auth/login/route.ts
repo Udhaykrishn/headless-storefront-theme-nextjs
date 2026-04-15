@@ -6,7 +6,7 @@ import {
   getAuthConfiguration,
 } from "@/lib/auth";
 
-export async function GET() {
+export async function GET(request: Request) {
   const config = await getAuthConfiguration();
   const cookieStore = await cookies();
 
@@ -14,16 +14,23 @@ export async function GET() {
   const codeVerifier = await generateCodeVerifier();
   const codeChallenge = await generateCodeChallenge(codeVerifier);
 
+  // Detect the current base URL from the request
+  const currentOrigin = new URL(request.url).origin;
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || currentOrigin;
+  const isLocal = currentOrigin.includes("localhost");
+
   // Store transient data in cookies for the callback to verify
   cookieStore.set("auth_state", state, {
     httpOnly: true,
-    secure: true,
+    secure: !isLocal,
     maxAge: 600,
+    path: "/",
   });
   cookieStore.set("auth_code_verifier", codeVerifier, {
     httpOnly: true,
-    secure: true,
+    secure: !isLocal,
     maxAge: 600,
+    path: "/",
   });
 
   const authUrl = new URL(config.authorization_endpoint);
@@ -34,7 +41,7 @@ export async function GET() {
   authUrl.searchParams.set("scope", "openid email customer-account-api:full");
   authUrl.searchParams.set(
     "redirect_uri",
-    `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback`,
+    `${baseUrl}/api/auth/callback`,
   );
   authUrl.searchParams.set("state", state);
   authUrl.searchParams.set("code_challenge", codeChallenge);

@@ -22,9 +22,13 @@ export async function GET(_request: Request) {
     logoutUrl.searchParams.set("id_token_hint", idToken);
   }
 
+  // Detect the current base URL from the request
+  const currentOrigin = new URL(_request.url).origin;
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || currentOrigin;
+
   logoutUrl.searchParams.set(
     "post_logout_redirect_uri",
-    process.env.NEXT_PUBLIC_APP_URL!,
+    baseUrl,
   );
 
   return NextResponse.redirect(logoutUrl.toString());
