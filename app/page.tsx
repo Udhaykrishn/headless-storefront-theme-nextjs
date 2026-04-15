@@ -9,7 +9,7 @@ import { getProducts } from "@/lib/shopify";
 export const revalidate = 0;
 
 export default async function Home() {
-  const productsData = await getProducts();
+  const productsData = await getProducts({ first: 12 });
   const products = productsData.edges.map((e) => e.node);
 
   return (

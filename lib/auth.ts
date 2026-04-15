@@ -1,40 +1,38 @@
-import { cookies } from "next/headers";
-
 const CLIENT_ID = process.env.SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID;
 const SHOP_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
 const REDIRECT_URI = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/auth/callback`;
 
 export async function getAuthConfiguration() {
-  // The root discovery URL is often the most reliable for New Customer Accounts
-  const discoveryUrls = [
-    `https://${SHOP_DOMAIN}/.well-known/openid-configuration`,
-    `https://${SHOP_DOMAIN}/auth/customer/.well-known/openid-configuration`,
-  ];
-  
-  for (const url of discoveryUrls) {
-    try {
-      const response = await fetch(url);
-      if (response.ok) return await response.json();
-    } catch (e) {
-      console.warn(`Discovery failed on ${url}, trying next...`);
-    }
-  }
-
-  // Final fallback attempt via Shop ID
+  // Try Shop ID based discovery first (most robust for New Customer Accounts)
   try {
     const { getShopId } = await import("./shopify");
     const shopId = await getShopId();
-    
     if (shopId) {
       const shopIdUrl = `https://shopify.com/${shopId}/auth/customer/.well-known/openid-configuration`;
       const response = await fetch(shopIdUrl);
       if (response.ok) return await response.json();
     }
-  } catch (error) {
-    console.error("Shop ID fallback discovery failed");
+  } catch (_e) {
+    console.warn("Shop ID discovery failed, trying domain-based...");
   }
-    
-  throw new Error(`OIDC Discovery failed. Please ensure "New Customer Accounts" is enabled in Shopify Admin > Settings > Customer Accounts.`);
+
+  const discoveryUrls = [
+    `https://${SHOP_DOMAIN}/auth/customer/.well-known/openid-configuration`,
+    `https://${SHOP_DOMAIN}/.well-known/openid-configuration`,
+  ];
+
+  for (const url of discoveryUrls) {
+    try {
+      const response = await fetch(url);
+      if (response.ok) return await response.json();
+    } catch (_e) {
+      console.warn(`Discovery failed on ${url}, trying next...`);
+    }
+  }
+
+  throw new Error(
+    `OIDC Discovery failed. Please ensure "New Customer Accounts" is enabled in Shopify Admin > Settings > Customer Accounts.`,
+  );
 }
 
 export async function generateCodeVerifier() {

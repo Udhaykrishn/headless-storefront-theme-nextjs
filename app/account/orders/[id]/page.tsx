@@ -1,20 +1,85 @@
-import { getOrder } from "@/app/actions/customer";
-import { redirect } from "next/navigation";
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
-import Link from "next/link";
-import { 
-  ChevronLeft, 
-  Package, 
-  MapPin, 
-  CreditCard, 
-  Truck, 
-  Check,
-  ArrowRight
+import {
+  ArrowRight,
+  CheckCircle2,
+  ChevronLeft,
+  Circle,
+  Clock,
+  CreditCard,
+  Download,
+  MapPin,
+  Package,
+  Truck,
 } from "lucide-react";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getOrder } from "@/app/actions/customer";
+import { Footer } from "@/components/footer";
+import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+function StatusBadge({ status }: { status: string }) {
+  const map: Record<string, { label: string; class: string }> = {
+    PAID: {
+      label: "Paid",
+      class: "bg-emerald-100 text-emerald-700 border-emerald-200",
+    },
+    PENDING: {
+      label: "Pending",
+      class: "bg-amber-100 text-amber-700 border-amber-200",
+    },
+    REFUNDED: {
+      label: "Refunded",
+      class: "bg-red-100 text-red-700 border-red-200",
+    },
+    PARTIALLY_REFUNDED: {
+      label: "Partial Refund",
+      class: "bg-orange-100 text-orange-700 border-orange-200",
+    },
+  };
+  const s = map[status] ?? {
+    label: status,
+    class: "bg-slate-100 text-slate-600 border-slate-200",
+  };
+  return (
+    <span
+      className={cn(
+        "text-xs font-semibold px-3 py-1 rounded-full border",
+        s.class,
+      )}
+    >
+      {s.label}
+    </span>
+  );
+}
+
+const TIMELINE = [
+  {
+    icon: CheckCircle2,
+    label: "Order Placed",
+    desc: "Your order has been received",
+    done: true,
+  },
+  {
+    icon: Package,
+    label: "Processing",
+    desc: "We're preparing your items",
+    done: true,
+  },
+  {
+    icon: Truck,
+    label: "Shipped",
+    desc: "Your order is on its way",
+    done: false,
+  },
+  {
+    icon: CheckCircle2,
+    label: "Delivered",
+    desc: "Package delivered successfully",
+    done: false,
+  },
+];
 
 export default async function OrderDetailPage({
   params,
@@ -24,113 +89,151 @@ export default async function OrderDetailPage({
   const { id } = await params;
   const order = await getOrder(id);
 
-  if (!order) {
-    redirect("/account");
-  }
+  if (!order) redirect("/account");
 
   const customer = order.customer || { firstName: "Customer", lastName: "" };
 
   return (
-    <div className="min-h-screen flex flex-col text-slate-900 overflow-hidden relative selection:bg-indigo-600 selection:text-white">
-      {/* Cinematic Background Orbs */}
-      <div className="fixed top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-purple-500/10 blur-[150px] -z-10 animate-pulse"></div>
-      <div className="fixed bottom-[-20%] right-[-10%] w-[70%] h-[70%] rounded-full bg-indigo-500/10 blur-[200px] -z-10 delay-700"></div>
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-indigo-600 selection:text-white">
+      {/* Gradient backdrop */}
+      <div className="fixed inset-0 -z-10 pointer-events-none">
+        <div className="absolute top-0 left-0 w-full h-[400px] bg-gradient-to-br from-indigo-50 via-purple-50/40 to-transparent" />
+      </div>
 
       <Header />
-      
-      <main className="flex-1 py-12 lg:py-24 relative z-10">
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
-          {/* Back Navigation Protocol */}
-          <div className="mb-16">
-            <Link href="/account" className="group inline-flex items-center gap-4 px-8 py-4 rounded-full bg-white/40 backdrop-blur-md border border-white/40 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-black hover:bg-white transition-all shadow-xl">
-               <ChevronLeft className="w-5 h-5 group-hover:-translate-x-2 transition-transform" />
-               Archive Dashboard
+
+      <main className="flex-1 py-10 lg:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
+          {/* Back */}
+          <div className="mb-8">
+            <Link
+              href="/account"
+              className="group inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-indigo-700 transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+              Back to Account
             </Link>
           </div>
 
-          <div className="mb-24 flex flex-col lg:flex-row items-center justify-between gap-12 bg-white/40 backdrop-blur-3xl p-12 lg:p-20 rounded-[5rem] border-2 border-white shadow-[0_80px_150px_-30px_rgba(0,0,0,0.1)] relative overflow-hidden group">
-             <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/5 rounded-full blur-[100px]"></div>
-             <div className="relative z-10 text-center lg:text-left">
-                <span className="text-indigo-400 text-[10px] font-black uppercase tracking-[0.6em] mb-6 block italic">Acquisition Verified</span>
-                <div className="flex flex-col lg:flex-row items-center gap-10">
-                   <h1 className="text-6xl lg:text-8xl font-black tracking-tighter uppercase text-indigo-950 italic underline decoration-indigo-200 decoration-[16px] underline-offset-[12px] leading-none block">
-                      Manifest #{order.orderNumber}
-                   </h1>
-                   <div className={cn(
-                      "text-[10px] font-black uppercase tracking-[0.4em] px-10 py-4 rounded-full shadow-2xl border-2 border-white/80 backdrop-blur-xl scale-110",
-                      order.financialStatus === "PAID" ? "bg-green-100/60 text-green-700" : "bg-amber-100/60 text-amber-700"
-                   )}>
-                      {order.financialStatus} Protocol
-                   </div>
-                </div>
-                <p className="text-slate-500 font-bold uppercase tracking-[0.3em] text-[10px] mt-16 flex items-center justify-center lg:justify-start gap-4">
-                  <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
-                  Processed at Source: {new Date(order.processedAt).toLocaleDateString("en-US", {
-                    month: "long", day: "numeric", year: "numeric"
+          {/* Page header */}
+          <div className="mb-8 bg-white/80 backdrop-blur-xl rounded-3xl border border-white shadow-lg shadow-indigo-100/30 px-8 py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold text-indigo-500 uppercase tracking-widest mb-1">
+                Order
+              </p>
+              <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">
+                #{order.orderNumber}
+              </h1>
+              <div className="flex items-center gap-3 mt-2">
+                <Clock className="w-3.5 h-3.5 text-slate-400" />
+                <span className="text-sm text-slate-500">
+                  Placed on{" "}
+                  {new Date(order.processedAt).toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
                   })}
-                </p>
-             </div>
-             
-             <div className="flex flex-wrap gap-8 relative z-10 lg:skew-x-[-12deg]">
-                <Button variant="outline" className="rounded-[2.5rem] h-24 px-12 text-[10px] font-black uppercase tracking-[0.3em] border-2 bg-white/60 backdrop-blur-md border-white/80 hover:bg-black hover:text-white transition-all shadow-2xl lg:skew-x-[12deg]">
-                   Export Proof
-                </Button>
-                <Button className="rounded-[2.5rem] h-24 px-12 text-[10px] font-black uppercase tracking-[0.3em] shadow-[0_30px_60px_-15px_rgba(79,70,229,0.5)] bg-indigo-600 border-none hover:bg-black transition-all lg:skew-x-[12deg]">
-                   Real-time Logistics
-                </Button>
-             </div>
+                </span>
+                <StatusBadge status={order.financialStatus} />
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 rounded-xl border-slate-200 text-slate-600 hover:border-indigo-300 hover:text-indigo-700"
+              >
+                <Download className="w-4 h-4" />
+                Invoice
+              </Button>
+              <Button
+                size="sm"
+                className="gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-500/30"
+              >
+                <Truck className="w-4 h-4" />
+                Track Order
+              </Button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
-            {/* Manifest Itemization */}
-            <div className="lg:col-span-8 space-y-16">
-              <div className="bg-white/40 backdrop-blur-[60px] rounded-[5rem] p-12 lg:p-20 shadow-2xl border-2 border-white relative overflow-hidden group/manifest">
-                <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-indigo-500/5 rounded-full blur-[100px] group-hover/manifest:bg-indigo-500/10 transition-colors duration-1000"></div>
-                <h2 className="relative text-4xl font-black uppercase tracking-tighter mb-20 italic text-indigo-950 underline decoration-indigo-200 decoration-8 underline-offset-8">Unit Summary</h2>
-                <div className="space-y-16 relative">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* ── Left Column ─────────────────────────────────── */}
+            <div className="lg:col-span-8 space-y-6">
+              {/* Order Items */}
+              <div className="bg-white/80 backdrop-blur-xl rounded-3xl border border-white shadow-lg shadow-indigo-100/20 overflow-hidden">
+                <div className="border-b border-slate-100 px-8 py-5">
+                  <h2 className="text-base font-bold text-slate-900">
+                    Items Ordered
+                  </h2>
+                  <p className="text-sm text-slate-500 mt-0.5">
+                    {order.lineItems.edges.length} item
+                    {order.lineItems.edges.length !== 1 ? "s" : ""}
+                  </p>
+                </div>
+
+                <div className="divide-y divide-slate-100">
                   {order.lineItems.edges.map((edge: any) => {
                     const item = edge.node;
                     return (
-                      <div key={item.variant.id} className="flex flex-col md:flex-row gap-16 group/item">
-                        <div className="relative w-48 h-64 rounded-[3.5rem] overflow-hidden bg-white border-2 border-white/80 flex-shrink-0 group-hover/item:scale-105 group-hover/item:rotate-2 transition-all duration-[1.5s] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.15)]">
+                      <div
+                        key={item.variant.id}
+                        className="flex gap-5 px-8 py-5 group"
+                      >
+                        {/* Product image */}
+                        <div className="relative w-20 h-24 rounded-2xl overflow-hidden bg-slate-100 flex-shrink-0 border border-slate-200">
                           {item.variant.image ? (
                             <Image
                               src={item.variant.image.url}
                               alt={item.variant.image.altText || item.title}
                               fill
-                              className="object-cover group-hover/item:scale-110 transition-transform duration-[2s]"
+                              className="object-cover group-hover:scale-105 transition-transform duration-500"
                             />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-indigo-100 bg-indigo-950">
-                               <Package className="w-16 h-16" />
+                            <div className="w-full h-full flex items-center justify-center bg-indigo-50">
+                              <Package className="w-8 h-8 text-indigo-200" />
                             </div>
                           )}
                         </div>
-                        <div className="flex-1 flex flex-col justify-center pt-4">
-                          <div className="flex justify-between items-start mb-8 gap-8">
-                            <div>
-                               <span className="text-indigo-400 text-[9px] font-black uppercase tracking-[0.4em] mb-3 block">SKU-{item.variant.id.slice(-6).toUpperCase()}</span>
-                               <h3 className="text-4xl font-black uppercase tracking-tighter text-indigo-950 italic group-hover/item:underline decoration-indigo-200 decoration-8 underline-offset-8 transition-all">{item.title}</h3>
-                               <p className="text-[10px] font-black text-slate-400 mt-6 uppercase tracking-[0.3em] bg-white/60 px-6 py-2 rounded-full border border-white/60 inline-block shadow-sm">{item.variant.title}</p>
-                            </div>
-                            <div className="text-right">
-                               <p className="font-black text-4xl tracking-tighter text-indigo-900 italic underline decoration-indigo-200 decoration-4">
-                                {parseFloat(item.variant.price.amount).toLocaleString("en-US", {
-                                  style: "currency",
-                                  currency: item.variant.price.currencyCode,
-                                })}
-                               </p>
-                               <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mt-3">Unit Valuation</p>
-                            </div>
+
+                        {/* Product details */}
+                        <div className="flex-1 min-w-0 flex flex-col justify-center">
+                          <h3 className="text-sm font-semibold text-slate-900 leading-snug group-hover:text-indigo-700 transition-colors">
+                            {item.title}
+                          </h3>
+                          {item.variant.title &&
+                            item.variant.title !== "Default Title" && (
+                              <span className="text-xs text-slate-500 mt-1 bg-slate-100 px-2 py-0.5 rounded-md inline-block w-fit">
+                                {item.variant.title}
+                              </span>
+                            )}
+                          <div className="flex items-center gap-4 mt-2">
+                            <span className="text-xs text-slate-500">
+                              Qty: {item.quantity}
+                            </span>
+                            {item.variant.product?.handle && (
+                              <Link
+                                href={`/products/${item.variant.product.handle}`}
+                                className="text-xs text-indigo-600 font-medium hover:text-indigo-800 inline-flex items-center gap-1"
+                              >
+                                Buy again <ArrowRight className="w-3 h-3" />
+                              </Link>
+                            )}
                           </div>
-                          <div className="flex items-center gap-8 mt-6">
-                             <div className="px-8 py-5 bg-indigo-950 text-white rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl">
-                                Units Captured: {item.quantity}
-                             </div>
-                             <Link href={`/products/${item.variant.product.handle}`} className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 hover:text-indigo-600 transition-all group/link flex items-center gap-3">
-                                Reacquire Item <ArrowRight className="w-4 h-4 group-hover/link:translate-x-2 transition-transform" />
-                             </Link>
-                          </div>
+                        </div>
+
+                        {/* Price */}
+                        <div className="text-right flex-shrink-0 flex flex-col justify-center">
+                          <p className="text-sm font-bold text-slate-900">
+                            {parseFloat(
+                              item.variant.price.amount,
+                            ).toLocaleString("en-US", {
+                              style: "currency",
+                              currency: item.variant.price.currencyCode,
+                            })}
+                          </p>
+                          <p className="text-xs text-slate-400 mt-0.5">
+                            per item
+                          </p>
                         </div>
                       </div>
                     );
@@ -138,117 +241,159 @@ export default async function OrderDetailPage({
                 </div>
               </div>
 
-              {/* Logistic Timeline Terminal */}
-              <div className="bg-white/40 backdrop-blur-[60px] rounded-[5rem] p-12 lg:p-20 shadow-2xl border-2 border-white relative overflow-hidden group/timeline">
-                 <div className="absolute inset-x-0 bottom-0 h-48 bg-indigo-500/5 blur-[100px]"></div>
-                 <h2 className="text-4xl font-black uppercase tracking-tighter mb-16 italic text-indigo-950 relative underline decoration-indigo-200 decoration-8 underline-offset-8">Logistic Feedback</h2>
-                 <div className="space-y-16 relative">
-                    <div className="flex gap-12 relative">
-                       <div className="absolute left-[34px] top-16 bottom-0 w-1 bg-indigo-600/10"></div>
-                       <div className="w-20 h-20 rounded-[2rem] bg-indigo-600 flex items-center justify-center flex-shrink-0 relative z-10 shadow-[0_25px_50px_-15px_rgba(79,70,229,0.5)] group-hover/timeline:rotate-12 transition-transform duration-700">
-                          <Check className="text-white w-10 h-10" />
-                       </div>
-                       <div className="pt-2">
-                          <h4 className="font-black text-xl uppercase tracking-[0.2em] mb-4 text-indigo-950">Resource Confirmed</h4>
-                          <p className="text-xs text-slate-500 font-bold leading-relaxed max-w-sm uppercase tracking-widest italic opacity-60">Physical manifestation successful. Archive updated.</p>
-                       </div>
-                    </div>
-                    <div className="flex gap-12 relative opacity-40">
-                       <div className="w-20 h-20 rounded-[2rem] bg-white border-2 border-white/80 flex items-center justify-center flex-shrink-0 relative z-10 shadow-xl backdrop-blur-md">
-                          <Truck className="text-slate-300 w-10 h-10" />
-                       </div>
-                       <div className="pt-2">
-                          <h4 className="font-black text-xl uppercase tracking-[0.2em] mb-4 text-slate-400">Transit Protocol</h4>
-                          <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] italic">Projection Window: Pending Terminal Update</p>
-                       </div>
-                    </div>
-                 </div>
+              {/* Shipping Timeline */}
+              <div className="bg-white/80 backdrop-blur-xl rounded-3xl border border-white shadow-lg shadow-indigo-100/20 px-8 py-6">
+                <h2 className="text-base font-bold text-slate-900 mb-6">
+                  Order Status
+                </h2>
+                <div className="relative">
+                  {/* Vertical line */}
+                  <div className="absolute left-5 top-5 bottom-5 w-px bg-slate-200" />
+
+                  <div className="space-y-6">
+                    {TIMELINE.map((step) => (
+                      <div
+                        key={step.label}
+                        className="flex items-start gap-4 relative"
+                      >
+                        <div
+                          className={cn(
+                            "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 z-10 border-2 transition-colors",
+                            step.done
+                              ? "bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-500/30"
+                              : "bg-white border-slate-200 text-slate-300",
+                          )}
+                        >
+                          {step.done ? (
+                            <CheckCircle2 className="w-5 h-5" />
+                          ) : (
+                            <Circle className="w-5 h-5" />
+                          )}
+                        </div>
+                        <div
+                          className={cn("pt-1.5", !step.done && "opacity-40")}
+                        >
+                          <p className="text-sm font-semibold text-slate-900">
+                            {step.label}
+                          </p>
+                          <p className="text-xs text-slate-500 mt-0.5">
+                            {step.desc}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Financial & Node Breakdown Sidebar */}
-            <div className="lg:col-span-4 space-y-16">
-              <div className="bg-white/40 backdrop-blur-[80px] rounded-[5rem] p-12 lg:p-16 shadow-2xl border-2 border-white relative overflow-hidden group/summary">
-                <div className="absolute -top-32 -right-32 w-64 h-64 bg-indigo-500/10 rounded-full blur-[100px]"></div>
-                <h3 className="relative text-3xl font-black uppercase tracking-tighter mb-16 italic text-indigo-950 leading-none">Voucher</h3>
-                <div className="space-y-10 mb-16 relative">
-                  <div className="flex justify-between items-center bg-white/60 p-8 rounded-[2.5rem] border border-white shadow-inner group/val">
-                    <span className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-400 group-hover/val:text-indigo-400 transition-colors">Net Valuation</span>
-                    <span className="font-black text-2xl text-indigo-950 italic">
-                      {parseFloat(order.totalPrice.amount).toLocaleString("en-US", {
-                        style: "currency",
-                        currency: order.totalPrice.currencyCode,
-                      })}
+            {/* ── Right Column ─────────────────────────────────── */}
+            <div className="lg:col-span-4 space-y-5">
+              {/* Order Summary */}
+              <div className="bg-white/80 backdrop-blur-xl rounded-3xl border border-white shadow-lg shadow-indigo-100/20 p-6">
+                <h3 className="text-base font-bold text-slate-900 mb-5">
+                  Order Summary
+                </h3>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between text-slate-600">
+                    <span>Subtotal</span>
+                    <span className="font-medium text-slate-900">
+                      {parseFloat(order.subtotalPrice?.amount || order.totalPrice.amount).toLocaleString(
+                        "en-US",
+                        {
+                          style: "currency",
+                          currency: order.subtotalPrice?.currencyCode || order.totalPrice.currencyCode,
+                        },
+                      )}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center px-8">
-                    <span className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-400">Logistics</span>
-                    <span className="text-indigo-600 text-[10px] font-black uppercase tracking-[0.4em] bg-white/80 px-6 py-2 rounded-full border border-white/80 shadow-2xl">Terminal Free</span>
+                  <div className="flex justify-between text-slate-600">
+                    <span>Shipping</span>
+                    <span className="text-emerald-600 font-medium">
+                      {parseFloat(order.totalShippingPrice?.amount || "0") === 0 
+                        ? "Free" 
+                        : parseFloat(order.totalShippingPrice.amount).toLocaleString("en-US", {
+                            style: "currency",
+                            currency: order.totalShippingPrice.currencyCode,
+                          })
+                      }
+                    </span>
                   </div>
-                  <div className="flex justify-between items-center px-8">
-                    <span className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-400">Levy</span>
-                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-950">Amalgamated</span>
+                  <div className="flex justify-between text-slate-600">
+                    <span>Tax</span>
+                    <span className="font-medium text-slate-900">Included</span>
                   </div>
-                  <div className="h-px bg-white/80 mx-4"></div>
-                  <div className="pt-8 px-4">
-                      <span className="block text-[10px] font-black uppercase tracking-[0.5em] text-slate-400 mb-8">Total Investment</span>
-                      <div className="bg-indigo-950 text-white p-12 rounded-[4rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] skew-x-[-12deg] relative group/total overflow-hidden">
-                         <div className="absolute inset-0 bg-indigo-600/20 translate-x-full group-hover/total:translate-x-0 transition-transform duration-1000"></div>
-                         <span className="relative z-10 text-5xl lg:text-6xl font-black tracking-tighter italic skew-x-[12deg] leading-none block">
-                            {parseFloat(order.totalPrice.amount).toLocaleString("en-US", {
-                               style: "currency",
-                               currency: order.totalPrice.currencyCode,
-                            })}
-                         </span>
-                      </div>
+                  <div className="h-px bg-slate-100 my-2" />
+                  <div className="flex justify-between">
+                    <span className="font-bold text-slate-900">Total</span>
+                    <span className="font-bold text-lg text-indigo-700">
+                      {parseFloat(order.totalPrice.amount).toLocaleString(
+                        "en-US",
+                        {
+                          style: "currency",
+                          currency: order.totalPrice.currencyCode,
+                        },
+                      )}
+                    </span>
                   </div>
                 </div>
               </div>
 
-              {/* Node Destination Card */}
-              <div className="bg-white/40 backdrop-blur-[60px] rounded-[5rem] p-12 lg:p-16 shadow-2xl border-2 border-white relative overflow-hidden group/destination">
-                <div className="absolute bottom-0 right-0 w-48 h-48 bg-purple-500/5 rounded-full blur-[80px]"></div>
-                <h3 className="relative text-3xl font-black uppercase tracking-tighter mb-16 italic text-indigo-950">Node Registry</h3>
-                <div className="space-y-12 relative">
-                   <div className="flex flex-col gap-10 group/item">
-                      <div className="flex items-center gap-8">
-                        <div className="w-16 h-16 rounded-[1.5rem] bg-indigo-950 text-white flex items-center justify-center border-2 border-white/20 flex-shrink-0 shadow-2xl group-hover/destination:rotate-12 transition-transform duration-700">
-                           <MapPin className="w-8 h-8" />
-                        </div>
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">Terminal Address</h4>
-                      </div>
-                      <div className="relative">
-                         <div className="text-xl font-black uppercase tracking-tighter text-indigo-950 italic mb-6 leading-none">{customer.firstName} {customer.lastName}</div>
-                         {order.shippingAddress ? (
-                           <div className="bg-white/60 p-10 rounded-[3rem] border-2 border-white shadow-inner text-sm font-bold leading-relaxed text-indigo-900/60 uppercase tracking-widest italic">
-                             <p className="text-indigo-950 not-italic font-black text-xl mb-3">{order.shippingAddress.address1}</p>
-                             {order.shippingAddress.address2 && <p className="mb-2">{order.shippingAddress.address2}</p>}
-                             <p>{order.shippingAddress.city}, {order.shippingAddress.provinceCode} {order.shippingAddress.zip}</p>
-                             <div className="w-full h-px bg-indigo-200/40 my-6"></div>
-                             <p className="text-indigo-600 font-black">{order.shippingAddress.country} // SECTOR-7</p>
-                           </div>
-                         ) : (
-                           <p className="italic text-gray-400">No destination specified</p>
-                         )}
-                      </div>
-                   </div>
-                   
-                   <div className="flex flex-col gap-10 group/item">
-                      <div className="flex items-center gap-8">
-                        <div className="w-16 h-16 rounded-[1.5rem] bg-indigo-400 text-white flex items-center justify-center border-2 border-white/20 flex-shrink-0 shadow-2xl group-hover/destination:-rotate-12 transition-transform duration-700">
-                           <CreditCard className="w-8 h-8" />
-                        </div>
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">Payment Authorization</h4>
-                      </div>
-                      <div className="bg-white/60 p-10 rounded-[3rem] border-2 border-white shadow-inner">
-                        <span className="text-indigo-400 text-[9px] font-black uppercase tracking-[0.4em] mb-4 block">Current State</span>
-                        <p className="text-2xl font-black uppercase tracking-tighter text-indigo-950 italic mb-6 leading-none underline decoration-indigo-200 decoration-8 underline-offset-8">{order.financialStatus}</p>
-                        <div className="flex items-center gap-4 bg-indigo-950/5 p-4 rounded-2xl border border-white">
-                           <div className="w-10 h-7 bg-black rounded flex items-center justify-center text-[7px] text-white font-black tracking-[0.3em] uppercase">VISA</div>
-                           <p className="text-[9px] text-slate-500 font-black uppercase tracking-[0.4em] italic">Archive Match: **** 4242</p>
-                        </div>
-                      </div>
-                   </div>
+              {/* Shipping Address */}
+              <div className="bg-white/80 backdrop-blur-xl rounded-3xl border border-white shadow-lg shadow-indigo-100/20 p-6">
+                <div className="flex items-center gap-2.5 mb-4">
+                  <div className="w-8 h-8 rounded-xl bg-indigo-100 flex items-center justify-center">
+                    <MapPin className="w-4 h-4 text-indigo-600" />
+                  </div>
+                  <h3 className="text-sm font-bold text-slate-900">
+                    Shipping Address
+                  </h3>
+                </div>
+                {order.shippingAddress ? (
+                  <div className="text-sm text-slate-600 space-y-1 bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                    <p className="font-semibold text-slate-900">
+                      {customer.firstName} {customer.lastName}
+                    </p>
+                    <p>{order.shippingAddress.address1}</p>
+                    {order.shippingAddress.address2 && (
+                      <p>{order.shippingAddress.address2}</p>
+                    )}
+                    <p>
+                      {order.shippingAddress.city},{" "}
+                      {order.shippingAddress.province}{" "}
+                      {order.shippingAddress.zip}
+                    </p>
+                    <p className="text-indigo-600 font-medium">
+                      {order.shippingAddress.country}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-sm text-slate-400 italic">
+                    No address on file
+                  </p>
+                )}
+              </div>
+
+              {/* Payment */}
+              <div className="bg-white/80 backdrop-blur-xl rounded-3xl border border-white shadow-lg shadow-indigo-100/20 p-6">
+                <div className="flex items-center gap-2.5 mb-4">
+                  <div className="w-8 h-8 rounded-xl bg-indigo-100 flex items-center justify-center">
+                    <CreditCard className="w-4 h-4 text-indigo-600" />
+                  </div>
+                  <h3 className="text-sm font-bold text-slate-900">Payment</h3>
+                </div>
+                <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-6 bg-indigo-950 rounded text-white text-[8px] font-bold flex items-center justify-center tracking-wider">
+                      VISA
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-slate-900">
+                        •••• 4242
+                      </p>
+                      <StatusBadge status={order.financialStatus} />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

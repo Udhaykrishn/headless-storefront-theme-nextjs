@@ -13,10 +13,9 @@ export const shopifyClient = new GraphQLClient(endpoint, {
 });
 
 export const customerAccountClient = (accessToken: string) => {
-  // Based on your specific shop discovery:
-  const shopId = "96111690044"; 
+  const shopId = "79508275445";
   const url = `https://shopify.com/${shopId}/account/customer/api/2026-04/graphql`;
-  
+
   return new GraphQLClient(url, {
     headers: {
       "Content-Type": "application/json",
@@ -50,9 +49,45 @@ export const GET_CUSTOMER_ACCOUNT_QUERY = `
         address1
         address2
         city
-        province
+        zoneCode
         zip
-        country
+        territoryCode
+      }
+      metafield(namespace: "custom", key: "cart_id") {
+        value
+      }
+      addresses(first: 10) {
+        edges {
+          node {
+            id
+            address1
+            address2
+            city
+            zoneCode
+            zip
+            territoryCode
+            firstName
+            lastName
+            phoneNumber
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const SET_CUSTOMER_METAFIELD_MUTATION = `
+  mutation MetafieldsSet($metafields: [MetafieldsSetInput!]!) {
+    metafieldsSet(metafields: $metafields) {
+      metafields {
+        key
+        namespace
+        value
+      }
+      userErrors {
+        field
+        message
+        code
       }
     }
   }
@@ -70,6 +105,14 @@ export const GET_PRODUCTS_QUERY = `
           descriptionHtml
           priceRange {
             maxVariantPrice { amount, currencyCode }
+          }
+          variants(first: 1) {
+            edges {
+              node {
+                id
+                availableForSale
+              }
+            }
           }
           images(first: 1) {
             edges { node { url, altText } }
@@ -133,6 +176,14 @@ export const SEARCH_PRODUCTS_QUERY = `
           title
           handle
           priceRange { maxVariantPrice { amount, currencyCode } }
+          variants(first: 1) {
+            edges {
+              node {
+                id
+                availableForSale
+              }
+            }
+          }
           images(first: 1) { edges { node { url, altText } } }
         }
       }
@@ -222,7 +273,10 @@ export const GET_PRODUCT_BY_HANDLE_QUERY = `
       id
       handle
       title
+      description
       descriptionHtml
+      vendor
+      productType
       variants(first: 100) { 
         edges { 
           node { 
@@ -234,7 +288,7 @@ export const GET_PRODUCT_BY_HANDLE_QUERY = `
       }
       options { name, values }
       priceRange { maxVariantPrice { amount, currencyCode } }
-      images(first: 5) { edges { node { url, altText } } }
+      images(first: 10) { edges { node { url, altText } } }
     }
   }
 `;
@@ -245,6 +299,7 @@ export const CART_CREATE_MUTATION = `
       cart {
         id
         checkoutUrl
+        totalQuantity
         lines(first: 10) {
           edges {
             node {
@@ -277,6 +332,7 @@ export const CART_LINES_ADD_MUTATION = `
     cartLinesAdd(cartId: $cartId, lines: $lines) {
       cart {
         id
+        totalQuantity
         lines(first: 10) {
           edges {
             node {
@@ -293,6 +349,36 @@ export const CART_LINES_ADD_MUTATION = `
         }
         cost { 
           subtotalAmount { amount, currencyCode }, 
+          totalAmount { amount, currencyCode }
+        }
+      }
+      userErrors { field, message }
+    }
+  }
+`;
+
+export const CART_LINES_UPDATE_MUTATION = `
+  mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
+    cartLinesUpdate(cartId: $cartId, lines: $lines) {
+      cart {
+        id
+        totalQuantity
+        lines(first: 100) {
+          edges {
+            node {
+              id
+              quantity
+              merchandise {
+                ... on ProductVariant {
+                  id, title, product { title, handle },
+                  price { amount, currencyCode }, image { url, altText }
+                }
+              }
+            }
+          }
+        }
+        cost {
+          subtotalAmount { amount, currencyCode }
           totalAmount { amount, currencyCode }
         }
       }
@@ -306,6 +392,7 @@ export const CART_LINES_REMOVE_MUTATION = `
     cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
       cart {
         id
+        totalQuantity
         lines(first: 10) {
           edges {
             node {
@@ -330,11 +417,48 @@ export const CART_LINES_REMOVE_MUTATION = `
   }
 `;
 
+export const CART_BUYER_IDENTITY_UPDATE_MUTATION = `
+  mutation cartBuyerIdentityUpdate($cartId: ID!, $buyerIdentity: CartBuyerIdentityInput!) {
+    cartBuyerIdentityUpdate(cartId: $cartId, buyerIdentity: $buyerIdentity) {
+      cart {
+        id
+        totalQuantity
+        lines(first: 10) {
+          edges {
+            node {
+              id
+              quantity
+              merchandise {
+                ... on ProductVariant {
+                  id, title, product { title, handle },
+                  price { amount, currencyCode }, image { url, altText }
+                }
+              }
+            }
+          }
+        }
+        cost {
+          subtotalAmount { amount, currencyCode },
+          totalAmount { amount, currencyCode }
+        }
+        buyerIdentity {
+          email
+          customer {
+            id
+          }
+        }
+      }
+      userErrors { field, message }
+    }
+  }
+`;
+
 export const GET_CART_QUERY = `
   query getCart($cartId: ID!) {
     cart(id: $cartId) {
       id
       checkoutUrl
+      totalQuantity
       lines(first: 100) {
         edges {
           node {
@@ -356,6 +480,12 @@ export const GET_CART_QUERY = `
         subtotalAmount { amount, currencyCode }
         totalAmount { amount, currencyCode }
       }
+      buyerIdentity {
+        email
+        customer {
+          id
+        }
+      }
     }
   }
 `;
@@ -364,7 +494,10 @@ export interface ShopifyProduct {
   id: string;
   title: string;
   handle: string;
+  description?: string;
   descriptionHtml: string;
+  vendor?: string;
+  productType?: string;
   priceRange: {
     maxVariantPrice: {
       amount: string;
@@ -457,6 +590,7 @@ export const GET_CUSTOMER_QUERY = `
 export interface CartInfo {
   id: string;
   checkoutUrl: string;
+  totalQuantity: number;
   lines: {
     edges: {
       node: {
@@ -475,6 +609,12 @@ export interface CartInfo {
   cost: {
     subtotalAmount: { amount: string; currencyCode: string };
     totalAmount: { amount: string; currencyCode: string };
+  };
+  buyerIdentity?: {
+    email: string;
+    customer?: {
+      id: string;
+    };
   };
 }
 
@@ -505,7 +645,7 @@ export async function getProducts({
 } = {}) {
   // Setup pagination variables limit 20. If neither first nor last is provided, default to first 20.
   let f = first;
-  let l = last;
+  const l = last;
   if (!first && !last) {
     f = 20;
   }
@@ -609,3 +749,65 @@ export async function getShopId() {
   const gid = data.shop.id; // gid://shopify/Shop/123456
   return gid.split("/").pop();
 }
+
+export const CUSTOMER_ADDRESS_CREATE_MUTATION = `
+  mutation customerAddressCreate($address: CustomerAddressInput!, $defaultAddress: Boolean) {
+    customerAddressCreate(address: $address, defaultAddress: $defaultAddress) {
+      customerAddress {
+        id
+        firstName
+        lastName
+        address1
+        address2
+        city
+        zoneCode
+        territoryCode
+        zip
+        phoneNumber
+        company
+      }
+      userErrors {
+        field
+        message
+        code
+      }
+    }
+  }
+`;
+
+export const CUSTOMER_ADDRESS_DELETE_MUTATION = `
+  mutation customerAddressDelete($addressId: ID!) {
+    customerAddressDelete(addressId: $addressId) {
+      deletedAddressId
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+export const CUSTOMER_ADDRESS_UPDATE_MUTATION = `
+  mutation customerAddressUpdate($addressId: ID!, $address: CustomerAddressInput!) {
+    customerAddressUpdate(addressId: $addressId, address: $address) {
+      customerAddress {
+        id
+        firstName
+        lastName
+        address1
+        address2
+        city
+        zoneCode
+        territoryCode
+        zip
+        phoneNumber
+        company
+      }
+      userErrors {
+        field
+        message
+        code
+      }
+    }
+  }
+`;

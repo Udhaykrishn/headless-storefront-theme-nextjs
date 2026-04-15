@@ -1,18 +1,12 @@
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
-import { getCollection } from "@/lib/shopify";
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { Metadata } from "next";
+import { Footer } from "@/components/footer";
+import { Header } from "@/components/header";
+import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { getCollection } from "@/lib/shopify";
 
 export const revalidate = 60;
 
@@ -25,13 +19,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { handle } = await params;
   try {
     const collection = await getCollection({ handle });
-    if (!collection) return { title: "Collection | LUXE" };
+    if (!collection) return { title: "Collection | RebootX" };
     return {
-      title: `${collection.title} | LUXE`,
-      description: collection.description || `Shop our ${collection.title} collection.`,
+      title: `${collection.title} | RebootX`,
+      description:
+        collection.description || `Shop our ${collection.title} collection.`,
     };
   } catch {
-    return { title: "Collection | LUXE" };
+    return { title: "Collection | RebootX" };
   }
 }
 
@@ -45,24 +40,36 @@ export default async function CollectionPage({ params, searchParams }: Props) {
   let sortKey = "BEST_SELLING";
   let reverse = false;
 
-  if (sort === "newest") { sortKey = "CREATED"; reverse = true; }
-  else if (sort === "price-asc") { sortKey = "PRICE"; reverse = false; }
-  else if (sort === "price-desc") { sortKey = "PRICE"; reverse = true; }
-  else if (sort === "title-asc") { sortKey = "TITLE"; reverse = false; }
-
-  let collection;
-  try {
-    collection = await getCollection({ handle, sortKey, reverse, after });
-  } catch {
-    notFound();
+  if (sort === "newest") {
+    sortKey = "CREATED";
+    reverse = true;
+  } else if (sort === "price-asc") {
+    sortKey = "PRICE";
+    reverse = false;
+  } else if (sort === "price-desc") {
+    sortKey = "PRICE";
+    reverse = true;
+  } else if (sort === "title-asc") {
+    sortKey = "TITLE";
+    reverse = false;
   }
+
+  const collection = await getCollection({
+    handle,
+    sortKey,
+    reverse,
+    after,
+  }).catch(() => null);
 
   if (!collection) notFound();
 
-  const products = collection.products.edges.map((e) => ({ ...e.node, cursor: e.cursor }));
+  const products = collection.products.edges.map((e) => ({
+    ...e.node,
+    cursor: e.cursor,
+  }));
   const pageInfo = collection.products.pageInfo;
 
-  const sortParams = sort ? `&sort=${sort}` : "";
+  const _sortParams = sort ? `&sort=${sort}` : "";
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col text-gray-900">
@@ -87,9 +94,16 @@ export default async function CollectionPage({ params, searchParams }: Props) {
           <div className="relative z-10 h-full flex flex-col justify-end max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
             {/* Breadcrumbs */}
             <nav className="flex items-center gap-2 text-sm text-white/60 mb-3">
-              <Link href="/" className="hover:text-white transition-colors">Home</Link>
+              <Link href="/" className="hover:text-white transition-colors">
+                Home
+              </Link>
               <span>/</span>
-              <Link href="/collections" className="hover:text-white transition-colors">Collections</Link>
+              <Link
+                href="/collections"
+                className="hover:text-white transition-colors"
+              >
+                Collections
+              </Link>
               <span>/</span>
               <span className="text-white">{collection.title}</span>
             </nav>
@@ -97,7 +111,9 @@ export default async function CollectionPage({ params, searchParams }: Props) {
               {collection.title}
             </h1>
             {collection.description && (
-              <p className="text-white/70 mt-2 max-w-xl text-sm">{collection.description}</p>
+              <p className="text-white/70 mt-2 max-w-xl text-sm">
+                {collection.description}
+              </p>
             )}
           </div>
         </div>
@@ -110,7 +126,9 @@ export default async function CollectionPage({ params, searchParams }: Props) {
               {products.length} product{products.length !== 1 ? "s" : ""}
             </p>
             <div className="flex items-center gap-3">
-              <span className="text-sm text-gray-600 hidden sm:block">Sort by:</span>
+              <span className="text-sm text-gray-600 hidden sm:block">
+                Sort by:
+              </span>
               <div className="flex gap-2 flex-wrap">
                 {[
                   { label: "Best Selling", value: "" },
@@ -136,64 +154,36 @@ export default async function CollectionPage({ params, searchParams }: Props) {
 
           {products.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-32 text-gray-400">
-              <p className="text-xl font-medium">No products in this collection yet</p>
+              <p className="text-xl font-medium">
+                No products in this collection yet
+              </p>
               <Link href="/shop">
-                <Button variant="outline" className="mt-6">Browse all products</Button>
+                <Button variant="outline" className="mt-6">
+                  Browse all products
+                </Button>
               </Link>
             </div>
           ) : (
             <>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {products.map((product) => {
-                  const price = product.priceRange.maxVariantPrice;
-                  const formattedPrice = new Intl.NumberFormat("en-US", {
-                    style: "currency",
-                    currency: price.currencyCode,
-                  }).format(parseFloat(price.amount));
-                  const img = product.images.edges[0]?.node;
-
-                  return (
-                    <Link
-                      key={product.id}
-                      href={`/products/${product.handle}`}
-                      className="group flex flex-col"
-                    >
-                      <div className="aspect-square relative rounded-xl overflow-hidden bg-white mb-3 shadow-sm border border-black/5">
-                        {img ? (
-                          <Image
-                            src={img.url}
-                            alt={img.altText || product.title}
-                            fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
-                          />
-                        ) : (
-                          <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="text-gray-300">
-                              <rect width="18" height="18" x="3" y="3" rx="2" />
-                              <circle cx="9" cy="9" r="2" />
-                              <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
-                            </svg>
-                          </div>
-                        )}
-                      </div>
-                      <h3 className="font-medium text-sm leading-tight group-hover:underline underline-offset-4 decoration-2 line-clamp-2">
-                        {product.title}
-                      </h3>
-                      <p className="text-gray-600 mt-1 text-sm font-semibold">{formattedPrice}</p>
-                    </Link>
-                  );
-                })}
+                {products.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
               </div>
 
               {/* Pagination */}
               <div className="mt-12 flex justify-center gap-4">
                 {pageInfo.hasPreviousPage && (
-                  <Link href={`/collections/${handle}?${new URLSearchParams({ ...(sort && { sort }), before: pageInfo.startCursor }).toString()}`}>
+                  <Link
+                    href={`/collections/${handle}?${new URLSearchParams({ ...(sort && { sort }), before: pageInfo.startCursor }).toString()}`}
+                  >
                     <Button variant="outline">← Previous</Button>
                   </Link>
                 )}
                 {pageInfo.hasNextPage && (
-                  <Link href={`/collections/${handle}?${new URLSearchParams({ ...(sort && { sort }), after: pageInfo.endCursor }).toString()}`}>
+                  <Link
+                    href={`/collections/${handle}?${new URLSearchParams({ ...(sort && { sort }), after: pageInfo.endCursor }).toString()}`}
+                  >
                     <Button variant="outline">Next →</Button>
                   </Link>
                 )}

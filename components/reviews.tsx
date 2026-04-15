@@ -8,7 +8,7 @@ const REVIEWS = [
     name: "Sarah Jenkins",
     handle: "@sarahj",
     content:
-      "Absolutely love the quality of the new spring collection. The fabric feels premium and the fit is perfect.",
+      "Picked up a refurbished ThinkPad for my design work. It looks brand new and handles heavy software like a champ. Incredible value!",
     rating: 5,
     avatar: "https://i.pravatar.cc/150?u=sarahj",
   },
@@ -17,7 +17,7 @@ const REVIEWS = [
     name: "Michael Chen",
     handle: "@mchen_opts",
     content:
-      "Fast shipping and incredible customer service. The minimalist design is exactly what I was looking for.",
+      "The battery life on this refurbished MacBook is stellar. Fast shipping and the 1-year warranty gave me peace of mind.",
     rating: 5,
     avatar: "https://i.pravatar.cc/150?u=mchen",
   },
@@ -26,8 +26,8 @@ const REVIEWS = [
     name: "Elena Rodriguez",
     handle: "@elenar",
     content:
-      "I've bought three items so far and they never disappoint. The attention to detail is unmatched.",
-    rating: 4,
+      "I was skeptical about buying refurbished, but RebootX proved me wrong. My Dell XPS is flawless and saved me $400.",
+    rating: 5,
     avatar: "https://i.pravatar.cc/150?u=elena",
   },
 ];
@@ -43,7 +43,8 @@ export function Reviews() {
             Customer Reviews
           </h2>
           <p className="mt-4 text-slate-600">
-            See what our customers have to say about their experience with our next-generation technology.
+            See why thousands of professionals trust RebootX for their
+            high-performance computing needs.
           </p>
         </div>
 
@@ -61,7 +62,7 @@ export function Reviews() {
                   />
                 ))}
               </div>
-              
+
               <blockquote className="flex-grow">
                 <p className="text-lg text-slate-700 leading-relaxed italic">
                   "{review.content}"
@@ -71,11 +72,15 @@ export function Reviews() {
               <div className="mt-8 flex items-center gap-4 pt-6 border-t border-slate-100">
                 <Avatar className="h-12 w-12 border border-slate-200">
                   <AvatarImage src={review.avatar} alt={review.name} />
-                  <AvatarFallback className="bg-slate-100 text-slate-600 font-semibold">{review.name.charAt(0)}</AvatarFallback>
+                  <AvatarFallback className="bg-slate-100 text-slate-600 font-semibold">
+                    {review.name.charAt(0)}
+                  </AvatarFallback>
                 </Avatar>
                 <div>
                   <div className="font-bold text-slate-900">{review.name}</div>
-                  <div className="text-xs text-slate-500 font-medium">{review.handle}</div>
+                  <div className="text-xs text-slate-500 font-medium">
+                    {review.handle}
+                  </div>
                 </div>
               </div>
             </div>
